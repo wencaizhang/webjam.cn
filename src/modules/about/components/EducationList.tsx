@@ -2,11 +2,15 @@ import { TbSchool as EducationIcon } from 'react-icons/tb';
 
 import SectionHeading from '@/common/components/elements/SectionHeading';
 import SectionSubHeading from '@/common/components/elements/SectionSubHeading';
-import { EDUCATION } from '@/common/constant/education';
+import { EducationProps } from '@/common/types/education';
 
 import EducationCard from './EducationCard';
 
-const EducationList = () => {
+const EducationList = ({
+  educationList,
+}: {
+  educationList: EducationProps[];
+}) => {
   return (
     <section className='space-y-6'>
       <div className='space-y-2'>
@@ -20,7 +24,7 @@ const EducationList = () => {
       </div>
 
       <div className='grid md:grid-cols-1 gap-4'>
-        {EDUCATION?.map((item, index) => (
+        {educationList?.map((item, index) => (
           <EducationCard key={index} {...item} />
         ))}
       </div>

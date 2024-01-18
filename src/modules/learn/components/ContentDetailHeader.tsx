@@ -4,8 +4,8 @@ import { useEffect, useState } from 'react';
 import { FiExternalLink as LinkIcon } from 'react-icons/fi';
 
 import Tooltip from '@/common/components/elements/Tooltip';
-import { STACKS } from '@/common/constant/stacks';
 import { SubContentMetaProps } from '@/common/types/learn';
+import { STACKS } from '@/contents/stacks';
 
 const ContentDetailHeader = ({
   title,

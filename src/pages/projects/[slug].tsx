@@ -1,11 +1,12 @@
-import { GetServerSideProps, NextPage } from 'next';
+import { GetStaticProps, NextPage } from 'next';
 import { NextSeo } from 'next-seo';
 
 import BackButton from '@/common/components/elements/BackButton';
 import Container from '@/common/components/elements/Container';
 import PageHeading from '@/common/components/elements/PageHeading';
-import prisma from '@/common/libs/prisma';
+import { getCollection, getEntry } from '@/common/libs/mdx';
 import { ProjectItemProps } from '@/common/types/projects';
+import { siteMetadata } from '@/contents/siteMetadata';
 import ProjectDetail from '@/modules/projects/components/ProjectDetail';
 
 interface ProjectsDetailPageProps {
@@ -16,20 +17,20 @@ const ProjectsDetailPage: NextPage<ProjectsDetailPageProps> = ({ project }) => {
   const PAGE_TITLE = project?.title;
   const PAGE_DESCRIPTION = project?.description;
 
-  const canonicalUrl = `https://aulianza.id/project/${project?.slug}`;
+  const canonicalUrl = `${siteMetadata.siteUrl}/projects/${project?.slug}`;
 
   return (
     <>
       <NextSeo
-        title={`${project?.title} - Project Ryan Aulia`}
+        title={`${project?.title} - Project ${siteMetadata.author}`}
         description={project?.description}
         canonical={canonicalUrl}
         openGraph={{
           type: 'article',
           article: {
-            publishedTime: project?.updated_at.toString(),
-            modifiedTime: project?.updated_at.toString(),
-            authors: ['Ryan Aulia'],
+            publishedTime: project?.updated_at,
+            modifiedTime: project?.updated_at,
+            authors: [siteMetadata.author],
           },
           url: canonicalUrl,
           images: [
@@ -37,7 +38,7 @@ const ProjectsDetailPage: NextPage<ProjectsDetailPageProps> = ({ project }) => {
               url: project?.image,
             },
           ],
-          siteName: 'Blog Ryan Aulia',
+          siteName: `Blog ${siteMetadata.author}`,
         }}
       />
       <Container data-aos='fade-up'>
@@ -51,14 +52,28 @@ const ProjectsDetailPage: NextPage<ProjectsDetailPageProps> = ({ project }) => {
 
 export default ProjectsDetailPage;
 
-export const getServerSideProps: GetServerSideProps = async ({ params }) => {
-  const response = await prisma.projects.findUnique({
-    where: {
-      slug: String(params?.slug),
-    },
-  });
+export const getStaticPaths = async () => {
+  const list = getCollection('project');
+  const paths = list.reduce((acc, curr) => {
+    acc.push({
+      params: {
+        slug: curr.slug,
+      },
+    });
+    return acc;
+  }, [] as object[]);
 
-  if (response === null) {
+  return {
+    paths: paths,
+    fallback: false,
+  };
+};
+
+export const getStaticProps: GetStaticProps = async ({ params }) => {
+  const slug = params?.slug as string;
+  const entry = await getEntry('project', slug);
+
+  if (!entry) {
     return {
       redirect: {
         destination: '/404',
@@ -66,38 +81,12 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
       },
     };
   }
+  const { content, frontMatter } = entry;
 
   return {
     props: {
-      project: JSON.parse(JSON.stringify(response)),
+      project: { content, ...frontMatter },
     },
+    revalidate: 1,
   };
 };
-
-// RY: moved from SSG to SSR since data updated frequently from DB
-// export const getStaticProps: GetStaticProps = async ({ params }) => {
-//   const response = await prisma.projects.findUnique({
-//     where: {
-//       slug: String(params?.slug),
-//     },
-//   });
-
-//   return {
-//     props: {
-//       project: JSON.parse(JSON.stringify(response)),
-//     },
-//     revalidate: 10,
-//   };
-// };
-
-// export const getStaticPaths: GetStaticPaths = async () => {
-//   const response = await prisma.projects.findMany();
-//   const paths = response.map((project) => ({
-//     params: { slug: project.slug },
-//   }));
-
-//   return {
-//     paths,
-//     fallback: false,
-//   };
-// };

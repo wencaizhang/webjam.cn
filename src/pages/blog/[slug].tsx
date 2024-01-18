@@ -1,61 +1,55 @@
-import axios from 'axios';
-import { GetServerSideProps, NextPage } from 'next';
+import { GetStaticProps, NextPage } from 'next';
 import dynamic from 'next/dynamic';
 import { NextSeo } from 'next-seo';
-import { useEffect } from 'react';
 
 import BackButton from '@/common/components/elements/BackButton';
 import Container from '@/common/components/elements/Container';
+import NavigationSection from '@/common/components/elements/NavigationSection';
 import { formatExcerpt } from '@/common/helpers';
+import { getCollection, getEntry } from '@/common/libs/mdx';
 import { BlogDetailProps } from '@/common/types/blog';
+import { siteMetadata } from '@/contents/siteMetadata';
 import BlogDetail from '@/modules/blog/components/BlogDetail';
-import { getBlogDetail } from '@/services/blog';
 
 const GiscusComment = dynamic(
   () => import('@/modules/blog/components/GiscusComment')
 );
+type PageInfo = { title: string; href: string };
 
 interface BlogDetailPageProps {
-  blog: {
-    data: BlogDetailProps;
-  };
+  post: BlogDetailProps;
+  prev: PageInfo | null;
+  next: PageInfo | null;
 }
 
-const BlogDetailPage: NextPage<BlogDetailPageProps> = ({ blog }) => {
-  const blogData = blog?.data || {};
+const BlogDetailPage: NextPage<BlogDetailPageProps> = ({
+  post,
+  prev,
+  next,
+}) => {
+  const blogData = post;
 
-  const slug = `blog/${blogData?.slug}?id=${blogData?.id}`;
-  const canonicalUrl = `https://aulianza.id/${slug}`;
-  const description = formatExcerpt(blogData?.excerpt?.rendered);
-
-  const incrementViews = async () => {
-    await axios.post(`/api/views?&slug=${blogData?.slug}`);
-  };
-
-  useEffect(() => {
-    if (process.env.NODE_ENV === 'production') {
-      incrementViews();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const slug = blogData.slug;
+  const canonicalUrl = `${siteMetadata.siteUrl}/${slug}`;
+  const description = formatExcerpt(blogData?.frontMatter.summary) || '';
 
   return (
     <>
       <NextSeo
-        title={`${blogData?.title?.rendered} - Blog Ryan Aulia`}
+        title={`${blogData.frontMatter.title} - Blog ${siteMetadata.author}`}
         description={description}
         canonical={canonicalUrl}
         openGraph={{
           type: 'article',
           article: {
-            publishedTime: blogData?.date,
-            modifiedTime: blogData?.date,
-            authors: ['Ryan Aulia', 'aulianza'],
+            publishedTime: blogData.frontMatter.date,
+            modifiedTime: blogData.frontMatter.date,
+            authors: [siteMetadata.author, 'aulianza'],
           },
           url: canonicalUrl,
           images: [
             {
-              url: blogData?.featured_image_url,
+              url: blogData.frontMatter.featured_image_url,
             },
           ],
           siteName: 'aulianza blog',
@@ -64,9 +58,12 @@ const BlogDetailPage: NextPage<BlogDetailPageProps> = ({ blog }) => {
       <Container data-aos='fade-up'>
         <BackButton url='/blog' />
         <BlogDetail {...blogData} />
+
         <section id='comments'>
-          <GiscusComment isEnableReaction={false} />
+          <GiscusComment />
         </section>
+
+        <NavigationSection prev={prev} next={next} />
       </Container>
     </>
   );
@@ -74,21 +71,32 @@ const BlogDetailPage: NextPage<BlogDetailPageProps> = ({ blog }) => {
 
 export default BlogDetailPage;
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const blogId = context.query?.id as string;
-
-  if (!blogId) {
-    return {
-      redirect: {
-        destination: '/',
-        permanent: false,
+export async function getStaticPaths() {
+  const contentList = await getCollection('blog');
+  const paths = contentList.reduce((acc, curr) => {
+    acc.push({
+      params: {
+        slug: curr.slug,
       },
-    };
-  }
+    });
+    return acc;
+  }, [] as object[]);
+  return {
+    paths,
+    fallback: false,
+  };
+}
 
-  const response = await getBlogDetail(parseInt(blogId));
+export const getStaticProps: GetStaticProps = async ({ params }) => {
+  const slug = params?.slug as string;
+  const contentList = await getCollection('blog');
+  const post = await getEntry('blog', slug);
 
-  if (response?.status === 404) {
+  const postIndex = contentList.findIndex((item) => item.slug === slug);
+  const prev = contentList[postIndex + 1] || null;
+  const next = contentList[postIndex - 1] || null;
+
+  if (!post) {
     return {
       redirect: {
         destination: '/404',
@@ -96,10 +104,21 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       },
     };
   }
-
   return {
     props: {
-      blog: response,
+      post,
+      prev: !prev
+        ? null
+        : {
+            title: prev?.frontMatter.title,
+            href: `/blog/${prev.slug}`,
+          },
+      next: !next
+        ? null
+        : {
+            title: next?.frontMatter.title,
+            href: `/blog/${next.slug}`,
+          },
     },
   };
 };

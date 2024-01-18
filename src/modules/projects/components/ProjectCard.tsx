@@ -5,8 +5,8 @@ import { HiOutlineArrowSmRight as ViewIcon } from 'react-icons/hi';
 import Card from '@/common/components/elements/Card';
 import Image from '@/common/components/elements/Image';
 import Tooltip from '@/common/components/elements/Tooltip';
-import { STACKS } from '@/common/constant/stacks';
 import { ProjectItemProps } from '@/common/types/projects';
+import { STACKS } from '@/contents/stacks';
 
 const ProjectCard = ({
   title,
@@ -16,7 +16,7 @@ const ProjectCard = ({
   stacks,
   is_featured,
 }: ProjectItemProps) => {
-  const stacksArray = JSON.parse(stacks);
+  const stacksArray = stacks;
 
   return (
     <Link href={`/projects/${slug}`}>
@@ -35,7 +35,7 @@ const ProjectCard = ({
             alt={title}
             className='rounded-t-xl h-48 object-cover object-left'
           />
-          <div className='flex gap-1 absolute top-0 left-0 w-full h-full bg-black opacity-0 transition-opacity duration-300 flex justify-center items-center text-white group-hover:opacity-80 rounded-t-xl text-sm font-medium'>
+          <div className='flex gap-1 absolute top-0 left-0 w-full h-full bg-black opacity-0 transition-opacity duration-300 justify-center items-center text-white group-hover:opacity-80 rounded-t-xl text-sm font-medium'>
             <span>View Project</span>
             <ViewIcon size={20} />
           </div>
@@ -50,8 +50,8 @@ const ProjectCard = ({
             {description}
           </p>
           <div className='flex flex-wrap items-center gap-3 pt-2'>
-            {stacksArray?.map((stack: string, index: number) => (
-              <div key={index}>
+            {stacksArray?.map((stack) => (
+              <div key={stack}>
                 <Tooltip title={stack}>{STACKS[stack]}</Tooltip>
               </div>
             ))}

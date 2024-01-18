@@ -7,6 +7,7 @@ import useSWR from 'swr';
 
 import SectionHeading from '@/common/components/elements/SectionHeading';
 import SectionSubHeading from '@/common/components/elements/SectionSubHeading';
+import { author } from '@/contents/siteMetadata';
 import { fetcher } from '@/services/fetcher';
 
 import CodingActiveList from './CodingActiveList';
@@ -27,8 +28,8 @@ const CodingActive = ({ lastUpdate }: CodingActiveProps) => {
       const lastUpdateDate = lastUpdate || data?.last_update;
       if (lastUpdateDate) {
         const zonedDate = utcToZonedTime(
-          zonedTimeToUtc(lastUpdateDate, 'Asia/Jakarta'),
-          'Asia/Jakarta'
+          zonedTimeToUtc(lastUpdateDate, author.timeZone),
+          author.timeZone
         );
         const distance = formatDistanceToNowStrict(zonedDate, {
           addSuffix: true,
@@ -57,7 +58,8 @@ const CodingActive = ({ lastUpdate }: CodingActiveProps) => {
         <div className='dark:text-neutral-400 md:flex-row md:items-center'>
           <span>My </span>
           <Link
-            href='https://wakatime.com/@aulianza'
+            href={author.wakatime}
+            target='_blank'
             className='hover:text-neutral-900 hover:underline dark:hover:text-neutral-100'
           >
             WakaTime

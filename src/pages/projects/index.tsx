@@ -1,11 +1,12 @@
-import { GetStaticProps, NextPage } from 'next';
+import { NextPage } from 'next';
 import { NextSeo } from 'next-seo';
 import { useState } from 'react';
 
 import Container from '@/common/components/elements/Container';
 import PageHeading from '@/common/components/elements/PageHeading';
-import prisma from '@/common/libs/prisma';
+import { getCollection } from '@/common/libs/mdx';
 import { ProjectItemProps } from '@/common/types/projects';
+import { siteMetadata } from '@/contents/siteMetadata';
 import Projects from '@/modules/projects';
 
 interface ProjectsPageProps {
@@ -24,7 +25,7 @@ const ProjectsPage: NextPage<ProjectsPageProps> = ({ projects }) => {
 
   return (
     <>
-      <NextSeo title={`${PAGE_TITLE} - Ryan Aulia`} />
+      <NextSeo title={`${PAGE_TITLE} - ${siteMetadata.author}`} />
       <Container data-aos='fade-up'>
         <PageHeading title={PAGE_TITLE} description={PAGE_DESCRIPTION} />
         <Projects
@@ -39,22 +40,16 @@ const ProjectsPage: NextPage<ProjectsPageProps> = ({ projects }) => {
 
 export default ProjectsPage;
 
-export const getStaticProps: GetStaticProps = async () => {
-  const response = await prisma.projects.findMany({
-    orderBy: [
-      {
-        is_featured: 'desc',
-      },
-      {
-        updated_at: 'desc',
-      },
-    ],
-  });
+export async function getStaticProps() {
+  const collection = getCollection('project');
+  const list = collection
+    .filter((item) => item.frontMatter.is_show)
+    .map((item) => item.frontMatter);
 
   return {
     props: {
-      projects: JSON.parse(JSON.stringify(response)),
+      projects: list,
     },
     revalidate: 1,
   };
-};
+}

@@ -1,8 +1,8 @@
 import Image from '@/common/components/elements/Image';
 import MDXComponent from '@/common/components/elements/MDXComponent';
 import Tooltip from '@/common/components/elements/Tooltip';
-import { STACKS } from '@/common/constant/stacks';
 import { ProjectItemProps } from '@/common/types/projects';
+import { STACKS } from '@/contents/stacks';
 
 import ProjectLink from './ProjectLink';
 
@@ -14,18 +14,18 @@ const ProjectDetail = ({
   link_github,
   content,
 }: ProjectItemProps) => {
-  const stacksArray = JSON.parse(stacks);
+  const stacksArray = stacks;
 
   return (
     <div className='space-y-8'>
       <div className='flex flex-col lg:flex-row items-start lg:items-center sm:flex-row gap-5 justify-between'>
         <div className='flex items-center flex-wrap gap-2'>
           <span className='text-[15px] mb-1 text-neutral-700 dark:text-neutral-300'>
-            Tech Stack :
+            技术栈 :
           </span>
           <div className='flex flex-wrap items-center gap-3'>
-            {stacksArray?.map((stack: string, index: number) => (
-              <div key={index}>
+            {stacksArray?.map((stack) => (
+              <div key={stack}>
                 <Tooltip title={stack}>{STACKS[stack]}</Tooltip>
               </div>
             ))}

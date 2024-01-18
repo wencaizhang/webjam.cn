@@ -4,7 +4,7 @@ import {
 } from 'react-icons/md';
 
 import Tooltip from '@/common/components/elements/Tooltip';
-
+import { siteMetadata } from '@/contents/siteMetadata';
 interface PanelFooterProps {
   isFullScreen?: boolean;
   onCloseFullScreen?: () => void;
@@ -19,7 +19,7 @@ const PanelFooter = ({
   return (
     <div className='flex items-center justify-between bg-neutral-900 border border-neutral-700 border-t-0 py-1 px-2 rounded-b-md'>
       <div className='text-sm font-sora items-center text-neutral-500'>
-        &copy; <a href='https://aulianza.id'>aulianza</a>
+        &copy; <a href={siteMetadata.siteUrl}>{siteMetadata.siteShortTitle}</a>
       </div>
       {isFullScreen ? (
         <Tooltip title='Close'>

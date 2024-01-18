@@ -1,16 +1,28 @@
-import Image from './Image';
+import { useTheme } from 'next-themes';
 
+import Image from '@/common/components/elements/Image';
+import { siteMetadata } from '@/contents/siteMetadata';
 const TopBar = () => {
+  const { resolvedTheme } = useTheme();
+
+  const lightBg = 'linear-gradient(to right, #ffc3a0 0%, #ffafbd 100%)';
+  const darkBg = 'linear-gradient(to top, #b224ef 0%, #7579ff 100%)';
+  const bg = resolvedTheme === 'light' ? lightBg : darkBg
+
   return (
-    <div className='hidden xl:flex gap-x-2 items-center justify-center p-2.5 shadow-lg backdrop-blur-2xl bg-no-repeat bg-cover text-sm dark:text-neutral-300 dark:border-b dark:border-neutral-800'>
-      <span>🚀</span>
-      <span>Just launched my landing page website. check it out :</span>
+    <div
+      className='hidden xl:flex gap-x-2 items-center justify-center p-2.5 shadow-lg backdrop-blur-2xl bg-no-repeat bg-cover text-sm dark:text-neutral-300 dark:border-b dark:border-neutral-800'
+      style={{ backgroundImage: bg }}
+    >
+      <span>🌟🍺✨🎉</span>
+      <span>你好，2024</span>
+      <span>🎉✨🍺🌟</span>
       <a
-        href='https://aulianza.com/?utm_source=aulianza.id&utm_medium=referral&ref=aulianza.id'
+        href={siteMetadata.siteUrl}
         target='_blank'
         className='ml-0.5 underline'
       >
-        aulianza.com
+        {siteMetadata.siteTitle}
       </a>
       <Image
         src='/images/dot_new_animated.svg'
