@@ -3,6 +3,8 @@ import { ReactNode } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
+import { siteMetadata } from '@/contents/siteMetadata';
+
 import CodeBlock from './CodeBlock';
 
 interface MarkdownRendererProps {
@@ -26,7 +28,10 @@ const MDXComponent = ({ children }: MarkdownRendererProps) => {
       components={{
         a: (props) => (
           <a
-            className='text-teal-500 hover:text-teal-400 hover:underline cursor-pointer'
+            className='text-indigo-500 hover:text-indigo-400 hover:underline cursor-pointer'
+            target={
+              props.href?.startsWith(siteMetadata.siteUrl) ? '_self' : '_blank'
+            }
             {...props}
           />
         ),

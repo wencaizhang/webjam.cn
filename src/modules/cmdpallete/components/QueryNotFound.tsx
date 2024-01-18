@@ -2,6 +2,7 @@ import { BiLogoGoogle as GoogleIcon } from 'react-icons/bi';
 import { HiOutlineChat as AiIcon } from 'react-icons/hi';
 
 import Button from '@/common/components/elements/Button';
+import { featureSwich } from '@/contents/siteMetadata';
 
 interface QueryNotFoundProps {
   query: string;
@@ -25,17 +26,21 @@ const QueryNotFound = ({
           in this website.
         </p>
         <p className='text-neutral-600 dark:text-neutral-400'>
-          Ask my AI Assistant or find in Google instead?
+          {featureSwich.ai
+            ? 'Ask my AI Assistant or find in Google instead?'
+            : 'Find in Google instead?'}
         </p>
       </div>
       <div className='flex flex-col lg:flex-row gap-3 w-full justify-center'>
-        <Button
-          onClick={onAskAiAssistant}
-          className='justify-center !bg-green-600'
-          data-umami-event='Click Ask AI Assistant'
-        >
-          <AiIcon size={20} /> Ask AI Assistant
-        </Button>
+        {featureSwich.ai && (
+          <Button
+            onClick={onAskAiAssistant}
+            className='justify-center !bg-green-600'
+            data-umami-event='Click Ask AI Assistant'
+          >
+            <AiIcon size={20} /> Ask AI Assistant
+          </Button>
+        )}
         <Button
           onClick={onFindGoogle}
           className='justify-center !bg-indigo-600'

@@ -5,14 +5,14 @@ import { ReactNode } from 'react';
 import { useWindowSize } from 'usehooks-ts';
 
 import useHasMounted from '@/common/hooks/useHasMounted';
-import ChatButton from '@/modules/chat/components/ChatButton';
+import { featureSwich } from '@/contents/siteMetadata';
 
+// import ChatButton from '@/modules/chat/components/ChatButton';
 import HeaderSidebar from './header/HeaderSidebar';
 import HeaderTop from './header/HeaderTop';
 import NowPlayingBar from '../elements/NowPlayingBar';
 import NowPlayingCard from '../elements/NowPlayingCard';
-
-// import TopBar from '../elements/TopBar';
+import TopBar from '../elements/TopBar';
 
 interface LayoutProps {
   children: ReactNode;
@@ -36,11 +36,18 @@ const Layout = ({ children }: LayoutProps) => {
     router.pathname.startsWith('/blog/') ||
     router.pathname.startsWith('/learn/');
 
-  const isShowChatButton = pageName !== 'guestbook';
+  // const isShowChatButton = pageName !== 'guestbook';
+
+  const Spotify = () => {
+    if (!featureSwich.spotify) {
+      return null;
+    }
+    return isMobile ? <NowPlayingCard /> : <NowPlayingBar />;
+  };
 
   return (
     <>
-      {/* <TopBar /> */}
+      {featureSwich.topBanner && <TopBar />}
       <div
         className={clsx(
           'max-w-6xl mx-auto lg:px-8',
@@ -61,8 +68,8 @@ const Layout = ({ children }: LayoutProps) => {
           </div>
         )}
       </div>
-      {isShowChatButton && <ChatButton />}
-      {isMobile ? <NowPlayingCard /> : <NowPlayingBar />}
+      {/* {isShowChatButton && <ChatButton />} */}
+      {Spotify()}
     </>
   );
 };

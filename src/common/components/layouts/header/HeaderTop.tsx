@@ -9,8 +9,9 @@ import {
   MdVerified as VerifiedIcon,
 } from 'react-icons/md';
 
-import { MENU_ITEMS } from '@/common/constant/menu';
 import { CommandPaletteContext } from '@/common/context/CommandPaletteContext';
+import { MENU_ITEMS } from '@/contents/menu';
+import { author, siteMetadata } from '@/contents/siteMetadata';
 
 import Image from '../../elements/Image';
 import ThemeToggleButton from '../../elements/ThemeToggleButton';
@@ -31,19 +32,21 @@ const HeaderTop = () => {
     <header>
       <div className='hidden lg:flex gap-5 items-center justify-between py-8 mx-8'>
         <div className='flex items-center gap-5'>
-          <Image
-            src='/images/aulianza.png'
-            alt='Ryan Aulia'
-            width={40}
-            height={40}
-            rounded='rounded-full'
-            className='lg:hover:scale-105'
-          />
+          <Link href='/' passHref>
+            <Image
+              src={siteMetadata.siteLogo}
+              alt={author.name}
+              width={40}
+              height={40}
+              rounded='rounded-full'
+              className='lg:hover:scale-105'
+            />
+          </Link>
           {!showMenu && (
             <div className='flex items-center gap-3'>
               <Link href='/' passHref>
                 <h2 className='flex-grow text-lg lg:text-xl font-sora font-medium'>
-                  Ryan Aulia
+                  {siteMetadata.siteShortTitle}
                 </h2>
               </Link>
               <Tooltip title='Verified'>

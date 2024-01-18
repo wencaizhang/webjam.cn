@@ -11,14 +11,11 @@ import {
 import { HiOutlineChat as AiIcon } from 'react-icons/hi';
 import { useDebounce } from 'usehooks-ts';
 
-import {
-  EXTERNAL_LINKS,
-  MENU_ITEMS,
-  SOCIAL_MEDIA,
-} from '@/common/constant/menu';
 import { CommandPaletteContext } from '@/common/context/CommandPaletteContext';
 import useIsMobile from '@/common/hooks/useIsMobile';
 import { MenuItemProps } from '@/common/types/menu';
+import { EXTERNAL_LINKS, MENU_ITEMS, SOCIAL_MEDIA } from '@/contents/menu';
+import { siteMetadata } from '@/contents/siteMetadata';
 import AiLoading from '@/modules/cmdpallete/components/AiLoading';
 import AiResponses from '@/modules/cmdpallete/components/AiResponses';
 import QueryNotFound from '@/modules/cmdpallete/components/QueryNotFound';
@@ -52,7 +49,9 @@ const CommandPalette = () => {
   const placeholders = [
     'Search or Ask anything...',
     'Press Cmd + K anytime to access this command pallete',
+    '你可以随时按下 Cmd + K 进入这个命令面板',
   ];
+  const maxIndex = placeholders.length - 1;
 
   const placeholder = placeholders[placeholderIndex];
 
@@ -128,8 +127,9 @@ const CommandPalette = () => {
   }: React.ChangeEvent<HTMLInputElement>) => setQuery(value);
 
   const handleFindGoogle = () => {
-    const url =
-      'https://www.google.com/search?q=' + queryDebounce + '&ref=aulianza.id';
+    const url = `
+    https://www.google.com/search?q=${queryDebounce}&ref=${siteMetadata.siteUrl}
+    `;
     window.open(url, '_blank');
   };
 
@@ -161,14 +161,16 @@ const CommandPalette = () => {
   useEffect(() => {
     if (!isMobile) {
       const timer = setTimeout(() => {
-        setPlaceholderIndex((prevIndex) => (prevIndex === 0 ? 1 : 0));
-      }, 3000);
+        setPlaceholderIndex((prevIndex) => {
+          return prevIndex === maxIndex ? 0 : prevIndex + 1;
+        });
+      }, 2500);
 
       return () => {
         clearTimeout(timer);
       };
     }
-  }, [placeholderIndex, isMobile]);
+  }, [placeholderIndex, isMobile, maxIndex]);
 
   useEffect(() => {
     if (!isOpen) {

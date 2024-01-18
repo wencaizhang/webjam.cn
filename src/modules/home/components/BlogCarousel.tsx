@@ -1,34 +1,18 @@
 import { motion } from 'framer-motion';
-import { useMemo, useRef } from 'react';
+import { useRef } from 'react';
 import { useDraggable } from 'react-use-draggable-scroll';
-import useSWR from 'swr';
 
-import BlogCardNewSkeleton from '@/common/components/skeleton/BlogCardNewSkeleton';
 import { BlogItemProps } from '@/common/types/blog';
 import BlogCardNew from '@/modules/blog/components/BlogCardNew';
-import { fetcher } from '@/services/fetcher';
 
-const BlogCarousel = () => {
-  const { data, isLoading } = useSWR(`/api/blog?page=1&per_page=4`, fetcher, {
-    revalidateOnFocus: false,
-    refreshInterval: 0,
-  });
-
-  const blogData: BlogItemProps[] = useMemo(() => {
-    return data?.data?.posts || [];
-  }, [data]);
+const BlogCarousel = ({ blogList }: { blogList: BlogItemProps[] }) => {
+  const blogData = blogList;
 
   const ref =
     useRef<HTMLDivElement>() as React.MutableRefObject<HTMLInputElement>;
   const { events } = useDraggable(ref);
 
   const renderBlogCards = () => {
-    if (isLoading) {
-      return Array.from({ length: 3 }, (_, index) => (
-        <BlogCardNewSkeleton key={index} />
-      ));
-    }
-
     return blogData.map((item, index) => (
       <motion.div
         key={index}

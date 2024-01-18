@@ -2,8 +2,9 @@ import { useContext } from 'react';
 import { BiCommand as CommandIcon } from 'react-icons/bi';
 import { useWindowSize } from 'usehooks-ts';
 
-import { MENU_ITEMS } from '@/common/constant/menu';
 import { CommandPaletteContext } from '@/common/context/CommandPaletteContext';
+import { MENU_ITEMS } from '@/contents/menu';
+import { featureSwich } from '@/contents/siteMetadata';
 
 import Menu from './Menu';
 import MenuItem from './MenuItem';
@@ -32,10 +33,12 @@ const Navigation = () => {
           isExternal={false}
           onClick={() => handleOpenCommandPalette()}
         >
-          <div className='relative inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-green-200 text-green-800 '>
-            <div className='absolute -ml-2 w-[4.9rem] rounded-full h-5 border-2 border-green-300 animate-badge-pulse'></div>
-            <span>AI Powered</span>
-          </div>
+          {featureSwich.ai && (
+            <div className='relative inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-green-200 text-green-800 '>
+              <div className='absolute -ml-2 w-[4.9rem] rounded-full h-5 border-2 border-green-300 animate-badge-pulse'></div>
+              <span>AI Powered</span>
+            </div>
+          )}
         </MenuItem>
       </div>
     </div>

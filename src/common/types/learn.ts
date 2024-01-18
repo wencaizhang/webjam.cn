@@ -25,6 +25,7 @@ export interface SubContentProps {
 
 export interface SubContentMetaProps {
   id: number;
+  date: string;
   chapter_id?: number;
   chapter_title?: string;
   title: string;

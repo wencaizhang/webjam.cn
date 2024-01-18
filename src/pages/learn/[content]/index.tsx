@@ -6,11 +6,11 @@ import BackButton from '@/common/components/elements/BackButton';
 import Container from '@/common/components/elements/Container';
 import Loading from '@/common/components/elements/Loading';
 import PageHeading from '@/common/components/elements/PageHeading';
-import { LEARN_CONTENTS } from '@/common/constant/learn';
-import { loadMdxFiles } from '@/common/libs/mdx';
+import { filterIndex } from '@/common/libs/learn';
+import { getCollection } from '@/common/libs/mdx';
 import { ContentProps, MdxFileContentProps } from '@/common/types/learn';
+import { siteMetadata } from '@/contents/siteMetadata';
 import ContentList from '@/modules/learn/components/ContentList';
-
 interface ContentPageProps {
   content: ContentProps | null;
   subContents: MdxFileContentProps[];
@@ -36,12 +36,12 @@ const LearnContentPage: NextPage<ContentPageProps> = ({
     (a, b) => a.frontMatter.id - b.frontMatter.id
   );
 
-  const canonicalUrl = `https://aulianza.id/learn/${content?.slug}`;
+  const canonicalUrl = `${siteMetadata.siteUrl}/learn/${content?.slug}`;
 
   return (
     <>
       <NextSeo
-        title={`Learn ${title} - Ryan Aulia`}
+        title={`Learn ${title} - ${siteMetadata.author}`}
         description={description}
         canonical={canonicalUrl}
         openGraph={{
@@ -51,7 +51,7 @@ const LearnContentPage: NextPage<ContentPageProps> = ({
               url: content?.image,
             },
           ],
-          siteName: 'Ryan Aulia',
+          siteName: siteMetadata.author,
         }}
       />
       <Container data-aos='fade-up'>
@@ -70,9 +70,19 @@ const LearnContentPage: NextPage<ContentPageProps> = ({
 export default LearnContentPage;
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const paths = LEARN_CONTENTS.map((content) => ({
-    params: { content: content.slug },
-  }));
+  const collection = getCollection('learn/');
+  const cate = collection.filter((item) => !filterIndex(item));
+
+  const parseSlug = (slug: string) => {
+    return slug.split('/');
+  };
+
+  const paths = cate.map((content) => {
+    const slugs = parseSlug(content.slug);
+    return {
+      params: { content: slugs[0], slug: slugs[1] },
+    };
+  });
 
   return {
     paths,
@@ -83,8 +93,18 @@ export const getStaticPaths: GetStaticPaths = async () => {
 export const getStaticProps: GetStaticProps = async ({ params }) => {
   const contentSlug = params?.content as string;
 
-  const content =
-    LEARN_CONTENTS.find((item) => item?.slug === contentSlug) || null;
+  const collection = getCollection('learn/' + contentSlug);
+
+  const index = collection.filter((item) => filterIndex(item))[0];
+  const content = {};
+  if (index) {
+    Object.assign(content, {
+      ...index.frontMatter,
+      slug: index.frontMatter.dir,
+    });
+  }
+
+  const subContentList = collection.filter((item) => !filterIndex(item));
 
   if (!content) {
     return {
@@ -94,8 +114,6 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
       },
     };
   }
-
-  const subContentList = loadMdxFiles(content?.slug);
 
   return {
     props: {

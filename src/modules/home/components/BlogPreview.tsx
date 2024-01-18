@@ -3,10 +3,11 @@ import { BsArrowRightShort as ViewAllIcon } from 'react-icons/bs';
 
 import SectionHeading from '@/common/components/elements/SectionHeading';
 import SectionSubHeading from '@/common/components/elements/SectionSubHeading';
+import { BlogItemProps } from '@/common/types/blog';
 
 import BlogCarousel from './BlogCarousel';
 
-const BlogPreview = () => {
+const BlogPreview = ({ blogList }: { blogList: BlogItemProps[] }) => {
   return (
     <section className='space-y-6'>
       <div className='flex items-center justify-between'>
@@ -22,7 +23,7 @@ const BlogPreview = () => {
           </Link>
         </SectionSubHeading>
       </div>
-      <BlogCarousel />
+      <BlogCarousel blogList={blogList} />
     </section>
   );
 };

@@ -1,39 +1,38 @@
-const canonicalUrl = 'https://aulianza.id';
-const metaImage =
-  'https://aulianza.s3.ap-southeast-1.amazonaws.com/images/public/aulianza-id.png';
-const metaDescription =
-  'Seasoned Software Engineer especially in Frontend side, with a passion for creating pixel-perfect web experiences';
+import { siteMetadata } from '@/contents/siteMetadata';
+const canonicalUrl = siteMetadata.siteUrl;
+const metaImage = siteMetadata.siteScreenshot;
+const metaDescription = siteMetadata.siteDescription;
 
 const defaultSEOConfig = {
-  defaultTitle: 'Ryan Aulia - Personal Website',
+  defaultTitle: siteMetadata.siteTitle,
   description: metaDescription,
   canonical: canonicalUrl,
   openGraph: {
     canonical: canonicalUrl,
-    title: 'Ryan Aulia - Personal Website',
+    title: siteMetadata.siteTitle,
     description: metaDescription,
     type: 'website',
     images: [
       {
         url: metaImage,
-        alt: 'aulianza.id og-image',
+        alt: `${siteMetadata.siteTitle} og-image`,
         width: 800,
         height: 600,
       },
       {
         url: metaImage,
-        alt: 'aulianza.id og-image',
+        alt: `${siteMetadata.siteTitle} og-image`,
         width: 1200,
         height: 630,
       },
       {
         url: metaImage,
-        alt: 'aulianza.id og-image',
+        alt: `${siteMetadata.siteTitle} og-image`,
         width: 1600,
         height: 900,
       },
     ],
-    site_name: 'aulianza.id',
+    site_name: siteMetadata.siteTitle,
   },
   twitter: {
     handle: '@handle',

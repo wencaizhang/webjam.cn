@@ -1,26 +1,32 @@
 import Giscus from '@giscus/react';
 import { useTheme } from 'next-themes';
 
-interface GiscusComment {
-  isEnableReaction?: boolean;
-}
+import { commentConfig } from '@/contents/siteMetadata';
 
-const GiscusComment = ({ isEnableReaction = false }: GiscusComment) => {
+const config = commentConfig.giscusConfig;
+
+const GiscusComment = () => {
   const { theme } = useTheme();
+
+  if (!commentConfig.enable) {
+    return null;
+  }
 
   return (
     <div className='mt-5 mb-2'>
       <Giscus
-        repo='aulianza/aulianza.id'
-        repoId='R_kgDOJoIhfQ'
-        category='General'
-        categoryId='DIC_kwDOJoIhfc4CW6cJ'
-        mapping='pathname'
-        reactionsEnabled={isEnableReaction ? '1' : '0'}
-        emitMetadata='1'
+        repo={`${config.gitUsername}/${config.repo}`}
+        repoId={config.repositoryId}
+        category={config.category}
+        categoryId={config.categoryId}
+        // mapping={config.mapping}
+        mapping='title'
+        reactionsEnabled={config.reactions ? '1' : '0'}
+        // emitMetadata={config.metadata}
+        emitMetadata='0'
         inputPosition='top'
-        theme={theme === 'dark' ? 'transparent_dark' : 'light'}
-        lang='en'
+        theme={theme === 'dark' ? config.darkTheme : config.lightTheme}
+        lang={config.lang}
         loading='lazy'
       />
     </div>

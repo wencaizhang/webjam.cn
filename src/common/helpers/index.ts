@@ -1,5 +1,7 @@
-import { format, parseISO } from 'date-fns';
+import { format, getTime, parseISO } from 'date-fns';
 import { utcToZonedTime } from 'date-fns-tz';
+
+import { siteMetadata } from '@/contents/siteMetadata';
 
 import { ChapterGroupProps, MdxFileContentProps } from '../types/learn';
 
@@ -16,10 +18,17 @@ export const formatDate = (date: string, type = 'MMMM dd, yyyy') => {
   }
 
   const formattedDate = format(
-    utcToZonedTime(parseISO(date), 'Asia/Jakarta'),
+    utcToZonedTime(parseISO(date), siteMetadata.timeZone),
     type
   );
   return formattedDate;
+};
+
+export const getTimestamp = (date: string) => {
+  const [y, m, d] = formatDate(date, 'yyyy MM dd')
+    .split(' ')
+    .map((i) => Number.parseInt(i));
+  return getTime(new Date(y, m, d));
 };
 
 export const groupContentByChapter = (

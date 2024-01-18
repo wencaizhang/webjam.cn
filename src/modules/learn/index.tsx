@@ -5,7 +5,7 @@ import { ContentProps } from '@/common/types/learn';
 import LearnCard from './components/LearnCard';
 
 interface LearnModuleProps {
-  contents: ContentProps[];
+  contents: (ContentProps & { lessonCount: number })[];
 }
 
 const LearnModule = ({ contents }: LearnModuleProps) => {

@@ -1,7 +1,8 @@
 import axios from 'axios';
 
-import { GITHUB_ACCOUNTS } from '@/common/constant/github';
+import { author } from '@/contents/siteMetadata';
 
+const GITHUB_ACCOUNTS = author.github_accounts;
 const GITHUB_USER_ENDPOINT = 'https://api.github.com/graphql';
 
 const GITHUB_USER_QUERY = `query($username: String!) {
