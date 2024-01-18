@@ -9,6 +9,7 @@ import { useEffect } from 'react';
 import 'tailwindcss/tailwind.css';
 import 'aos/dist/aos.css';
 import '@/common/styles/globals.css';
+import '@/common/styles/link-icon.css';
 import '@/contents/custom.css';
 
 import CommandPalette from '@/common/components/elements/CommandPalette';

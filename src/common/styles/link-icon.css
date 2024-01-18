@@ -1,0 +1,740 @@
+.article a:not(:empty)::before {
+  display: inline-block;
+  position: relative;
+  background-repeat: no-repeat;
+  background-size: 0.8em 0.8em;
+  background-position: center;
+  top: 0.14em;
+  width: 1em;
+  height: 1em;
+  /* margin-right: 0.2em; */
+  margin-left: 0.1em;
+  content: '';
+}
+
+.article a[target='_blank']:not(:empty)::after {
+  content: '';
+  width: 0.75em;
+  height: 0.75em;
+  margin: 0 0.05em 0 0.1em;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%233B82F6' d='M14,3V5H17.59L7.76,14.83L9.17,16.24L19,6.41V10H21V3M19,19H5V5H12V3H5C3.89,3 3,3.9 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V12H19V19Z' /%3E%3C/svg%3E");
+  background-size: contain;
+  display: inline-block;
+}
+
+.article a[href^='http']::before {
+  background-image: url('/icons/brand/link.svg');
+}
+.article a[href*='webjam.cn']::before,
+.article a[href^='/']::before,
+.article a[href^='#']::before {
+  background-image: url('/images/logo.jpg');
+  border-radius: 50%;
+  /* background: #000; */
+  /* background-image: none;
+  display: none; */
+}
+
+.article a[href^="file://"]::before
+{
+  background-image: url('/icons/file/folder.svg');
+}
+
+.article a[href*='vuejs.org']::before {
+  background-image: url('/icons/stack/vue.svg');
+}
+
+.article a[href*='es6.ruanyifeng.com']::before {
+  background-image: url('/icons/stack/es.svg');
+}
+
+.article a[href*='medium.com']::before {
+  background-image: url('/icons/brand/medium.svg');
+}
+
+.article a[href*='developer.mozilla.org']::before {
+  background-image: url('/icons/brand/mdn.png');
+}
+
+.article a[href*='zhangxinxu.com']::before {
+  background-image: url('/icons/brand/zxx.webp');
+}
+
+.article a[href*='ruanyifeng.com']::before {
+  background-image: url('/icons/brand/ruanyifeng.webp');
+}
+
+.article a[href*='segmentfault.com']::before {
+  background-image: url(https://static.segmentfault.com/main_site_next/f934caec/_next/static/media/sf-icon-small.4d244289.svg);
+}
+
+.article a[href*='stackoverflow.com'] {
+  background-image: url('/icons/brand/stackoverflow.png');
+}
+
+.article a[href*='csdn.net']::before {
+  background-image: url('/icons/brand/csdn.png');
+}
+
+.article a[href*='weibo.com']::before {
+  background-image: url('/icons/brand/weibo_com.png');
+}
+
+.article a[href*='zhihu.com']::before {
+  background-image: url('/icons/brand/zhihu_com.png');
+}
+
+.article a[href*='t.bilibili.com']::before {
+  background-image: url('/icons/brand/t_bilibili_com.png');
+}
+
+.article a[href*='bilibili.com']::before {
+  background-image: url('/icons/brand/bilibili_com.png');
+}
+
+.article a[href*='douban.com']::before {
+  background-image: url('/icons/brand/douban_com.png');
+}
+
+.article a[href*='oschina.net']::before {
+  background-image: url('/icons/brand/oschina_net.png');
+}
+
+.article a[href*='ld246.com']::before {
+  background-image: url('/icons/brand/ld246_com.png');
+}
+
+.article a[href*='music.163.com']::before {
+  background-image: url('/icons/brand/music_163_com.png');
+}
+
+.article a[href*='runoob.com']::before {
+  background-image: url('/icons/brand/runoob_com.png');
+}
+
+.article a[href*='iconfont.cn']::before {
+  background-image: url('/icons/brand/iconfont_cn.png');
+}
+
+.article a[href*='pan.baidu.com']::before {
+  background-image: url('/icons/brand/pan_baidu_com.png');
+}
+
+.article a[href*='yuque.com']::before {
+  background-image: url('/icons/brand/yuque_com.png');
+}
+
+.article a[href*='52pojie.cn']::before {
+  background-image: url('/icons/brand/52pojie_cn.png');
+}
+
+.article a[href*='sspai.com']::before {
+  background-image: url('/icons/brand/sspai_com.png');
+}
+
+.article a[href*='uisdc.com']::before {
+  background-image: url('/icons/brand/uisdc_com.png');
+}
+
+.article a[href*='cn.bing.com']::before {
+  background-image: url('/icons/brand/cn_bing_com.png');
+}
+
+.article a[href*='jianshu.com']::before {
+  background-image: url('/icons/brand/jianshu_com.png');
+}
+
+.article a[href*='blog.csdn.net']::before {
+  background-image: url('/icons/brand/blog_csdn_net.png');
+}
+
+.article a[href*='zcool.com.cn']::before {
+  background-image: url('/icons/brand/zcool_com_cn.png');
+}
+
+.article a[href*='ixigua.com']::before {
+  background-image: url('/icons/brand/ixigua_com.png');
+}
+
+.article a[href*='weixin.sogou.com']::before {
+  background-image: url('/icons/brand/weixin_sogou_com.png');
+}
+
+.article a[href*='baidu.com']::before {
+  background-image: url('/icons/brand/baidu_com.png');
+}
+
+.article a[href*='tieba.baidu.com']::before {
+  background-image: url('/icons/brand/tieba_baidu_com.png');
+}
+
+.article a[href*='fanyi.baidu.com']::before {
+  background-image: url('/icons/brand/fanyi_baidu_com.png');
+}
+
+.article a[href*='iplaysoft.com']::before {
+  background-image: url('/icons/brand/iplaysoft_com.png');
+}
+
+.article a[href*='huaban.com']::before {
+  background-image: url('/icons/brand/huaban_com.png');
+}
+
+.article a[href*='v.qq.com']::before {
+  background-image: url('/icons/brand/v_qq_com.png');
+}
+
+.article a[href*='iqiyi.com']::before {
+  background-image: url('/icons/brand/iqiyi_com.png');
+}
+
+.article a[href*='youku.com']::before {
+  background-image: url('/icons/brand/youku_com.png');
+}
+
+.article a[href*='haokan.baidu.com']::before {
+  background-image: url('/icons/brand/haokan_baidu_com.png');
+}
+
+.article a[href*='y.qq.com']::before {
+  background-image: url('/icons/brand/y_qq_com.png');
+}
+
+.article a[href*='kugou.com']::before {
+  background-image: url('/icons/brand/kugou_com.png');
+}
+
+.article a[href*='kuwo.cn']::before {
+  background-image: url('/icons/brand/kuwo_cn.png');
+}
+
+.article a[href*='toutiao.com']::before {
+  background-image: url('/icons/brand/toutiao_com.png');
+}
+
+.article a[href*='tianya.cn']::before {
+  background-image: url('/icons/brand/tianya_cn.png');
+}
+
+.article a[href*='bbs.hupu.com']::before {
+  background-image: url('/icons/brand/bbs_hupu_com.png');
+}
+
+.article a[href*='wiz.cn']::before {
+  background-image: url('/icons/brand/wiz_cn.png');
+}
+
+.article a[href*='yinxiang.com']::before {
+  background-image: url('/icons/brand/yinxiang_com.png');
+}
+
+.article a[href*='logseq.com']::before {
+  background-image: url('/icons/brand/logseq_com.png');
+}
+
+.article a[href*='obsidian.md']::before {
+  background-image: url('/icons/brand/obsidian.png');
+}
+
+.article a[href*='taobao.com']::before {
+  background-image: url('/icons/brand/taobao_com.png');
+}
+
+.article a[href*='so.com']::before {
+  background-image: url('/icons/brand/so_com.png');
+}
+
+.article a[href*='mp.weixin.qq.com']::before {
+  background-image: url('/icons/brand/wechat.svg');
+}
+
+.article a[href*='yandex.com']::before {
+  background-image: url('/icons/brand/yandex_com.png');
+}
+
+.article a[href*='feishu.cn']::before {
+  background-image: url('/icons/brand/feishu.webp');
+}
+
+.article a[href*='wolai.com']::before {
+  background-image: url('/icons/brand/wolai_com.png');
+}
+
+.article a[href*='auth.alipay.com']::before {
+  background-image: url('/icons/brand/auth_alipay_com.png');
+}
+
+.article a[href*='aliyundrive.com']::before {
+  background-image: url('/icons/brand/aliyundrive_com.png');
+}
+
+.article a[href*='baike.baidu.com']::before {
+  background-image: url('/icons/brand/baike_baidu_com.png');
+}
+
+.article a[href*='apple.com.cn']::before {
+  background-image: url('/icons/brand/apple_com_cn.png');
+}
+
+.article a[href*='huawei.com']::before {
+  background-image: url('/icons/brand/huawei_com.png');
+}
+
+.article a[href*='samsung.com']::before {
+  background-image: url('/icons/brand/samsung_com.png');
+}
+
+.article a[href*='mi.com']::before {
+  background-image: url('/icons/brand/mi_com.png');
+}
+
+.article a[href*='oppo.com']::before {
+  background-image: url('/icons/brand/oppo_com.png');
+}
+
+.article a[href*='vivo.com.cn']::before {
+  background-image: url('/icons/brand/vivo_com_cn.png');
+}
+
+.article a[href*='topbook.cc']::before {
+  background-image: url('/icons/brand/topbook_cc.png');
+}
+
+.article a[href*='appinn.com']::before {
+  background-image: url('/icons/brand/appinn_com.png');
+}
+
+.article a[href*='ghxi.com']::before {
+  background-image: url('/icons/brand/ghxi_com.png');
+}
+
+.article a[href*='weread.qq.com']::before {
+  background-image: url('/icons/brand/weread_qq_com.png');
+}
+
+.article a[href*='news.qq.com']::before {
+  background-image: url('/icons/brand/news_qq_com.png');
+}
+
+.article a[href*='news.163.com']::before {
+  background-image: url('/icons/brand/news_163_com.png');
+}
+
+.article a[href*='guancha.cn']::before {
+  background-image: url('/icons/brand/guancha_cn.png');
+}
+
+.article a[href*='getpocket.com']::before {
+  background-image: url('/icons/brand/getpocket_com.png');
+}
+
+.article a[href*='instapaper.com']::before {
+  background-image: url('/icons/brand/instapaper_com.png');
+}
+
+.article a[href*='github.com']::before {
+  background-image: url('/icons/brand/github.svg');
+}
+
+.article a[href*='google.com']::before,
+.article a[href*='google.cn']::before {
+  background-image: url('/icons/brand/google.svg');
+}
+.article a[href*='translate.google.cn']::before {
+  background-image: url('/icons/brand/google-translate.svg');
+}
+
+.article a[href*='zotero.org']::before {
+  background-image: url('/icons/brand/zotero.png');
+}
+
+.article a[href*='sohu.com']::before {
+  background-image: url('/icons/brand/souhu.svg');
+}
+
+.article a[href*='wandoujia.com']::before {
+  background-image: url('/icons/brand/wandou.svg');
+}
+
+.article a[href*='redditinc.com']::before {
+  background-image: url('/icons/brand/reddit.svg');
+}
+
+.article a[href*='Instagram.com']::before {
+  background-image: url('/icons/brand/ins.svg');
+}
+
+.article a[href*='twitter.com']::before {
+  background-image: url('/icons/brand/Twitter.svg');
+}
+
+.article a[href*='facebook.com']::before {
+  background-image: url('/icons/brand/Facebook.svg');
+}
+
+.article a[href*='notion']::before {
+  background-image: url('/icons/brand/notion.svg');
+}
+
+.article a[href*='youtube']::before {
+  background-image: url('/icons/brand/youtube.svg');
+}
+.article a[href*='spotify.com']::before {
+  background-image: url('/icons/brand/spotify.svg');
+}
+
+.article a[href^="file://"]::before
+{
+  background-image: url('/icons/file/folder.svg');
+}
+
+.article a[href*='mailto']::before {
+  background-image: url('/icons/file/mail.svg');
+}
+
+.article a[href^='assets/'][href$='.zip']::before,
+.article a[href^='assets/'][href$='.rar']::before,
+.article a[href^='assets/'][href$='.7z']::before {
+  background-image: url('/icons/file/zip.svg');
+}
+
+.article a[href^='assets/'][href$='.docx']::before,
+.article a[href^='assets/'][href$='.doc']::before {
+  background-image: url('/icons/file/word.svg');
+}
+
+.article a[href^='assets/'][href$='.pptx']::before,
+.article a[href^='assets/'][href$='.ppt']::before {
+  background-image: url('/icons/file/ppt.svg');
+}
+
+.article a[href^='assets/'][href$='.xlsx']::before,
+.article a[href^='assets/'][href$='.xls']::before {
+  background-image: url('/icons/file/excel.svg');
+}
+
+.article a[href^='assets/'][href$='.pdf']::before {
+  background-image: url('/icons/file/pdf.svg');
+}
+
+.article a[href^='assets/'][href$='.txt']::before {
+  background-image: url('/icons/file/txt.svg');
+}
+
+.article a[href^='assets/'][href$='.mp4']::before,
+.article a[href^='assets/'][href$='.m4v']::before,
+.article a[href^='assets/'][href$='.mov']::before,
+.article a[href^='assets/'][href$='.flv']::before,
+.article a[href^='assets/'][href$='.avi']::before {
+  background-image: url('/icons/file/mp4.svg');
+}
+
+.article a[href^='assets/'][href$='.jpg']::before,
+.article a[href^='assets/'][href$='.png']::before {
+  background-image: url('/icons/file/jpg.svg');
+}
+
+.article a[href^='assets/'][href$='.html']::before {
+  background-image: url('/icons/file/html.svg');
+}
+
+.article a[href^='assets/'][href$='.json']::before {
+  background-image: url('/icons/file/json.svg');
+}
+
+.article a[href^='assets/'][href$='.css']::before {
+  background-image: url('/icons/file/css.svg');
+}
+
+.article a[href^='assets/'][href$='.java']::before {
+  background-image: url('/icons/file/java.svg');
+}
+
+.article a[href^='assets/'][href$='.js']::before {
+  background-image: url('/icons/file/vscode.svg');
+}
+
+.article a[href^='assets/'][href$='.xmind']::before {
+  background-image: url('/icons/file/xmind.svg');
+}
+
+.article a[href^='assets/'][href$='.md']::before {
+  background-image: url('/icons/file/md.svg');
+}
+
+.article a[href*='weibo.com'] {
+  color: #d3211b;
+}
+
+.article a[href*='vuejs.org'] {
+  color: #42b883;
+}
+
+.article a[href*='zhihu.com'] {
+  color: #017cdd;
+}
+
+.article a[href*='t.bilibili.com'] {
+  color: #00aaf4;
+}
+
+.article a[href*='bilibili.com'] {
+  color: #00aaf4;
+}
+
+.article a[href*='douban.com'] {
+  color: #071;
+}
+
+.article a[href*='oschina.net'] {
+  color: #21b351;
+}
+
+.article a[href*='ld246.com'] {
+  color: #3d4045;
+}
+
+.article a[href*='music.163.com'] {
+  color: #f10c01;
+}
+
+.article a[href*='runoob.com'] {
+  color: #96b97d;
+}
+
+.article a[href*='iconfont.cn'] {
+  color: #4068ee;
+}
+
+.article a[href*='pan.baidu.com'] {
+  color: #36cef7;
+}
+
+.article a[href*='yuque.com'] {
+  color: #49c95c;
+}
+
+.article a[href*='52pojie.cn'] {
+  color: #e21010;
+}
+
+.article a[href*='sspai.com'] {
+  color: #d8171c;
+}
+
+.article a[href*='uisdc.com'] {
+  color: #f12d01;
+}
+
+.article a[href*='cn.bing.com'] {
+  color: #3ca1fa;
+}
+
+.article a[href*='jianshu.com'] {
+  color: #e28979;
+}
+
+.article a[href*='blog.csdn.net'] {
+  color: #fc5531;
+}
+
+.article a[href*='zcool.com.cn'] {
+  color: #272828;
+}
+
+.article a[href*='ixigua.com'] {
+  color: #fb242c;
+}
+
+.article a[href*='weixin.sogou.com'] {
+  color: #fc4f26;
+}
+
+.article a[href*='baidu.com'] {
+  color: #1c25de;
+}
+
+.article a[href*='tieba.baidu.com'] {
+  color: #3184fe;
+}
+
+.article a[href*='fanyi.baidu.com'] {
+  color: #1488f5;
+}
+
+.article a[href*='iplaysoft.com'] {
+  color: #3090e8;
+}
+
+.article a[href*='huaban.com'] {
+  color: #e04e56;
+}
+
+.article a[href*='v.qq.com'] {
+  color: #3ec6e6;
+}
+
+.article a[href*='iqiyi.com'] {
+  color: #07d800;
+}
+
+.article a[href*='youku.com'] {
+  color: #24d1f8;
+}
+
+.article a[href*='haokan.baidu.com'] {
+  color: #f80611;
+}
+
+.article a[href*='y.qq.com'] {
+  color: #10be72;
+}
+
+.article a[href*='kugou.com'] {
+  color: #1a80fc;
+}
+
+.article a[href*='kuwo.cn'] {
+  color: #ff8019;
+}
+
+.article a[href*='toutiao.com'] {
+  color: #f50d00;
+}
+
+.article a[href*='tianya.cn'] {
+  color: #0787ee;
+}
+
+.article a[href*='bbs.hupu.com'] {
+  color: #c01d31;
+}
+
+.article a[href*='wiz.cn'] {
+  color: #3570fe;
+}
+
+.article a[href*='yinxiang.com'] {
+  color: #3bd72c;
+}
+
+.article a[href*='logseq.com'] {
+  color: #80a1bd;
+}
+
+.article a[href*='obsidian.md'] {
+  color: #816dda;
+}
+
+.article a[href*='taobao.com'] {
+  color: #fd4200;
+}
+
+.article a[href*='so.com'] {
+  color: #fe631e;
+}
+
+.article a[href*='mp.weixin.qq.com'] {
+  color: #04c05f;
+}
+
+.article a[href*='yandex.com'] {
+  color: #fa1e19;
+}
+
+.article a[href*='feishu.cn'] {
+  color: #1456f0;
+}
+.article a[href*='wolai.com'] {
+  color: #202124;
+}
+
+.article a[href*='auth.alipay.com'] {
+  color: #2493ca;
+}
+
+.article a[href*='aliyundrive.com'] {
+  color: #6a7afc;
+}
+
+.article a[href*='baike.baidu.com'] {
+  color: #3c44e3;
+}
+
+.article a[href*='apple.com.cn'] {
+  color: #332928;
+}
+
+.article a[href*='huawei.com'] {
+  color: #dd0218;
+}
+
+.article a[href*='samsung.com'] {
+  color: #1b2796;
+}
+
+.article a[href*='mi.com'] {
+  color: #f47822;
+}
+
+.article a[href*='oppo.com'] {
+  color: #018a56;
+}
+
+.article a[href*='vivo.com.cn'] {
+  color: #0090e1;
+}
+
+.article a[href*='topbook.cc'] {
+  color: #51d7df;
+}
+
+.article a[href*='appinn.com'] {
+  color: #016cdc;
+}
+
+.article a[href*='ghxi.com'] {
+  color: #ffa943;
+}
+
+.article a[href*='weread.qq.com'] {
+  color: #31a9ff;
+}
+
+.article a[href*='news.qq.com'] {
+  color: #0089c3;
+}
+
+.article a[href*='news.163.com'] {
+  color: #e10101;
+}
+
+.article a[href*='guancha.cn'] {
+  color: #be0507;
+}
+
+.article a[href*='getpocket.com'] {
+  color: #ed4156;
+}
+
+.article a[href*='instapaper.com'] {
+  color: #000000;
+}
+
+.article a[href*='github.com'] {
+  color: #020202;
+}
+
+.article a[href*='translate.google.cn'] {
+  color: #538ef4;
+}
+
+.article a {
+  border-radius: 4px;
+}
+
+.article a:hover {
+  /* background-color: rgba(162, 155, 254, .4); */
+  /* background-color: rgba(108, 92, 231,.4); */
+  background-color: rgba(20, 86, 240, 0.2);
+}
