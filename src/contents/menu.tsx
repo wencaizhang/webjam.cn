@@ -9,7 +9,7 @@ import {
 import {
   FiBookOpen as LearnIcon,
   FiCoffee as ProjectIcon,
-  // FiCoffee as WeeklyIcon,
+  FiCode as SnippetsIcon,
   FiCpu as DashboardIcon,
   FiLayers as WeeklyIcon,
   FiPieChart as AnalyticsIcon,
@@ -68,7 +68,16 @@ export const MENU_ITEMS: MenuItemProps[] = [
     icon: <WeeklyIcon size={iconSize} />,
     isShow: true,
     isExternal: false,
-    eventName: 'Pages: Learn',
+    eventName: 'Pages: Weekly',
+    type: 'Pages',
+  },
+  {
+    title: 'Snippets',
+    href: '/snippets',
+    icon: <SnippetsIcon size={iconSize} />,
+    isShow: true,
+    isExternal: false,
+    eventName: 'Pages: Snippets',
     type: 'Pages',
   },
   {
