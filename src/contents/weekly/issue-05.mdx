@@ -1,0 +1,62 @@
+---
+title: 第 05 期 - 锡惠公园
+slug: issue-05
+draft: false
+date: '2024-01-31'
+description: '这是「果酱前端周刊」第五期，以后每周都会把看到的有趣的工具、开源项目、文章发布到周刊，欢迎关注。'
+cover_url: 'https://static.webjam.cn/images/202401/xi-hui-gong-yuan.webp'
+created_at: '2024-01-31'
+updated_at: '2024-01-31'
+---
+
+![封面图](https://static.webjam.cn/images/202401/xi-hui-gong-yuan.webp)
+
+封面图来自无锡锡惠公园
+
+> 这是「果酱前端周刊」第五期，以后每周都会把看到的有趣的工具、开源项目、文章发布到周刊，欢迎关注。
+
+## 开源和工具
+
+1、[moodist - 白噪音](https://github.com/geekyouth/moodist)
+
+这是一款白噪音产品，目前有 54 种声音，你可以自由组合播放。仓库还提供了打包后的代码（`dist` 目录），所以你可以直接 clone 仓库，然后使用 nginx 或者 http-server 在 dist 目录启动一个静态网站服务即可。
+
+![moodist - 白噪音](https://static.webjam.cn/images/202401/moodist.webp)
+
+2、[Grabient - 渐变色工具](https://www.grabient.com/)
+
+提供了一些现成的渐变色，都很好看，而且还运行调整颜色和角度，可以直接复制其 CSS 代码，复用到开发中。
+
+![Grabient - 渐变色工具](https://static.webjam.cn/images/202401/grabient.webp)
+
+类似的工具还有 [WebGradients](https://webgradients.com/)，有更多的渐变色但是不支持调整。
+
+
+
+## 文章
+
+1、[用 View Transition API 在 Web 做出 Native 般丝滑的动画](https://mp.weixin.qq.com/s/PdU8mXUD3s7_SF-ybRNpuw)
+
+![View Transition API](https://static.webjam.cn/images/202401/vta.gif)
+
+之前一个项目就有这个需求，但是当时一直没有很好的解决方案，只能以不太优雅的方式实现，如今有了 View Transition API 之后，我们就能开发效果更棒的页面转场动画了。
+
+不过现在还是实验性技术，使用前还需要注意兼容性：[View Transitions API - Web API 接口参考 | MDN](https://developer.mozilla.org/zh-CN/docs/Web/API/View_Transitions_API)
+
+2、[程序员为什么一定要去造几个轮子](https://mp.weixin.qq.com/s/6mXHrpsAXNta2dxwNnmt6w)
+
+我刚开始工作的时候也经常造轮子，不过应用在项目中的不多，经常造轮子有个好处就是“去魅”，不会盲目崇拜别人开发的库，使用第三方库遇到问题去排查的时候也更容易找到方向。
+
+## 随便看看
+
+1、[遇见皆是好风景：我们影像里的 2024 少数派泰国团建 - 少数派](https://sspai.com/post/86088)
+
+也许是办公室坐久了，也许是临近春节，总有一种想往外（办公室外）走一走的冲动。
+
+2、滥用 npm 或 GitHub
+
+有开发者将视频切片（`ts`后缀）甚至B站视频弹幕信息以 JSON 格式当做代码上传到 npm 当做免费的存储空间，抛开对 npm 资源的占用问题，不得不说这个思路很特别。
+
+但是回到资源占用的问题，我还是非常不建议这样做，目前 npm 是提供免费存储代码和免费下载的服务，但是如果大家都这样当成网盘滥用，那么可以参考目前国内网盘的模式，很明显在未来大概率就是两条路，要么因为资金问题难以为继然后消失掉，要么对下载进行限制，或者限制下载速度，无论哪样都会对其他开发者造成伤害。
+
+![滥用 npm 或 GitHub](https://static.webjam.cn/images/202401/use-npm.webp)
