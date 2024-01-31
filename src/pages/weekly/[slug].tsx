@@ -8,9 +8,19 @@ import { MdxFileContentProps } from '@/common/types/learn';
 import { siteMetadata } from '@/contents/siteMetadata';
 import ContentDetail from '@/modules/weekly/components/ContentDetail';
 import ContentDetailHeader from '@/modules/weekly/components/ContentDetailHeader';
+import NavigationSection from '@/common/components/elements/NavigationSection';
 
-const WeeklyContentDetailPage: NextPage<{ data: MdxFileContentProps }> = ({
+type PageInfo = { title: string; href: string };
+interface WeeklyDetailPageProps {
+  data: MdxFileContentProps;
+  prev: PageInfo | null;
+  next: PageInfo | null;
+}
+
+const WeeklyContentDetailPage: NextPage<WeeklyDetailPageProps> = ({
   data,
+  prev,
+  next,
 }) => {
   const { content, frontMatter } = data;
 
@@ -45,6 +55,7 @@ const WeeklyContentDetailPage: NextPage<{ data: MdxFileContentProps }> = ({
         <BackButton url='/weekly' />
         <ContentDetailHeader {...meta} />
         <ContentDetail content={content} frontMatter={frontMatter} />
+        <NavigationSection prev={prev} next={next} />
       </Container>
     </>
   );
@@ -73,6 +84,13 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
   const slug = params?.slug as string;
   const contentData = await getEntry('weekly', slug);
 
+  const contentList = await getCollection('weekly');
+  const index = contentList.findIndex((item) => item.slug === slug);
+
+  // 默认按时间顺序
+  const prev = contentList[index + 1];
+  const next = contentList[index - 1];
+
   if (!contentData) {
     return {
       redirect: {
@@ -85,6 +103,18 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
   return {
     props: {
       data: contentData,
+      prev: !prev
+        ? null
+        : {
+            title: prev?.frontMatter.title,
+            href: `/weekly/${prev.slug}`,
+          },
+      next: !next
+        ? null
+        : {
+            title: next?.frontMatter.title,
+            href: `/weekly/${next.slug}`,
+          },
     },
   };
 };
