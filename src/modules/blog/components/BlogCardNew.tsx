@@ -12,7 +12,7 @@ import Image from '@/common/components/elements/Image';
 import Tooltip from '@/common/components/elements/Tooltip';
 import { formatDate } from '@/common/helpers';
 import { BlogItemProps } from '@/common/types/blog';
-import { siteMetadata } from '@/contents/siteMetadata';
+import { author, siteMetadata } from '@/contents/siteMetadata';
 
 const BlogCardNew = (blogData: BlogItemProps) => {
   const [isHovered, setIsHovered] = useState<boolean>(false);
@@ -80,7 +80,7 @@ const BlogCardNew = (blogData: BlogItemProps) => {
             </div>
             <Breakline className='!border-neutral-700' />
             <div className='flex justify-between gap-4 text-neutral-400 px-0.5'>
-              <Tooltip title='by aulianza'>
+              <Tooltip title={`by ${author.name}`}>
                 <Image
                   src={siteMetadata.siteLogo}
                   alt={siteMetadata.author}
