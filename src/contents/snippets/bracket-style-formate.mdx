@@ -1,0 +1,52 @@
+---
+title: 中文符号开头样式对齐问题
+description: 处理中文符号(如方括号【)空隙过大导致视觉上没有对齐的问题
+slug: bracket-style-formate
+date: '2024-02-01'
+featured: fasle
+type: css3
+draft: true
+---
+
+中文符号（全角符号）相较于英文符号（半角符号）都比较宽，所以在排版上就会显得没有对齐，例如：
+
+- `(这是半角括号)`
+- `（这是全角括号）`
+- `[4K修复]`
+- `【4K修复】`
+
+可以看到使用全角符号之后，两侧的空白比较大，所以如果想要使其在视觉上“对齐”，那么可以利用 CSS 使其“缩进”一些位置：
+
+```css
+p[title^="「"],
+p[title^="『"],
+p[title^="【"],
+h1[title^="「"],
+h1[title^="『"],
+h1[title^="【"],
+h3[title^="「"],
+h3[title^="『"],
+h3[title^="【"] {
+  /* display 为 inline 时, text-indent 无效 */
+  text-indent: -0.6em;
+}
+```
+
+使用这段代码需要注意 CSS 选择器使用的是 `title` 属性选择器，那么你的 HTML 标签应该有一个 `title` 属性以便被匹配到，就像下面这样才能被匹配到：
+
+```html
+<h3 title="【4K修复】肩扛“大明两京一十三省”的小阁老，倒了！">
+  【4K修复】肩扛“大明两京一十三省”的小阁老，倒了！
+</h3>
+
+<h3 title="《随机的植物总是好的》">
+  《随机的植物总是好的》
+</h3>
+```
+
+
+## 参考
+
+- [text-indent - CSS：层叠样式表 | MDN](https://developer.mozilla.org/zh-CN/docs/Web/CSS/text-indent)
+- [属性选择器 - CSS：层叠样式表 | MDN](https://developer.mozilla.org/zh-CN/docs/Web/CSS/Attribute_selectors)
+- [【4K修复】肩扛“大明两京一十三省”的小阁老，倒了！](https://www.bilibili.com/video/BV1WW4y1c7sm/?share_source=copy_web&vd_source=cde8df2b3fa2127859ddf7c1e4250ff4)

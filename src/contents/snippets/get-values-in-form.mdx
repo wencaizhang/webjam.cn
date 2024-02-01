@@ -1,0 +1,40 @@
+---
+title: 原生 JS 获取 form 表单的值
+description: 将 formData 转为 Object 类型以便于提交到服务端
+slug: get-values-in-form
+date: '2024-02-01'
+featured: fasle
+type: js
+draft: true
+---
+
+原生 JS 只能获取 `formData`，但是现在基本上都是以 JSON 格式和服务端传值，所以还需要将 `formData` 转为 `Object` 格式。
+
+```js
+/**
+ * 获取表单值
+ * @param {string} formEleSelector form 表单选择器
+ * @returns Object 类型的表单数据
+ */
+function getFormValues(formEleSelector) {
+  const formEle = document.querySelector(formEleSelector)
+  if (!formEle) {
+    throw Error(`getFormValues: 未找到元素 ${formEleSelector}`)
+  }
+  const formData = new FormData(formEle);
+  return Object.fromEntries(formData.entries())
+}
+```
+
+示例：
+
+```js
+getFormValues("#form");
+// { email: 'test@email.com', name: 'Test Name' }
+```
+
+## 参考
+
+- [FormData() - Web API 接口参考 | MDN](https://developer.mozilla.org/zh-CN/docs/Web/API/FormData/FormData)
+- [FormData.entries() - Web API 接口参考 | MDN](https://developer.mozilla.org/zh-CN/docs/Web/API/FormData/entries)
+- [Object.fromEntries() - JavaScript | MDN](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Object/fromEntries)
