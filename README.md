@@ -52,11 +52,13 @@
 - [ ] 增加 RSS 功能
 - [ ] 增加自动化脚本，创建博客模版功能，这样就不需要手动复制粘贴 frontMattter
 - [ ] 替换 markdown 渲染库，支持 mdx 渲染，提供更多组件增强 mdx 表现力
-- [ ] 优化 「learn」 改成文档布局
+- [ ] 优化 「learn」 改成文档布局，参考 https://vercel.com/templates/next.js/documentation-starter-kit
 - [ ] 扩展 「dashboard」 信息
 - [ ] 优化 「weekly」 页面
-- [ ] 增加 「代码段」模块
+- [x] 增加 「代码段」模块
 - [ ] 重构代码结构（ contents 放在最外层，nextjs 代码作为主题放在某个子目录下）
+- [ ] 增加分享功能：https://github.com/nygardk/react-share?tab=readme-ov-file
+- [ ] 递增式静态再生ISR： https://vercel.com/templates/next.js/isr-blog-nextjs-wordpress 增量
 
 ## 如何运行
 
