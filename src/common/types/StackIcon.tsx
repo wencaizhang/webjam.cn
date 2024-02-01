@@ -61,7 +61,7 @@ import k8s from '~public/icons/stack/k8s.svg';
 import postcss from '~public/icons/stack/postcss.svg';
 import tailwindcss from '~public/icons/stack/tailwind-css.svg';
 
-export let StackIconsMap = {
+export const StackIconsMap = {
   gitlab,
   lerna,
   prisma,
@@ -130,8 +130,8 @@ export function BrandIcon(props: {
   type: keyof typeof StackIconsMap;
   className?: string;
 }) {
-  let { type, className } = props;
-  let Icon = StackIconsMap[type];
+  const { type, className } = props;
+  const Icon = StackIconsMap[type];
   if (!Icon) return <div>Missing icon for {type}</div>;
 
   return (
