@@ -1,11 +1,11 @@
-import { SubContentMetaProps } from '@/common/types/learn';
+import { SnippetsMetaProps } from '@/common/types/snippets';
 import GiscusComment from '@/modules/blog/components/GiscusComment';
 
 import ContentBody from './ContentBody';
 
 interface ContentDetailProps {
   content: string;
-  frontMatter: SubContentMetaProps;
+  frontMatter: SnippetsMetaProps;
 }
 
 const ContentDetail = ({ content, frontMatter }: ContentDetailProps) => {
