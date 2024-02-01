@@ -1,7 +1,10 @@
+import { StackIconsMap } from './StackIcon';
+
 export interface SnippetsMetaProps {
   slug: string;
   date: string;
   title: string;
+  description: string;
   cover_url?: string;
   created_at: string;
   updated_at: string;
@@ -10,7 +13,7 @@ export interface SnippetsMetaProps {
   initial_code?: string;
 
   featured?: boolean;
-  type?: boolean;
+  type: keyof typeof StackIconsMap;
   draft?: boolean;
 }
 

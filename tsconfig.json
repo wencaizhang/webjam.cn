@@ -16,6 +16,7 @@
     "incremental": true,
     "baseUrl": ".",
     "paths": {
+      "~public/*": ["./public/*"],
       "@/*": ["./src/*"],
       "db": ["src/common/libs/prisma"]
     }
