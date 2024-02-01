@@ -4,7 +4,7 @@ import { NextSeo } from 'next-seo';
 import BackButton from '@/common/components/elements/BackButton';
 import Container from '@/common/components/elements/Container';
 import { getCollection, getEntry } from '@/common/libs/mdx';
-import { MdxFileContentProps } from '@/common/types/learn';
+import { MdxFileContentProps } from '@/common/types/snippets';
 import { siteMetadata } from '@/contents/siteMetadata';
 import ContentDetail from '@/modules/snippets/components/ContentDetail';
 import ContentDetailHeader from '@/modules/snippets/components/ContentDetailHeader';
