@@ -336,6 +336,10 @@
   background-image: url('/icons/brand/github.svg');
 }
 
+.article a[href*='codepen.io']::before {
+  background-image: url('/icons/brand/codepen.svg');
+}
+
 .article a[href*='google.com']::before,
 .article a[href*='google.cn']::before {
   background-image: url('/icons/brand/google.svg');
