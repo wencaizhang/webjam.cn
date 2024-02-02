@@ -1,0 +1,170 @@
+---
+title: 'JS 插入 DOM 元素'
+slug: insert-dom-element
+date: '2023-07-07'
+draft: false
+summary: '虽然现在 Vue/React 这些框架已经隔离了对 DOM 的操作，但时不时地还是会需要直接使用 JS 插入 DOM 元素，所以总结一下等用到的时候直接过来查即可。'
+featured_image_url: 'https://static.webjam.cn/images/logos/js.svg'
+tags:
+  - JavaScript
+---
+
+虽然现在 Vue/React 这些框架已经隔离了对 DOM 的操作，但时不时地还是会需要直接使用 JS 插入 DOM 元素，所以总结一下等用到的时候直接过来查即可。
+
+## 插入子元素：`appendChild` 方法
+
+提起插入 DOM 元素，估计大家脑海里第一个想起来的就是 `appendChild` 方法了，它的作用是将一个元素插入到另外一个元素的内部。
+
+因为很熟悉了，就不多说，直接来个示例：
+
+```js
+// 创建一个新的段落元素 <p>，然后添加到 <body> 的最尾部
+var p = document.createElement('p');
+document.body.appendChild(p);
+```
+
+## 一、插到某元素前面： `insertBefore()` 方法
+
+> [Node.insertBefore() - Web API 接口参考 | MDN (mozilla.org)](https://developer.mozilla.org/zh-CN/docs/Web/API/Node/insertBefore)
+
+insertBefore()方法,可以实现把一个新元素插入到现在元素的前面，与现有元素形成兄弟关系。
+
+语法是：
+
+```js
+var insertedNode = parentNode.insertBefore(newNode, targetElement);
+```
+
+- newNode: 要插入的新元素（子元素）
+- targetElement: 已存在的元素，新元素将插入到这个已存在元素之前
+- parentNode: targetElement 的父元素
+
+但是这个函数使用起来略微麻烦，因为在调用之前需要计算 `parentNode`，而 `parentNode` 一定是 `targetElement` 的父元素，其实是可以省略掉的。
+
+所以我封装了一层，只需要传入新元素和目标元素即可：
+
+```js
+function myInsertBefore(newNode, targetElement) {
+  const parentNode = targetElement.parentNode;
+  const insertedNode = parentNode.insertBefore(newNode, targetElement);
+  return insertedNode;
+}
+```
+
+或者你喜欢极简版本：
+
+```js
+function myInsertBefore(newNode, targetElement) {
+  return targetElement.parentNode.insertBefore(newNode, targetElement);
+}
+```
+
+## 二、插到某元素之后： `insertAfter()` 自定义函数
+
+由于没有提供对应的函数，而且因为这样的逻辑还挺常见，所以我们有必要自己封装一个。
+
+插入到某元素之后，相当于插入到该元素的下一个兄弟节点之前，所以可以这样封装：
+
+```js
+// 此方法不推荐，因为下面有更好的方法
+function myInsertAfter(newElement, targetElement) {
+  var parent = targetElement.parentNode;
+  if (parent.lastChild == targetElement) {
+    parent.appendChild(newElement);
+  } else {
+    parent.insertBefore(newElement, targetElement.nextSibling);
+  }
+}
+```
+
+上面代码判断了插入位置是否在最后，如果在最后就使用 `appendChild` 插入。
+
+后来发现其实不用这么麻烦，原生的 `insertBefore` 方法如果第二个参数为 `null` 也会自动插入到父元素的最后位置，其结果也符合预期，所以建议使用下面这个版本的代码：
+
+```js
+function myInsertAfter(newElement, targetElement) {
+  return targetElement.parentNode.insertBefore(newElement, targetElement.nextSibling);
+}
+```
+
+## 三、插入位置更灵活的 `insertAdjacentHTML()` 方法
+
+上面介绍了三种插入 DOM 的方法，分别是在父元素的最后位置插入子元素，在某个元素之前插入，在某个元素之后插入，但是还是有一个问题比较麻烦，那就是创建新元素的代码比较繁琐。
+
+比如我要创建一个链接需要这样写：
+
+```js
+// 1 创建
+let dom = document.createElement('a');
+// 2 设置 class
+dom.classList.add('back-to-home');
+// 3 设置内容
+dom.textContent = '回到首页';
+// 4 设置属性
+dom.setAttribute('href', '_self');
+// 5 插入
+document.body.appendChild(dom);
+```
+
+可以看到创建完成需要 4 步，然后才能调用 `appendChild` 插入。实际上具体代码量其实随着需要设置的属性数量而变化，属性越多，代码量越多，这让使用过 jQuery 的同学都会感觉到不爽，毕竟一行 jQuery 代码就能搞定：
+
+```js
+// 使用 jQuery
+$('body').append('<a class="back-to-home" href="_self">回到首页</a>');
+```
+
+_不得不说 jQuery 真好用 😄_
+
+不过后来我发现原生的 JS 里面也有类似的方法: [element.insertAdjacentHTML - Web API 接口参考 | MDN (mozilla.org)](https://developer.mozilla.org/zh-CN/docs/Web/API/Element/insertAdjacentHTML)，这个方法可以插入任意位置并且能够将字符串解析为 DOM 元素。
+
+语法如下：
+
+```js
+element.insertAdjacentHTML(position, text);
+```
+
+**`insertAdjacentHTML()`** 方法参数 `text` 解析为 DOM 元素，并根据 `position` 指定的位置插入到 DOM 树中。
+
+而且它不会重新解析它正在使用的元素，因此它不会破坏元素内的现有元素。这避免了额外的序列化步骤，使其比直接使用 innerHTML 操作更快。
+
+参数 `position` 表示插入内容相对于元素的位置，并且必须是以下字符串之一：
+
+- `beforebegin`：元素自身的前面。
+- `afterbegin`：插入元素内部的第一个子节点之前。
+- `beforeend`：插入元素内部的最后一个子节点之后。
+- `afterend`：元素自身的后面。
+
+> 备注： beforebegin 和 afterend 位置，仅在节点在树中且节点具有一个 parent 元素时工作。
+
+```html
+<!-- beforebegin 元素自身的前面 -->
+<p>
+  <!-- afterbegin 元素内部的第一个子节点之前 -->
+  foo
+  <!-- beforeend 元素内部的最后一个子节点之后 -->
+</p>
+<!-- afterend 元素自身的后面 -->
+```
+
+另外一个参数 `text` 就容易理解了，它是能够被解析为 HTML 或 XML 元素的字符串。
+
+来个例子 🌰 看看：
+
+```js
+// 原为 <div id="one">one</div>
+
+var d1 = document.getElementById('one');
+d1.insertAdjacentHTML('afterend', '<div id="two">two</div>');
+
+// 此时，新结构变成：
+// <div id="one">one</div>
+// <div id="two">two</div>
+```
+
+使用的时候要注意安全问题：如果你得 `text` 参数来自用户输入的内容，要记得转义之后才能使用。
+
+如果只是为了插入文本内容（而不是 HTML 节点），不建议使用这个方法，建议 [`node.insertAdjacentText()`](https://developer.mozilla.org/zh-CN/docs/Web/API/Element/insertAdjacentText)。这两个方法的使用方式完全一样，只是 `insertAdjacentText` 不需要经过 HTML 解释器的转换，性能会好一点。
+
+## 四、总结
+
+这样我们就了解了各种各样的插入 DOM 元素的方法，以后在没有 jQuery 的情况下也能很快实现插入元素的功能了。
