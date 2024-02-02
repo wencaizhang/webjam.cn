@@ -1,0 +1,148 @@
+---
+title: '在油猴脚本中如何加载JS和CSS资源'
+slug: how-to-load-js-and-css-files-in-tampermonkey
+date: '2023-12-15'
+summary: ''
+draft: false
+featured_image_url: https://static.webjam.cn/images/logos/tampermonkey.svg
+tags:
+  - 油猴脚本
+  - tampermonkey
+---
+
+油猴脚本是一个强大的浏览器插件，可以为某个网站开发脚本来提升浏览体验。
+
+有时候为某个网站写一个脚本，想要引入 jQuery 之类的库却发现无从下手。一番「百之谷之」之后，基本弄明白了在油猴脚本中是如何引入外部文件的。
+
+当你创建一个油猴脚本时，油猴会帮你生成的一些代码，就像下面这样：
+
+```js
+// ==UserScript==
+// @name         New Userscript
+// @namespace    http://tampermonkey.net/
+// @version      0.1
+// @description  try to take over the world!
+// @author       You
+// @match        http://*/*
+// @grant        none
+// ==/UserScript==
+
+(function () {
+  'use strict';
+
+  // Your code here...
+})();
+```
+
+这和我们平时前端开发时写的 JS 代码不太一样的地方就是在一开始有很多行注释，注释的开始和结束都是 `// ==UserScript==`。
+
+其实这里的注释都是有他们的作用的，如果你仔细看一下，有一部分能够猜到是什么意思，例如 `@name` 是指脚本的名称，`@author` 是指脚本的作者。
+
+本文所说的加载资源的方法也需要在这里实现。
+
+## 加载 JS 资源
+
+加载 JS 很简单，语法是这样
+
+```js
+// @require      JS 文件链接
+```
+
+但是请注意，这行代码需要写在两行 `// ==UserScript==` 之间。
+
+```js {3,8}
+// ==UserScript==
+// ...其他代码
+// @require      https://libs.baidu.com/jquery/2.1.3/jquery.min.js
+// ==UserScript==
+(function () {
+  'use strict';
+  // Your code here...
+  $('body').css('background', 'gray');
+});
+```
+
+## 加载 CSS 文件
+
+如果你想要加载 CSS 文件，相较于 JS 会稍微复杂一丢丢。
+
+首先你要授权(`@grant`)两个油猴内置函数的使用权限：
+
+```js
+// @grant        GM_addStyle
+// @grant        GM_getResourceText
+```
+
+然后，引入 CSS 文件，在 CSS 文件地址前要给这个 CSS 资源起一个名字，例如下面的 `animate`：
+
+```js
+// @resource     animate https://cdn.bootcdn.net/ajax/libs/animate.css/4.1.1/animate.min.css
+```
+
+但是此时 CSS 文件还没生效，还需要最后一步，在 JS 代码中将其作为样式启用：
+
+```js
+GM_addStyle(GM_getResourceText('animate'));
+```
+
+这里的 `animate` 对应 `@resource` 中的 CSS 资源名称。
+
+完整引入 CSS 资源的代码如下：
+
+```js {3,4,5,9}
+// ==UserScript==
+// ...其他代码
+// @grant        GM_addStyle
+// @grant        GM_getResourceText
+// @resource     animate https://cdn.bootcdn.net/ajax/libs/animate.css/4.1.1/animate.min.css
+// ==UserScript==
+(function () {
+  'use strict';
+  GM_addStyle(GM_getResourceText('animate'));
+});
+```
+
+## 快速开始
+
+提供三个版本的 jQuery 链接，选择其中一个即可。
+
+```js
+// ==UserScript==
+// jQuery 1.x 版本（百度首页就是使用的这个文件）
+// @require      https://pss.bdstatic.com/static/superman/js/lib/jquery-1-edb203c114.10.2.js
+
+// jQuery 2.1.3 版本
+// @require      https://libs.baidu.com/jquery/2.1.3/jquery.min.js
+
+// jQuery 3.4.1 版本
+// @require      https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js
+// ==UserScript==
+```
+
+如果想使用 tailwindcss + daisyui 的组合，可以这样写
+
+```js
+// ==UserScript==
+// @grant        GM_addStyle
+// @grant        GM_getResourceText
+// @resource     daisyui https://cdn.jsdelivr.net/npm/daisyui@4.4.10/dist/full.min.css
+// @require      https://cdn.tailwindcss.com
+// ==/UserScript==
+
+(function () {
+  'use strict';
+
+  GM_addStyle(GM_getResourceText('daisyui'));
+});
+```
+
+### 推荐几个 CDN 资源
+
+使用公共的 CDN 资源，我们就不必自己部署服务器了，而且常见的库的各个版本都很容易找到，直接使用即可。
+
+- [字节跳动静态资源公共库](https://cdn.bytedance.com/)
+- [BootCDN - Bootstrap 中文网开源项目免费 CDN 加速服务](https://www.bootcdn.cn/)
+- [jsDelivr - A free, fast, and reliable CDN for JS and open source](https://www.jsdelivr.com/)
+- [cdnjs.cloudflare.com](https://cdnjs.cloudflare.com/)
+- [UNPKG](https://unpkg.com/)
+- [Staticfile CDN](https://www.staticfile.org/)

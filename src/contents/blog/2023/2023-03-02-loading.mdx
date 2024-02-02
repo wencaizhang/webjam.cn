@@ -1,0 +1,115 @@
+---
+title: 'CSS 实现 Loading 动画学习笔记'
+slug: loading
+date: '2023-03-02'
+summary: '这是一个很炫酷的 CSS Loading 动画'
+tags: ['css', 'loading']
+draft: false
+featured_image_url: 'https://static.webjam.cn/images/logos/css.svg'
+---
+
+今天我看到了一个用纯 CSS 实现的 Loading 动画，它非常简洁有趣。如果你也想了解它的具体实现过程，可以查看动画作者的讲解视频。你也可以直接将这个动画应用到你自己的项目中。
+
+> 动画作者的讲解视频：[简单又不简单的纯 CSS 加载动画效果 | Magic CSS - 知乎 (zhihu.com)](https://zhuanlan.zhihu.com/p/137959198)。
+> codepen 预览：[https://codepen.io/Mucourse/pen/dyYXeOb](https://codepen.io/Mucourse/pen/dyYXeOb)
+
+下面是对应的 HTML 结构，`div.container` 表示你的页面容器，而 `div.magic-loading` 和其内部的四个空 `div` 元素则是整个 Loading 动画的结构。
+
+因此，你只需要拷贝 `div.magic-loading` 相关的 HTML 和 CSS 代码就可以了，而 `div.container` 是不需要的。
+
+
+```html
+<div class="container">
+  <div class="magic-loading">
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+  </div>
+</div>
+```
+
+```css
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  width: 100%;
+}
+
+.magic-loading {
+  position: relative;
+  width: 120px;
+  height: 120px;
+}
+.magic-loading div {
+  height: 40%;
+  width: 40%;
+  border-radius: 50%;
+  position: absolute;
+  animation: MagicLoading 2s ease infinite;
+}
+.magic-loading :first-child {
+  background: #c299fc;
+}
+.magic-loading :nth-child(2) {
+  background: #ffd739;
+  animation-delay: -0.5s;
+}
+.magic-loading :nth-child(3) {
+  background: #9852f9;
+  animation-delay: -1s;
+}
+.magic-loading :last-child {
+  background: #6807f9;
+  animation-delay: -1.5s;
+}
+@keyframes MagicLoading {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  25% {
+    transform: translate(150%, 0);
+  }
+  50% {
+    transform: translate(150%, 150%);
+  }
+  75% {
+    transform: translate(0, 150%);
+  }
+}
+```
+
+## 在这个动画中我学到了什么
+
+这个动画让我了解了一些值得注意的知识点，下面是我记录的东西。
+
+### (1) 尺寸尽量使用百分比，不使用固定值
+
+只给动画最外层的 `div.magic-loading` 指定了宽高，内部的 4 个圆都使用百分比 (40%) 来控制宽高，这样做的好处是更具有弹性，整体可大可小，调整大小只需修改最外层的 `div.magic-loading` 就可以了，内部 4 个圆会随之变大或变小。
+
+### (2) `:nth-child(n)` 第一个子元素是从 1 开始的，不是从 0 开始
+
+CSS 选择器 `:nth-child(n)` 用来选取第 n 个子元素，要注意 **n 从 1 开始**，也就是表示**第一个子元素的「索引」是 1**。
+
+很多编程语言（例如 JavaScript）的数组索引起始值都是 0，这可能会让我们惯性地认为 CSS 中的 `:nth-child(n)` 中的 n 也是从 0 开始。但是**事实上，它的起始值是 1**。
+
+### (3) `animation-delay` 可以使用负值
+
+`animation-delay` 用来表示动画延迟多少开始执行。例如我想让动画 3 秒后开始执行就可以这样指定：`animation-delay: 3s;`。
+
+而当你指定为负值的时候，情况就不一样了，它会立即使动画执行到它该有的位置。这个负值的意义是，让浏览器计算动画在执行过程中每个时刻的状态，并立即使动画执行到指定的位置状态。
+
+### (4) `translate()` 使用百分比的时候，是以自身尺寸为基准的
+
+和「尺寸使用百分比，不使用固定值」一样，`translate` 使用百分比也方便了动画的调整，可以想象，如果每个圆形使用固定的值（例如 20px）作为偏移量，那么如果想要调整动画整体的大小会变得很麻烦。
+
+对于 Loading 动画这个案例而言，`translate()` 中填写的百分比是以圆形 div 自身的宽高为基准的。
+
+## 参考
+
+- [:nth-child - CSS：层叠样式表 | MDN (mozilla.org)](https://developer.mozilla.org/zh-CN/docs/Web/CSS/:nth-child)
+- [animation-delay - CSS：层叠样式表 | MDN (mozilla.org)](https://developer.mozilla.org/zh-CN/docs/Web/CSS/animation-delay)
+- [translate() - CSS：层叠样式表 | MDN (mozilla.org)](https://developer.mozilla.org/zh-CN/docs/Web/CSS/transform-function/translate)
