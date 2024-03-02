@@ -1,0 +1,15 @@
+{
+  "index_name": "BrianStyle",
+  "start_urls": ["https://brian.style/"],
+  "sitemap_urls": ["https://brian.style/sitemap.xml"],
+  "selectors": {
+    "default": {
+      "lvl0": "header h1, article h1",
+      "lvl1": "article h2",
+      "lvl2": "article h3",
+      "lvl3": "article h4",
+      "lvl4": "article h5",
+      "text": "article p, article div"
+    }
+  }
+}

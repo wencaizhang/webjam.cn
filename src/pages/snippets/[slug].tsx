@@ -22,7 +22,7 @@ const SnippetsContentDetailPage: NextPage<{ data: MdxFileContentProps }> = ({
   const PAGE_DESCRIPTION = `${endpointer} - ${PAGE_TITLE} with detailed explanations`;
 
   return (
-    <>
+    <article>
       <NextSeo
         title={`${endpointer} : ${PAGE_TITLE} - ${siteMetadata.author}`}
         description={PAGE_DESCRIPTION}
@@ -46,7 +46,7 @@ const SnippetsContentDetailPage: NextPage<{ data: MdxFileContentProps }> = ({
         <ContentDetailHeader {...meta} />
         <ContentDetail content={content} frontMatter={frontMatter} />
       </Container>
-    </>
+    </article>
   );
 };
 

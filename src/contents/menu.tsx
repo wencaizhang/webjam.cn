@@ -8,8 +8,8 @@ import {
 } from 'react-icons/bs';
 import {
   FiBookOpen as LearnIcon,
-  FiCoffee as ProjectIcon,
   FiCode as SnippetsIcon,
+  FiCoffee as ProjectIcon,
   FiCpu as DashboardIcon,
   FiLayers as WeeklyIcon,
   FiPieChart as AnalyticsIcon,
@@ -179,7 +179,7 @@ export const EXTERNAL_LINKS: MenuItemProps[] = [
     title: 'Analytics',
     href: siteMetadata.analytics.analyticsURL,
     icon: <AnalyticsIcon size={iconSize} />,
-    isShow: true,
+    isShow: !!siteMetadata.analytics.analyticsURL,
     isExternal: true,
     eventName: 'External Link: Analytics',
     type: 'Link',
