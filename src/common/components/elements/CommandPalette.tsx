@@ -58,7 +58,7 @@ const CommandPalette = () => {
   const menuOptions: MenuOptionProps[] = [
     {
       title: 'PAGES',
-      children: MENU_ITEMS?.map((menu) => ({
+      children: MENU_ITEMS?.filter((menu) => menu.isShow)?.map((menu) => ({
         ...menu,
         closeOnSelect: true,
       })),
