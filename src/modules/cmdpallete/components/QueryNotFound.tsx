@@ -97,7 +97,7 @@ const QueryNotFound = ({
                       <div
                         className='truncate'
                         dangerouslySetInnerHTML={{
-                          __html: `${hit.hierarchy.lvl0} ${
+                          __html: `${hit.hierarchy.lvl0 ?? ''} ${
                             hit.hierarchy.lvl1 ? `> ${hit.hierarchy.lvl1}` : ''
                           } ${
                             hit.hierarchy.lvl2 ? `> ${hit.hierarchy.lvl2}` : ''
