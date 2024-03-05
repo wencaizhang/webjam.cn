@@ -32,7 +32,7 @@ const LearnContentDetailPage: NextPage<PageProps> = ({ data, prev, next }) => {
   const PAGE_DESCRIPTION = `Learn ${meta?.category} - ${PAGE_TITLE} with detailed explanations`;
 
   return (
-    <>
+    <article>
       <NextSeo
         title={`Learn ${meta?.category} : ${PAGE_TITLE} - ${siteMetadata.author}`}
         description={PAGE_DESCRIPTION}
@@ -57,7 +57,7 @@ const LearnContentDetailPage: NextPage<PageProps> = ({ data, prev, next }) => {
         <ContentDetail content={data?.content} frontMatter={frontMatter} />
         <NavigationSection prev={prev} next={next} />
       </Container>
-    </>
+    </article>
   );
 };
 

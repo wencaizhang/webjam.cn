@@ -105,3 +105,9 @@ export const featureSwich = {
   dashboard_github: true,
   topBanner: true,
 };
+
+export const docSearch = {
+  apiKey: 'd291a440fb755a9b202844a68064d4e9', // search only key
+  indexName: 'BrianStyle',
+  appId: 'A4M5OCLKX8',
+};
