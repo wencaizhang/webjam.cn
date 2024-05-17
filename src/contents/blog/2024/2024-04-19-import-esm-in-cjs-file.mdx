@@ -1,0 +1,84 @@
+---
+title: 如何在 CJS 模块中引入 EJS 模块
+slug: import-esm-in-cjs-file
+summary: '如何在 CJS 模块中引入 EJS 模块'
+date: '2024-04-19'
+featured: true
+tags:
+  - JS 模块规范
+draft: true
+featured_image_url: https://static.webjam.cn/images/202405/import-esm-in-cjs-file.webp
+---
+
+![](https://static.webjam.cn/images/202405/import-esm-in-cjs-file.webp)
+
+
+前面写了关于[如何在 ESM 模块中引入 CJS 模块](./import-cjs-in-esm-file)的文章, 没过多久就又遇到了在 CJS 模块中引入 ES 模块的需求😅
+
+
+## 问题介绍
+
+事情是这样的, 我基于 Nestjs 开发一个项目, 引入了一个爬虫库 [coder-hxl/x-crawl](https://github.com/coder-hxl/x-crawl). 但是引入这个库之后总是找不到对应的模块, 因此我还去对应 issues 下提了一句(见[创建实例时候 报错 TypeError: (0 , x_crawl_1.default) is not a function · Issue #89 · coder-hxl/x-crawl](https://github.com/coder-hxl/x-crawl/issues/89)). 但是经过再次审查发现, 这不是人家 x-crawl 的 bug, 而是因为在 CJS 模块中引入 ES 模块引起的问题.
+
+## 问题分析
+
+在具体分析问题之前, 我先大致梳理一下不同规范的 npm 包是怎么引入的.
+
+npm 包大致分为三类, 第一类是仅支持 CJS 规范的, 这一类一般都是年代特别久远的 npm 包, 而且已经很久不更新了, 第二类是同时支持 CJS 和 ESM 规范, 它们一般通过打包工具完成对不同规范的支持, 第三类则是只支持 ESM 规范, 因为创建时间比较晚, 所以没有 CJS 的历史包袱.
+
+
+说回这次的问题, 因为 Nestjs 默认就是 ESM 规范的写法, 例如 `import { log } from '../utils';`, 所以我就认为 Nestjs 使用的是 ESM 规范, 而  [coder-hxl/x-crawl](https://github.com/coder-hxl/x-crawl) 也是支持 ESM 规范的, 但引入之后却始终报错提示模块引入错误.
+
+但其实呢问题出在 Nestjs 框架上, 使用 Nestjs 框架写代码使用 ESM 规范, 但是它最终打包产物却使用了 CJS 规范 😯. 我按照 ESM 规范写出来的代码, 最终会编译成 CJS 规范的代码, 而通过 `import` 引入模块的语句, 也会变成 CJS 规范下的 `require` 语句. 
+
+问题就出现在这一步, 如果是引入了 npm 包, 因为打包之后变成了 CJS 规范的 `require` 语句进行引入, 因此遇到只支持 ESM 规范, 不支持 CJS 规范的 npm 包, 那自然是模块导入失败, 提示引入错误也就合情合理了吧 🤔
+
+而 [coder-hxl/x-crawl](https://github.com/coder-hxl/x-crawl) 恰恰是在 V10 版本已经不再支持 CJS ，只能使用 ESM 了, 这就导致了在 Nestjs 中无法直接导入 `x-crawl`
+
+## 解决方案选择
+
+其实遇到不同规范的模块相互引入的问题, 可能大家第一反应是把项目整体改成 CJS 规范或者 ESM 规范, 具体操作大致是给 `package.json` 添加 `"type": "module"`，给 `tsconfig.json` 添加 `"module": "ESNext"` 和 `"moduleResolution": "Bundler"` 等等, 我尝试了一下, 发现这个方法不太合适.
+
+一来是代码改动太大, 你需要把已经写好的代码全部改成另一个规范, 二来是涉及到第三方 npm 包和打包构建工具, 会引起更多无法预测的问题, 总之这是一个解决方案, 但是改动成本也非常大.
+
+而上一篇文章[如何在 ESM 模块中引入 CJS 模块](./import-cjs-in-esm-file)就是一个局部引入不同规范模块的方案, 所以这一次, 我们的目标就是不改动整体代码, 只想办法在 CJS 模块中引入 ES 模块.
+
+经过一番百之谷之之后, 终于在 [Compile a package that depends on ESM only library into a CommonJS package - Stack Overflow](https://stackoverflow.com/questions/70545129/compile-a-package-that-depends-on-esm-only-library-into-a-commonjs-package/75939304#75939304) 找到了一个很简洁的解决方案.
+
+```js
+const importDynamic = new Function('modulePath', 'return import(modulePath)');
+importDynamic('x-crawl').then(xCrawl => {
+  const { createCrawl } = xCrawl
+  // do something
+})
+```
+
+`modulePath` 则是 ESM 模块的相对路径或者绝对路径, 如果是 npm 包则直接写包名即可.
+
+关于这个问题的复现代码我也单独创建了一个 repo 在这里 [https://github.com/wencaizhang/nestjs-crawl-bug-demo](https://github.com/wencaizhang/nestjs-crawl-bug-demo) 有兴趣可以狠狠点击查看具体代码.
+
+
+
+## 其他
+
+
+### 只支持 ESM 的 npm 包
+
+- x-crawl 从 V10 版本已经不再支持 CJS ，只能使用 ESM: [Release v10.0.0 · coder-hxl/x-crawl](https://github.com/coder-hxl/x-crawl/releases/tag/v10.0.0)
+- Chalk v5 开始只支持 ESM: [Release v5.0.0 · chalk/chalk](https://github.com/chalk/chalk/releases/tag/v5.0.0)
+
+### 搜到的资料
+
+- [require() of ES Module ... not supported - Stack Overflow](https://stackoverflow.com/questions/70820079/error-err-require-esm-require-of-es-module-not-supported/77966870#77966870)
+- [Compile a package that depends on ESM only library into a CommonJS package - Stack Overflow](https://stackoverflow.com/questions/70545129/compile-a-package-that-depends-on-esm-only-library-into-a-commonjs-package/75939304#75939304)
+- [chatgpt_nestjs_server/src/openai.service.ts at main · RusDyn/chatgpt_nestjs_server](https://github.com/RusDyn/chatgpt_nestjs_server/blob/main/src/openai.service.ts#L5)
+
+### 一些文档
+
+- [关于纯ESM包 --- Pure ESM package](https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c)
+- [import()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/import)
+- [Function() 构造函数 - JavaScript | MDN](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Function/Function)
+
+
+
+

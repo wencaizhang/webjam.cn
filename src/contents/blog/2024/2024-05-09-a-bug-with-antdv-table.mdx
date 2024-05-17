@@ -1,0 +1,113 @@
+---
+title: 记 Ant Design Vue 中表格组件限制选择数量引起的一个 BUG
+slug: a-bug-with-antdv-table
+summary: 记 Ant Design Vue 中表格组件限制选择数量引起的一个 BUG
+date: '2024-05-09'
+featured: true
+tags:
+  - antdv
+draft: true
+featured_image_url: https://static.webjam.cn/images/202405/antdv-table-select.webp
+---
+
+有一个 Vue 项目使用了 [Ant Design Vue](https://www.antdv.com/) 作为 UI 库，其中组件[表格 Table - Ant Design Vue](https://www.antdv.com/components/table-cn#components-table-demo-row-selection-and-operation) 提供了选择行的功能。
+
+![](https://static.webjam.cn/images/202405/antdv-table-select.webp)
+
+由于业务需要, 有一个表格要求最多只能选择两行, 而 [表格 Table - Ant Design Vue](https://www.antdv.com/components/table-cn#components-table-demo-row-selection-and-operation) 只提供选择功能, 并没有限制个数的功能, 因此这个需求只能自己想办法实现。
+
+在限制选择行数之前，核心代码是这样的：
+
+```html
+<template>
+  <a-table
+    :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onChange }"
+  />
+</template>
+<script>
+  export default {
+    data () {
+      return {
+        selectedRowKeys: []
+      }
+    },
+    methods: {
+      onChange (selectedRowKeys) {
+        this.selectedRowKeys = selectedRowKeys
+      }
+    }
+  }
+</script>
+```
+
+其中数组 `selectedRowKeys` 保存选中行的 `id` 数组, 方法 `onChange` 用来判断和更新 `selectedRowKeys`。
+
+针对要求最多选中两行的需求，我的处理方案是监听 change 事件, 判断当前已经选中的行数, 如果大于或等于 2 则不更新, 小于 2 才更新选中的值, 新的 `onChange` 函数代码如下:
+
+```js
+onChange (selectedRowKeys) {
+  if (selectedRowKeys >= 2) {
+    console.log('最多可以选择两行')
+    return;
+  }
+  this.selectedRowKeys = selectedRowKeys
+}
+```
+
+这就是个简简单单普普通通的需求，代码逻辑自认为还是很清晰的。但就是出现了很奇怪的现象。
+
+首先选中两行，再去选中第三个行, 由于 `onChange` 中有判断和拦截, 因此不能选中成功, 这是对的, 是我预期的现象, 接下来我把之前选中的行取消选择然后再来选择刚才这一行, 奇怪的现象出现了：点击一次，无法选中，再点击一次才能选中。
+
+经过反复点击试验, 我发现如果是有过选择但被 `onChange` 阻止选中的「经历」的行，想要选中它都需要点击两次，如果没有被阻止经历的行，就都能正常地点击一次就可以选中。
+
+而且通过 `console.log` 可以确定 `onChange` 内部代码没有问题，之所以点击两次才能选中，因为 `onChange (selectedRowKeys)` 接收到的参数就是当第二次点击的时候才出现这一行的 `id`，第一次并没有出现。
+
+🤔 挺奇怪吧~
+
+我不断地念叨“点击两次才能选中...点击两次才能选中...”，突然灵机一现：会不会是 checkbox 本来是选中状态，所以点击两次又回到选中状态了？
+
+好像只有这样才能解释通为什么需要点击两次，也能解释通其他行不需要点击两次，但是如果 checkbox 是选中状态，为什么页面并没有显示为选中状态呢？
+
+根据我之前[封装 checkbox](https://github.com/wencaizhang/wheels) 的经验，这就很容易理解了：为了能灵活控制 checkbox/radio 等表单元素的样式，通常会把原生 input 标签弄成透明的(不是隐藏，因为需要用户能点击)，然后利用 label 搭配 css 选择器(`:checked`)来实现选中和未选中的样式。
+
+通过审查元素去验证果然如此！
+
+因此这个问题的原因在于我简单地以为通过 `return` 阻止 `this.selectedRowKeys = selectedRowKeys` 执行，就可以阻止选中某一行了。实际上这样做还不够，这样只在样式上达到效果了，因为样式上是否选中是根据传入的 `selectedRowKeys` 来决定，但是原生标签 `input` 的状态没有被阻止，已经变成选中状态，因此就导致样式和状态的不统一。
+
+所以解决办法就是拦截选中的时候，要修改标签 `input` 状态，通过文档找到了另外一个事件处理函数 `onSelect`，相比 `onChange`，它能够拿到原生的 `event` 对象，通过 `event` 对象就可以控制 `input` 的状态了。
+
+|  参数   | 描述  | 类型 |
+|  ----  | ----  | --- |
+| onChange  | 选中项发生变化时的回调 | `Function(selectedRowKeys, selectedRows)` |
+| onSelect  | 用户手动选择/取消选择某列的回调 | `Function(record, selected, selectedRows, nativeEvent)` |
+
+
+最终代码如下：
+
+```html
+<template>
+  <a-table
+    :row-selection="{ selectedRowKeys: selectedRowKeys, onSelect: onSelect }"
+  />
+</template>
+<script>
+  export default {
+    data () {
+      return {
+        selectedRowKeys: []
+      }
+    },
+    methods: {
+      onSelect(record, selected, selectedRows, nativeEvent) {
+        const selectedRowKeys = selectedRows.map(item => item.id)
+        if (selectedRowKeys.length > 2) {
+          nativeEvent.target.checked = false
+          console.log('最多可以选择两行')
+        } else {
+          this.selectedNetworkRowKeys = selectedRowKeys
+        }
+      }
+    }
+  }
+</script>
+```

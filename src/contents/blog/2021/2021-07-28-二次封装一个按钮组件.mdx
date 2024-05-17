@@ -1,0 +1,68 @@
+---
+title: 'Vue.js 项目中二次封装一个按钮组件'
+slug: 二次封装一个按钮组件
+date: '2021-07-28'
+summary: '使用 Vue.js 开发项目难免遇到二次封装第三方组件的情况，来看看如何进行封装吧'
+draft: true
+category:
+  - vue
+tags:
+  - vue
+  - 组件
+featured_image_url: 'https://static.webjam.cn/images/logos/vue.svg'
+---
+
+我们在开发 VueJS 项目的时候通常会使用现成的开源组件库来提高开发效率，但有时候开源组件并不能完全满足我们的需求，这时候就需要我们对这些组件进行「二次封装」。在这里，我想分享两个非常实用的 API，相信它们会对你的工作有所帮助。
+
+## Vue2 中容易被忽略的两个重要的 API 介绍
+
+Vue2.x 版本文档
+
+- [vm.$attrs — Vue.js (vuejs.org)](https://v2.cn.vuejs.org/v2/api/#vm-attrs)
+- [vm.$listeners — Vue.js (vuejs.org)](https://v2.cn.vuejs.org/v2/api/#vm-listeners)
+
+Vue3.x 版本文档
+
+1. [组件实例 | Vue.js (vuejs.org)](https://cn.vuejs.org/api/component-instance.html#attrs)
+
+## Vue2 中封装
+
+```html
+<template>
+  <a-button icon="sync" title="刷新" v-bind="$attrs" v-on="$listeners" />
+</template>
+
+<script>
+  /**
+   * 和 a-button 外观、行为完全一致
+   * 区别是预设 icon 和 title 属性
+   */
+  export default {
+    inheritAttrs: false,
+  };
+</script>
+```
+
+## Vue3 中有了一些变化
+
+[移除 $listeners (非兼容)](https://v3.cn.vuejs.org/guide/migration/listeners-removed.html)
+
+```html
+<template>
+  <a-button icon="sync" title="刷新" v-bind="$attrs" />
+</template>
+
+<script>
+  /**
+   * 和 a-button 外观、行为完全一致
+   * 区别是预设 icon 和 title 属性
+   */
+  export default {
+    inheritAttrs: false,
+  };
+</script>
+```
+
+升级到 Vue3.x 之后，`$attrs` 和 `$listeners` 合并到 `$attrs` 中，因此直接删除 `$listeners` 即可，但是要保留 `$attrs`。
+
+- [透传 Attributes | Vue.js](https://cn.vuejs.org/guide/components/attrs.html)
