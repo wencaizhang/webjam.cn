@@ -1,0 +1,71 @@
+---
+title: 不可见字符引起的 bug
+slug: non-breaking-space
+summary: '空格和空格之间也有区别'
+date: '2024-03-06'
+featured: true
+tags:
+  - bug
+draft: true
+featured_image_url: https://static.webjam.cn/images/202403/echarts-pie.webp
+---
+
+## 问题
+
+在做一个爬虫项目的时候，有一个关键字搜索数据功能，明明看起来数据库里有相同的搜索关键字，但死活查不出来结果。
+
+然后发现了一种叫做「不间断空格」的字符，它的主要表现就是看不到但确实存在。这个字符主要用在office中，让一个单词在结尾处不会换行显示，见[不间断空格_百度百科](https://baike.baidu.com/item/%E4%B8%8D%E9%97%B4%E6%96%AD%E7%A9%BA%E6%A0%BC/9361098?fr=aladdin)。
+
+## 解决
+
+如果是论坛类的网页也经常会出现这个字符，因此需要对这类字符进行清洗，以免污染数据出现开头提到的情况。
+
+在 JavaScript 中可以使用 replace 方法去掉这个字符。
+
+```js
+function replaceBlank(str) {
+  return str.replace(/\u00a0/g, '');
+}
+```
+
+### 收集的更多的空格
+
+
+- `\t`：水平制表符
+- `\v`：垂直制表符
+- `\f`：换页符
+- `\xa0`：不间断空白符
+- `\u0020`：半角空格（英文符号），代码中常用的
+- `\u3000` ：全角空格（中文符号），中文文章中使用
+- `\u00A0`：不间断空格，主要用在office中，让一个单词在结尾处不会换行显示
+- `&nbsp;`：HTML 中的空格表示形式
+
+### 收集的开发中容易被坑的特殊字符编码
+
+| 名称      | Unicode | 备注 |
+| ---       | --- | --- |
+| 普通空格符 | \\u0020 |  |
+| Backspace | \\u0008 | \\b |
+| 水平制表符 | \\u0009 | \\t |
+| 换行符     | \\u000A | \\n |
+| 垂直制表符 | \\u000B | \\v |
+| 换页符     | \\u000C | \\f |
+| 回车符 | \\u000D | \\r |
+| 不换行空格 | \\u00A0 | 看上去和空格一样，实际上是在 HTML 中不自动换行，曾在从 word 拷贝出来的文本中复现 |
+| 行分隔符 | \\u2028 |  |
+| 段落分隔符 | \\u2029 |  |
+| 字节顺序标记（零宽非连接符） | \\uFEFF |  |
+| 从左至右书写标记 | \\u200E |  |
+| 从右至左书写标记 | \\u200F |  |
+| 零宽连接符 | \\u200D | 因为是零宽，肉眼看不到，从网页中拷贝出来的字符中会出现 |
+| 另一种空格符 | \\u2006 | 看上去和空格一样，但 Unicode 不同 |
+
+
+
+## Reference
+
+- [Unicode 在线转换工具](https://www.bejson.com/convert/unicode_chinese/)
+- [空格 - 维基百科，自由的百科全书](https://zh.wikipedia.org/zh-cn/%E7%A9%BA%E6%A0%BC)
+- [不换行空格 - 维基百科，自由的百科全书](https://zh.wikipedia.org/zh-cn/%E4%B8%8D%E6%8D%A2%E8%A1%8C%E7%A9%BA%E6%A0%BC)
+- [HTML 中的空格](https://www.freecodecamp.org/chinese/news/html-space-how-to-add-spaces/)
+- [去掉特殊空格(\t \v \f \xa0 \u0020 \u3000 \u00A0 &nbsp;) | 曹立禄的网络日志](https://clown-0726.github.io/2021/10/07/20211007-remove-unnomal-space/)

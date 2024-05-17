@@ -1,0 +1,233 @@
+---
+title: 如何在 ESM 模块中引入 CJS 模块
+slug: import-cjs-in-esm-file
+summary: '如何在 ESM 模块中引入 CJS 模块'
+date: '2024-04-12'
+featured: true
+tags:
+  - JS 模块规范
+draft: true
+featured_image_url: https://static.webjam.cn/images/202405/import-cjs-in-esm-file.webp
+---
+
+![](https://static.webjam.cn/images/202405/import-cjs-in-esm-file.webp)
+
+最近在开发 Nodejs 项目, 项目使用 ES 规范, 但是有一些年代久远的 npm 包只支持 CommonJS 规范导出, 如果把项目全部改为 CommonJS 规范工作量太大, 而且 ES 规范越来越流行, 这样做感觉像是开历史倒车, 因此必须要想办法在 ES 模块中将 CJS 正常引入.
+
+
+## 关于两种模块规范的简单介绍
+
+### CommonJS
+
+CommonJS 主要是在服务端使用的模块规范, 它使用 `require` 关键字导入模块, 使用 `module.exports` 导出模块
+
+```js
+// math.js
+const add = (a, b) => a + b;
+const subtract = (a, b) => a - b;
+ 
+module.exports = {
+  add,
+  subtract,
+};
+```
+
+```js
+// app.js
+const math = require('./math.js');
+ 
+console.log(math.add(5, 3)); // 输出 8
+console.log(math.subtract(5, 3)); // 输出 2
+```
+
+### ES6 模块 (ESM)
+
+ES6 模块是 ECMAScript 6 引入的官方模块化规范。它使用 `import` 关键字导入模块, 使用 `export` 导出模块。
+
+上面的 commonjs 规范代码转换为 ES 模块规范之后变成这样:
+
+```js
+// math.js
+export const add = (a, b) => a + b;
+export const subtract = (a, b) => a - b;
+```
+
+
+```js
+// app.js
+import { add, subtract } from './math.js';
+ 
+console.log(add(5, 3)); // 输出 8
+console.log(subtract(5, 3)); // 输出 2
+```
+
+### 如何规定项目使用哪种规范
+
+既然两种规范都可以使用, 那么如何声明具体使用哪种模块规范呢?
+
+第一种方法是修改文件后缀, 例如将扩展名从 `.js` 改为 `.mjs` 表示使用 ES 模块语法, 如果将扩展名从 `.js` 改为 `.cjs` 表示使用 CJS 模块语法
+
+第二种方法是设置 `package.json` 中的 `"type"` 字段: `"type": "commonjs"` 表示使用 CJS 模块语法, 而 `"type": "module"` 表示使用  ES 模块语法
+
+
+---
+
+## 如何在 ES 模块中引入 CommonJS 模块
+
+现在让我们回到最开始的问题: 如何在 ES 模块中导入 CJS 模块?
+
+办法也比较简单: 使用 `import()` 函数动态引入 CJS 模块. 注意这和普通的 ES 模块导入关键字 `import` 不一样.
+
+
+现在假设有一个 CommonJS 模块 `cjs-module.js`，想在 ES 模块环境中使用它.
+
+`cjs-module.js` 如下:
+```js
+// CommonJS模块示例
+module.exports = {
+  sayHello: function(name) {
+    console.log(`Hello, ${name}!`);
+  }
+};
+```
+
+使用动态 `import()` 来引入这个 CommonJS 模块：
+
+```js
+// 动态导入CommonJS模块
+import('./cjs-module.js')
+  .then((cjsModule) => {
+    cjsModule.sayHello('World');
+  })
+  .catch(console.error);
+```
+
+
+需要注意:
+
+1. **动态导入：** 之所以说是**动态引入** 是因为这是在代码执行时动态进行的. 而且这是异步执行的, 这意味着你需要使用 `then()` 方法或 `async/await` 语法来处理导入的模块.
+2. **文件路径：** `import()` 的参数是 CommonJS模块的文件路径, 应相对于当前模块或绝对路径, 如果这个 CJS 模块是 npm 包的话, 只提供包名即可.
+
+利用这种方法, 就可以让 CommonJS 模块在 ES 模块中生效了.
+
+
+## 优化
+
+在实际使用的时候发现上面的方法有两点不太方便:
+
+1. **动态导入**: 这意味着要增加一个异步函数, 这样就会增加代码复杂度
+2. 需要重复导入: 比如同一个文件需要多次调用这个 CJS 模块, 那每次调用之前都要导入一下才能使用, 相比 ESM 的 `import` 语句略显繁琐.
+
+下面有几种方法可以优化这两个问题.
+
+### 方法1: 使用 Async/Await 在模块顶层引入
+
+如果你的环境支持顶层 `await`（Node.js v14.8.0起支持，在 ES2022 中被正式标准化），你可以在模块的顶层使用 `async/await` 来导入CommonJS模块，并且之后可以多次使用它。
+
+```js
+// ES模块顶层await语法
+const cjsModule = await import('./cjs-module.js').catch(console.error);
+
+// 现在可以多次使用 cjsModule
+cjsModule.sayHello('World');
+cjsModule.sayHello('JS');
+```
+
+这种方法的好处是代码清晰直观，缺点就是你的项目需要**支持 ES2022** 而且可能会影响模块的**加载时间**，因为它需要等待 CommonJS 模块加载完成之后才会执行其余部分代码.
+
+
+### 方法2: 导入一次，存储为变量，异步使用
+
+如果你不能或不想在模块的顶层使用 `await`，你可以在模块的开始处导入模块，并将导入的模块存储在变量中。然后，你可以在异步函数中多次使用这个变量。
+
+```js
+let cjsModulePromise = import('./cjs-module.js').catch(console.error);
+
+// 使用模块的地方
+async function useTheModule() {
+    let cjsModule = await cjsModulePromise;
+    cjsModule.sayHello('World');
+    // 更多使用cjsModule的代码
+}
+
+// 另一个使用模块的函数
+async function anotherUse() {
+    let cjsModule = await cjsModulePromise;
+    cjsModule.sayHello('JS');
+    // 更多使用cjsModule的代码
+}
+```
+
+实际上存储的 `cjsModulePromise` 是一个 `promise` 实例, 得益于 `promise` 状态"敲定"之后就不会再发生变化, 因此 `cjsModulePromise` 实际上只导入一次模块, 却可以多次异步地使用它.
+
+### 方法3: 封装在自定义模块中
+
+如果你经常需要(在不同的 ES 模块中)使用这个 CommonJS 模块，另一个方法是将其封装在自己的 ES 模块中。这样，你可以在这个ES模块中处理异步导入，而其他需要此 CommonJS 模块的地方可以同步地导入这个ES模块。
+
+cjs-wrapper.js:
+
+```js
+// 动态导入CommonJS模块并导出
+const cjsModulePromise = import('./cjs-module.js').catch(console.error);
+export default cjsModulePromise;
+```
+
+使用封装的模块:
+
+```js
+import cjsModulePromise from './cjs-wrapper.js';
+
+async function doSomething() {
+    const cjsModule = await cjsModulePromise;
+    cjsModule.sayHello('World');
+}
+
+doSomething();
+```
+
+这种方法让你的代码更加模块化，并且在多个地方需要使用 CommonJS 模块时，可以更容易地管理。
+
+
+## 如何在 TypeScript 中使用
+
+如果我们使用了 TypeScript, TypeScript 提供的类型检查和自动完成等特性。
+
+如果你知道被导入模块的类型，最好能为 CJS 模块指定类型信息以便提升开发体验，而且很多流行的 npm 包也会提供类型文件, 实际上也并不费事.
+
+例如:
+
+```typescript
+// 定义模块导出的函数类型
+type CjsModuleFunctionType = () => void;
+
+// 动态导入模块并使用导出的函数
+async function useCjsFunction() {
+  // 使用import()动态导入，同时指定模块的类型
+  const cjsModule: { default: CjsModuleFunctionType } = await import('./cjs-module.js').catch(console.error);
+  
+  // 现在可以安全地调用这个函数
+  cjsModule.default();
+}
+
+useCjsFunction().catch(console.error);
+```
+
+这里使用 `type` 关键字定义了 `CjsModuleFunctionType` 作为一个函数类型，这个类型与想要动态导入的 CJS 模块导出的函数匹配。
+
+值得注意的是 **CJS 模块类型**：上面在 `await import()`调用时，我们通过`const cjsModule: { default: CjsModuleFunctionType }` 明确指定了模块的结构和类型。
+
+这告诉TypeScript我们期望这个动态导入的模块有一个默认导出，其类型为 `CjsModuleFunctionType`, 但也有一些模块使用的是命名导出而不是默认导出，此时你可以这样指定类型：
+
+```typescript
+// 假设导出的函数名为dynamicFunction
+type CjsModuleFunctionType = () => void;
+
+async function useCjsFunction() {
+  // 如果模块使用命名导出
+  const { dynamicFunction }: { dynamicFunction: CjsModuleFunctionType } = await import('./cjs-module.js').catch(console.error);
+  
+  dynamicFunction();
+}
+```
+
+这种方法可以确保你在 TypeScript 项目中使用动态导入时，既享受到动态导入带来的灵活性，又不失去 TypeScript 提供的类型安全性。

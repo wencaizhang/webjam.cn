@@ -1,0 +1,110 @@
+---
+title: echarts 图表根据容器大小自动改变
+slug: resize-echarts
+summary: '在有些场景下，我们希望当容器大小改变时，图表的大小也相应地改变。'
+date: '2024-02-23'
+featured: true
+tags:
+  - echarts
+draft: true
+featured_image_url: https://static.webjam.cn/images/202403/echarts-pie.webp
+---
+
+## 问题
+
+今天修复一个早期项目的问题，具体情况是：页面上有一些使用 echats 渲染的图表，当修改浏览器窗口大小的时候，这些图表没有自动重新渲染至合适大小。
+
+一开始我的想法是监听 `window` 的 `resize` 事件，当 `resize` 被触发的时候，调用渲染 `echarts` 图表的函数。
+
+后来发现 echarts 专门提供了 [`resize`](https://echarts.apache.org/zh/api.html#echartsInstance.resize) 方法用来改变图表的大小，这样就无需手动再次渲染图表了。
+
+## `echartsInstance.resize()` 用法
+
+`echartsInstance.resize()` 方法接受一个可选参数 `options`，参数类型如下：
+
+```ts
+{
+    width?: number|string,
+    height?: number|string,
+    silent?: boolean,
+    animation?: {
+        duration?: number
+        easing?: string
+    }
+}
+```
+
+**参数解释**
+
+- `opts` opts 可缺省。有下面几个属性：
+  - `width` 可显式指定实例宽度，单位为像素。如果传入值为 `null`/`undefined`/`'auto'`，则表示自动取 `dom`（实例容器）的宽度。
+  - `height` 可显式指定实例高度，单位为像素。如果传入值为 `null`/`undefined`/`'auto'`，则表示自动取 `dom`（实例容器）的高度。
+  - `silent` 是否禁止抛出事件。默认为 `false`。
+  - `animation` resize 的时候是否应用过渡动画，包含时长`duration`和缓动`easing`两个配置，默认`duration`为 0，即不应用过渡动画。
+
+**Tip:** 有时候图表会放在多个标签页里，那些初始隐藏的标签在初始化图表的时候因为获取不到容器的实际高宽，可能会绘制失败，因此在切换到该标签页时需要手动调用 `resize` 方法获取正确的高宽并且刷新画布，或者在 `opts` 中显示指定图表高宽。
+
+## 解决问题
+
+为了便于阅读，就不放大段代码在这里了，为了便于理解，这里只写最核心代码。
+
+因为项目是 vue 2.x 版本，所以这里主要是在 `<script>` 标签中的代码。首先就是要定义一个 `myChart` 用来表示 `echarts` 实例：
+
+```html
+<script>
+  import debounce from 'lodash.debounce'
+
+  export default {
+    data () {
+      return {
+        myChart: null
+      }
+    },
+    // ... 其他代码放在下面单独解释
+  }
+</script>
+```
+
+定义一个渲染图表的函数 `renderECharts`:
+
+```js
+methods: {
+  renderECharts () {
+    this.myChart = echarts.init(document.getElementById('main'));
+    // 渲染图表
+    // ...
+  }
+}
+```
+
+最重要的代码在这里：
+
+```js
+mounted () {
+  this.renderECharts()
+  this.handleResizeChart = debounce(() => {
+    this.myChart.resize()
+  }, 500)
+  window.addEventListener('resize', this.handleResizeChart)
+},
+```
+这里做了三件事：
+1. 在 `mounted` 阶段先渲染图表(调用 `renderECharts()`)
+2. 封装重新渲染图表函数，使用防抖函数包裹
+3. 监听 `resize` 事件，重新渲染图表。
+
+最后也不要忘记在 `destroyed` 阶段取消事件监听函数：
+
+```js
+destroyed () {
+  window.removeEventListener('resize', this.handleResizeChart)
+},
+```
+
+至此，`echarts` 图表根据浏览器窗口大小自动渲染问题算是解决了。
+
+
+## Reference
+
+- [echartsInstance.resize  - Apache ECharts](https://echarts.apache.org/zh/api.html#echartsInstance.resize)
+- [监听图表容器的大小并改变图表大小 - Apache ECharts](https://echarts.apache.org/handbook/zh/concepts/chart-size/#%E7%9B%91%E5%90%AC%E5%9B%BE%E8%A1%A8%E5%AE%B9%E5%99%A8%E7%9A%84%E5%A4%A7%E5%B0%8F%E5%B9%B6%E6%94%B9%E5%8F%98%E5%9B%BE%E8%A1%A8%E5%A4%A7%E5%B0%8F)

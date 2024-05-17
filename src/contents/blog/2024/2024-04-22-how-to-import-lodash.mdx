@@ -1,0 +1,135 @@
+---
+title: 究竟该如何引入 lodash
+slug: how-to-import-lodash
+summary: '究竟该如何引入 lodash'
+date: '2024-04-22'
+featured: true
+tags:
+  - lodash
+draft: true
+featured_image_url: https://static.webjam.cn/images/202405/how-to-import-lodash.webp
+---
+
+![](https://static.webjam.cn/images/202405/how-to-import-lodash.webp)
+
+[Lodash](https://lodash.com/) 是前端非常常用的一个库, 仅在 [npm](https://www.npmjs.com/package/lodash) 上仅一周的下载量将近五亿了, 但是我发现大家在项目中引入 Lodash 的方式各不相同, 本文就来盘点一下各种姿势, 并且总结一下哪种方式比较推荐.
+
+![](https://static.webjam.cn/images/202405/lodash-weekly-download.webp)
+
+
+## 全量引入
+
+引入 lodash 最常见也最简单的的方式是：
+
+```js
+// 方式1：引入整个lodash对象
+import _ from "lodash"
+
+// 方式2：按名称引入特定的函数
+import { cloneDeep } from "lodash"
+```
+
+但是这两种方式都会引入整个 lodash 库。由于 Lodash 内部使用 CommonJS 模块规范, 而 CommonJS 模块的一个特点是不能很好地支持树摇。Webpack 和其他现代的 JavaScript 打包工具无法进行有效的静态分析，很难确定哪些导入的模块和函数在代码中实际被使用, 因此很难删除未使用的部分，导致打包后的体积较大。
+
+因此即使你只引入了 lodash 的一个函数，最终打包的结果仍然可能包含整个 lodash 库的代码，因为 CommonJS 模块规范导致的结果.
+
+但是**仅在 Nodejs 项目推荐这种方式**, web 端还是比较在意代码体积的, 所以 web 端尽量还是使用按需加载来减少构建后的文件体积.
+
+## 按需引入
+
+
+### 方法一: 使用 ES 版本 `lodash-es` 库(强烈推荐)
+
+上面提到 lodash 因为使用了 CommonJS 模块规范导致无法按需加载导致减少最终构建后的文件体积, 因此最简单的一个方法就是用 ES 版本 [`lodash-es`](https://www.npmjs.com/package/lodash-es) 库进行代替.
+
+`lodash-es` 和 `lodash` 仅仅是内部使用的模块规范不同, 使用方式和功能是完全相同的.
+
+```bash
+# 安装
+pnpm i lodash-es
+```
+
+使用的时候可以按需引入
+
+```bash
+import { isEmpty } from 'lodash-es';
+```
+
+使用 ESM 规范的 `lodash-es` 支持静态分析，允许 Webpack 等打包工具更好地进行树摇优化。这样一来，只会引入和打包实际使用到的部分代码，而不是整个库。
+
+### 方法二: 使用打包插件实现(一般推荐)
+
+如果是一个大量使用 lodash 方法的项目, 又不想全局替换 `lodash-es`, 那么有一些插件可以在打包的时候去掉不必要的 lodash 代码，减小产物体积。
+
+- [babel-plugin-lodash](https://www.npmjs.com/package/babel-plugin-lodash "https://www.npmjs.com/package/babel-plugin-lodash")
+- [lodash-webpack-plugin](https://www.npmjs.com/package/lodash-webpack-plugin "https://www.npmjs.com/package/lodash-webpack-plugin")
+
+具体使用方法看对应的文档.
+
+### 方法三: 指用具体的功能模块(可以接受)
+
+例如下面, 只引入 array 和 cloneDeep 模块的功能
+
+```js
+import array from "lodash/array";
+import cloneDeep from "lodash/cloneDeep";
+```
+
+这种方式只会引入引用路径对应的模块，无需使用插件，也不会有冗余代码。不过缺点嘛也挺明显, 写起来比较啰嗦, 每个 `import` 语句只能引入一个函数，可能导致多个 `import` 语句。
+
+如果这个方法对原项目的改动最小, 如果你能接受这种引入方式, 倒也能凑合用.
+
+### 方法四: 使用单独的函数库(勉强接受)
+
+Lodash 为每个方法提供了[单独的 npm 包](https://www.npmjs.com/search?q=keywords:lodash-modularized "https://www.npmjs.com/search?q=keywords:lodash-modularized")，你可以只下载你想要的函数。
+
+例如 `debounce` 方法:
+
+```bash
+# install
+pnpm i lodash.debounce
+```
+
+```js
+import debounce from 'lodash.debounce'
+```
+
+这种方法的好处不仅仅是最终打包结果体积很小, 而且依赖包的体积也比较小.
+
+但是除非你的整个项目只用到了 1-2 个 lodash 方法, 否则还是不建议这样使用. 首先，**它并不像看起来一样轻量**，因为每个 lodash 的方法都会使用一些公共代码, 这种方式下公用代码会存在于每一个函数包中, 这样就会导致重复引入公共代码。其次，每个方法都是独立的 npm 包，意味着多次安装、多个 `package.json` 依赖项以及多个 node_modules 目录, 而且和方法二一样, 每个 import 引入一个函数, 写起来也比较啰嗦。
+
+
+
+## TypeScript 支持
+
+如果你的项目中使用了 TypeScript, 如果没有设置 `allowJS` 为 `true` 那么编辑器就会报错说 TypeScript 没有找到 lodash 这个包的定义.
+
+为了解决这个错误, 也为了让编辑器有更好的类型提示, 建议安装下面的依赖：
+
+```bash
+pnpm add -D @types/lodash
+```
+
+`@types/lodash` 专门为 lodash 声明 TypeScript 类型定义的库, 类似的库还有 `@types/jquery` 和 `@types/node` 等等.
+
+#### 小技巧之如何找到第三方库的 TypeScript 类型声明
+
+ npm 网站会显示对应包的类型声明信息, 比如 [vue - npm](https://www.npmjs.com/package/vue) 这个库会显示一个 `TS` 的图标, 鼠标放上去会提示这个库有内置的 TypeScript 声明, 这样的就无需另外安装 `@types/xxx` 之类的库了.
+
+![](https://static.webjam.cn/images/202405/npm-vue-ts.webp)
+
+[lodash-es - npm](https://www.npmjs.com/package/lodash-es) 会显示一个 `DT` 的图标, 鼠标放上去会提示说由 `@types/lodash-es` 提供 TypeScript 类型声明, 点击这个图标会跳转到 [@types/lodash-es - npm](https://www.npmjs.com/package/@types/lodash-es) 的页面.
+
+![](https://static.webjam.cn/images/202405/npm-lodash-es-dt.webp)
+
+> Definitely Typed 缩写为 DT, 它是一个开源项目，它的目标是为 JavaScript 各种库提供类型定义文件, 见: [DefinitelyTyped](https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/README.zh-Hans.md)
+
+
+
+## Refer
+
+- [Lodash per method packages](https://lodash.com/per-method-packages)
+- [Merge lodash-es into lodash package · Issue #5107 · lodash/lodash](https://github.com/lodash/lodash/issues/5107)
+- [npm displays packages with bundled TypeScript declarations - The GitHub Blog](https://github.blog/changelog/2020-12-16-npm-displays-packages-with-bundled-typescript-declarations/)
+- [lodash - Why we need @types in TypeScript - Stack Overflow](https://stackoverflow.com/questions/59633333/why-we-need-types-in-typescript)
+- [@types | 深入理解 TypeScript](https://jkchao.github.io/typescript-book-chinese/typings/types.html)
