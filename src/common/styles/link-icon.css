@@ -68,7 +68,7 @@
   background-image: url(https://static.segmentfault.com/main_site_next/f934caec/_next/static/media/sf-icon-small.4d244289.svg);
 }
 
-.article a[href*='stackoverflow.com'] {
+.article a[href*='stackoverflow.com']::before {
   background-image: url('/icons/brand/stackoverflow.png');
 }
 
@@ -334,6 +334,18 @@
 
 .article a[href*='github.com']::before {
   background-image: url('/icons/brand/github.svg');
+}
+
+.article a[href*='github.blog']::before {
+  background-image: url('/icons/brand/github.svg');
+}
+
+.article a[href*='npmjs.com']::before {
+  background-image: url('/icons/brand/npm.svg');
+}
+
+.article a[href*='lodash.com']::before {
+  background-image: url('/icons/brand/lodash.svg');
 }
 
 .article a[href*='codepen.io']::before {
@@ -727,6 +739,18 @@
 
 .article a[href*='github.com'] {
   color: #020202;
+}
+
+.article a[href*='github.blog'] {
+  color: #020202;
+}
+
+.article a[href*='npmjs.com'] {
+  color: #cb3837;
+}
+
+.article a[href*='lodash.com'] {
+  color: rgb(52, 146, 255);
 }
 
 .article a[href*='translate.google.cn'] {
