@@ -1,0 +1,129 @@
+---
+title: 自定义 Alfred 打开终端为 iTerm
+description: 自定义 Alfred 打开终端为 iTerm
+slug: alfred-custom-terminal
+date: '2024-05-17'
+featured: fasle
+type: Alfred
+draft: true
+---
+
+Alfred 可以帮你快速执行终端命令，只需要你在输入框输入前缀符号 `>` 再按下空格，它就知道后面是需要执行的命令了。
+
+![](https://static.webjam.cn/images/202405/alfred-terminal.webp)
+
+不过 Alfred 默认调用的是 MacOS 自带终端 APP，而我更习惯使用 [iTerm2](https://iterm2.com/) 当做终端，好在 Alfred 提供了自定义终端的功能，这里记录一下具体操作步骤。
+
+
+## 步骤
+
+具体使用步骤是：
+
+1. 打开 Alfred 首选项，对应的配置路径是 `Features → Terminal`
+2. 先将 `Application` 改为 `custom` 选项
+3. 清空 `custom` 下方的代码区域，然后再将下面代码复制粘贴到清空后的代码区域。
+
+![](https://static.webjam.cn/images/202405/alfred-custom-terminal.webp)
+
+
+下面是需要复制粘贴的代码：
+
+```alfred_script
+-- For the latest version:
+-- https://github.com/vitorgalvao/custom-alfred-iterm-scripts
+
+-- Set this property to true to always open in a new window
+property open_in_new_window : false
+
+-- Set this property to false to reuse current tab
+property open_in_new_tab : true
+
+-- Set this property to true if iTerm is configured to launch without opening a new window
+property iterm_opens_quietly : false
+
+-- Handlers
+on new_window()
+  tell application "iTerm" to create window with default profile
+end new_window
+
+on new_tab()
+  tell application "iTerm" to tell the first window to create tab with default profile
+end new_tab
+
+on call_forward()
+  tell application "iTerm" to activate
+end call_forward
+
+on is_running()
+  application "iTerm" is running
+end is_running
+
+on is_processing()
+  tell application "iTerm" to tell the first window to tell current session to return is processing
+end is_processing
+
+on has_windows()
+  if not is_running() then return false
+
+  tell application "iTerm"
+    if windows is {} then return false
+    if tabs of current window is {} then return false
+    if sessions of current tab of current window is {} then return false
+
+    set session_text to contents of current session of current tab of current window
+    if words of session_text is {} then return false
+  end tell
+
+  true
+end has_windows
+
+on send_text(custom_text)
+  tell application "iTerm" to tell the first window to tell current session to write text custom_text
+end send_text
+
+-- Main
+on alfred_script(query)
+  if has_windows() then
+    if open_in_new_window then
+      new_window()
+    else if open_in_new_tab then
+      new_tab()
+    else
+      -- Reuse current tab
+    end if
+  else
+    -- If iTerm is not running and we tell it to create a new window, we get two:
+    -- one from opening the application, and the other from the command
+    if is_running() or iterm_opens_quietly then
+      new_window()
+    else
+      call_forward()
+    end if
+  end if
+
+  -- macOS buffers TTY input to 1024 bytes, so if input is larger wait for session to be ready
+  -- "with timeout" does not work with "repeat", so use a delay (0.01 * 500 means a timeout of 5 seconds)
+  if length of query > 1024
+    repeat 500 times
+      if not is_processing() then exit repeat
+      delay 0.01
+    end repeat
+  end if
+
+  -- Make sure a window exists before we continue, or the write may fail
+  -- "with timeout" does not work with "repeat", so use a delay (0.01 * 500 means a timeout of 5 seconds)
+  repeat 500 times
+    if has_windows() then
+      send_text(query)
+      call_forward()
+      exit repeat
+    end if
+
+    delay 0.01
+  end repeat
+end alfred_script
+```
+
+## 参考
+
+[vitorgalvao/custom-alfred-iterm-scripts: AppleScript for iTerm2 Alfred integration.](https://github.com/vitorgalvao/custom-alfred-iterm-scripts)
