@@ -1,3 +1,4 @@
+import defaultIcon from '~public/icons/stack/code.svg';
 import gitlab from '~public/icons/stack/gitlab.svg';
 import lerna from '~public/icons/stack/lerna.svg';
 import prisma from '~public/icons/stack/prisma.svg';
@@ -60,8 +61,10 @@ import git from '~public/icons/stack/git.svg';
 import k8s from '~public/icons/stack/k8s.svg';
 import postcss from '~public/icons/stack/postcss.svg';
 import tailwindcss from '~public/icons/stack/tailwind-css.svg';
+import terminal from '~public/icons/stack/terminal.svg';
 
 export const StackIconsMap = {
+  defaultIcon,
   gitlab,
   lerna,
   prisma,
@@ -124,6 +127,7 @@ export const StackIconsMap = {
   k8s,
   postcss,
   tailwindcss,
+  terminal,
 };
 
 export function BrandIcon(props: {
@@ -131,7 +135,7 @@ export function BrandIcon(props: {
   className?: string;
 }) {
   const { type, className } = props;
-  const Icon = StackIconsMap[type];
+  const Icon = StackIconsMap[type] || defaultIcon;
   if (!Icon) return <div>Missing icon for {type}</div>;
 
   return (
