@@ -1,0 +1,41 @@
+---
+title: MacOS 系统中设置命令行中代理
+description: MacOS 系统中设置命令行中代理
+slug: proxy-in-terminal
+date: '2021-05-26'
+featured: fasle
+type: terminal
+draft: true
+---
+
+
+有时候需要在终端中通过代理访问一些网络，这时候就要让代理在终端中也生效，这里有两个函数可以帮你快速开启和关闭代理。
+
+将下面两个函数放在 `~/.bash_profile` 或者 `~/.zshrc` 文件最后：
+
+```bash
+function proxy_on() {
+  export https_proxy=http://127.0.0.1:63380
+  export http_proxy=http://127.0.0.1:63380
+  export all_proxy=socks5://127.0.0.1:63380
+  echo -e "已开启代理"
+}
+
+function proxy_off(){
+  unset http_proxy
+  unset https_proxy
+  echo -e "已关闭代理"
+}
+```
+
+想要这两个函数生效，需要重新载入配置文件(关闭并重新打开终端窗口也可以达到效果)
+
+```bash
+source ~/.bash_profile
+# or
+source ~/.zshrc
+```
+
+然后当你需要启用代理的时候，直接在终端执行 `proxy_on` 命令即可:
+
+![](https://static.webjam.cn/images/202405/proxy-in-terminal.webp)
