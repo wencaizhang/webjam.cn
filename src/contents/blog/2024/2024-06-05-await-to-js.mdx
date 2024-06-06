@@ -1,0 +1,125 @@
+---
+title: await-to-js 的使用和源码分析
+slug: await-to-js
+summary: TODO
+date: '2024-06-05'
+featured: true
+tags:
+  - 异步
+draft: true
+featured_image_url: https://static.webjam.cn/images/202405/vscode-search-01.webp
+---
+
+## 介绍 `await-to-js`
+
+最近发现了一个 [await-to-js](https://www.npmjs.com/package/await-to-js)，它的作用就是把 promise 包装一层，方便我们处理错误。
+
+我们知道 Promise 的出现解决了回调地狱的问题，async await 能将异步代码以同步代码的方式来书写，但是这两者在开发过程中都少不了对错误的捕捉，前者使用 [Promise.prototype.catch()](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Promise/catch) 后者使用 [try...catch](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Statements/try...catch)
+
+```js
+const p = Promise.reject('这是错误信息')
+p.catch(err => {
+  console.log(err)
+})
+
+// 或者
+try {
+  const result = await p
+} catch (err) {
+  console.log(err)
+}
+```
+
+提醒一句，在实际开发中，有些同学嫌麻烦不喜欢捕捉错误，但是我强烈建议不要这样，否则你总有一天会迟到苦头的（别问我为什么知道😭）。
+
+`await-to-js` 的作用就是更优雅的处理对错误的捕捉，简单示例如下：
+
+```js
+import to from 'await-to-js';
+
+const [ err, data ] = await to(promiseFn(1));
+```
+
+
+其中 `promiseFn` 是一个返回 Promise 实例的函数，我们假定这个 Promise 执行成功时返回结果为 `data`，执行失败时的错误为 `error`。
+
+经过 `to()` 函数处理会返回一个新的 Promise 实例，这个新实例最终返回的数据结构是固定的，它总是返回一个数组，当原 promise 执行成功时，新 promise 返回的是 `[null, data]`，原 promise 执行失败时，新 promise 返回的是 `[error, undefined]`。
+
+![await-to-js](https://static.webjam.cn/images/202406/await-to-js.webp)
+
+换种说法就是 `to()` 函数返回了两把座椅，第一把座椅是 `error` 专属，如果出现 `error` 了，就让它坐下来，如果没有 `error` 就把椅子空着，第二把同理，这是 `data` 专属，原 promise 执行成功了，就让执行结果坐第二把椅子，要不就空着。
+
+也因此，两者不可兼得，若有 `error` 则无 `data`，若有 `data` 则无 `error`。所以可以根据 `error` 是否存在来判断原 promise 的执行状态。
+
+
+## 源码
+
+源码地址：[scopsy/await-to-js: Async await wrapper for easy error handling without try-catch](https://github.com/scopsy/await-to-js)
+
+为了容易理解，这里使用的是编译后的 js 代码：
+
+```js
+/**
+ * @param { Promise } promise
+ * @param { Object= } errorExt - Additional Information you can pass to the err object
+ * @return { Promise }
+ */
+function to(promise, errorExt) {
+  return promise
+    .then(function (data) { return [null, data]; })
+    .catch(function (err) {
+      if (errorExt) {
+        Object.assign(err, errorExt);
+      }
+      return [err, undefined];
+    });
+}
+
+export { to };
+export default to;
+//# sourceMappingURL=await-to-js.es5.js.map
+```
+
+没错，实际上就只有一个函数，分别在原 promise 的 `.then` 和 `.catch` 中返回了前面说的固定结构的数组。
+
+看了源码我们能发现有一点是 [await-to-js](https://www.npmjs.com/package/await-to-js) 文档没有说的，`to()` 函数可以传入第二个参数，这个参数会被合并到 `error` 错误对象中。
+
+
+另外有一个 promise 的基础知识值得提一下，我估计很多同学都没注意到，那就是 `promise.catch()` 回调函数的返回值决定了这个 promise 最终状态。
+
+
+```js
+const p = () => {
+  return setTimeout(() => {
+    Promise.reject('错误信息')
+  }, 10);
+}
+const p1 = p()
+```
+
+上面的 `p()` 函数直接执行，最终将得到一个 `rejected` 状态的 Promise 实例，如果稍微改写一下：
+
+```js
+const p = () => {
+  return setTimeout(() => {
+    Promise.reject('错误信息')
+  }, 10);
+}
+const p2 = p().catch(() => {
+  // 什么都不做
+})
+```
+
+添加一个 `.catch` 即使什么都不做，`p2` 也将变成 `fulfilled` 状态的的 Promise 实例。
+
+这是因为 p2 的结果（状态）其实依赖于 `.catch()` 回调函数的返回结果，如果回调函数返回了 `promise.reject` 或者抛出了一个错误信息，这个 promise 的状态也会变为 `rejected`。
+
+简而言之就是 p2 的结果（状态）由 `.then` 和 `.catch` 执行链条中的最后一个决定。
+
+
+## Reference
+- [Promise - JavaScript | MDN](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Promise)
+- [Promise.prototype.catch() - JavaScript | MDN](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Promise/catch)
+- [try...catch - JavaScript | MDN](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Statements/try...catch)
+- [await-to-js](https://www.npmjs.com/package/await-to-js)
+- [scopsy/await-to-js: Async await wrapper for easy error handling without try-catch](https://github.com/scopsy/await-to-js)
