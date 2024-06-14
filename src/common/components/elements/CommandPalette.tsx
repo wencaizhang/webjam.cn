@@ -49,7 +49,6 @@ const CommandPalette = () => {
   const placeholders = [
     'Search or Ask anything...',
     'Press Cmd + K anytime to access this command pallete',
-    '你可以随时按下 Cmd + K 进入这个命令面板',
   ];
   const maxIndex = placeholders.length - 1;
 
@@ -72,7 +71,7 @@ const CommandPalette = () => {
     },
     {
       title: 'EXTERNAL LINKS',
-      children: EXTERNAL_LINKS?.map((menu) => ({
+      children: EXTERNAL_LINKS?.filter((menu) => menu.isShow)?.map((menu) => ({
         ...menu,
         closeOnSelect: true,
       })),
@@ -107,6 +106,12 @@ const CommandPalette = () => {
         ),
       }))
     : menuOptions;
+
+  const handleDocsearchSelect = (url: string) => {
+    router.replace(url);
+    setQuery('');
+    setIsOpen(false);
+  };
 
   const handleSelect = (menu: MenuOptionItemProps) => {
     setQuery('');
@@ -328,6 +333,7 @@ const CommandPalette = () => {
                     query={queryDebounce}
                     onAskAiAssistant={handleAskAiAssistant}
                     onFindGoogle={handleFindGoogle}
+                    handleDocsearchSelect={handleDocsearchSelect}
                   />
                 )}
 
