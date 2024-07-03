@@ -1,0 +1,114 @@
+---
+title: 正则表达式的贪婪模式
+slug: regexp-greedy
+summary: 正则表达式的贪婪模式
+date: '2024-03-15'
+featured: true
+tags:
+  - 正则
+draft: true
+featured_image_url: https://static.webjam.cn/images/202405/regexp.webp
+---
+
+
+遇到一个需求: 现在有一段 HTML 字符串, 需要拿到这里面所有的 img 标签的 src 属性.
+
+HTML 字符串如下(已经过简化): 
+
+```html
+<div class="row">
+    <!-- 注意里面三个 img 标签是在同一行 -->
+    <img src="https://static.fastadmin.net/assets/images/app/code.png" alt=""> <img src="https://static.fastadmin.net/assets/images/app/browser.png" alt=""> <img src="https://static.fastadmin.net/assets/images/app/laptop.png" alt="">
+</div>
+```
+
+为了匹配 img 标签的 src 属性, 我使用的正则是 `/<img.*src="(.*)"/g`, 匹配结果如下:
+
+![匹配 src 属性之贪婪模式](https://static.webjam.cn/images/202405/regex101-demo01.webp)
+
+如图所示, 并没有按照期待中的匹配每个 src 属性值, 反而仅匹配到最后一个 src, 而且还多余匹配了几个字符. 图中使用的工具是[匹配 src 属性之贪婪模式 - regex101](https://regex101.com/r/dCCFvi/1), 您可以狠狠点击打开查看本示例.
+
+经过多方查询(实际主要是问了 ChatGPT), 才知道这是因为正则默认是贪婪匹配模式导致的.
+
+## 什么是贪婪匹配
+
+顾名思义, "贪婪"就是尽可能多的匹配符合条件的字符. 举个例子 🌰, 现在有一个字符串 `'abcabc'`, 正则是 `/a(.*)c/`, 你认为 `(.*)` 会匹配哪些字符呢? 是 `b` 还是 `bcab` 呢?
+
+答案是 `bcab`, 实际两个答案都符合正则匹配, 但是因为"贪婪"的缘故, 所以最后匹配到的结果是"最多"的那个, 也就是 `bcab`.
+
+![例子之贪婪模式](https://static.webjam.cn/images/202405/regex101-greedy-01.webp)
+
+如何匹配最少那个呢? 那就要使用"非贪婪模式"了. 将刚才的正则改为 `/a(.*?)c/` 就是非贪婪模式了, 这样就是只匹配第一次出现的 `b` 了.
+
+![例子之非贪婪模式](https://static.webjam.cn/images/202405/regex101-greedy-02.webp)
+
+
+这两个例子也都可以点击查看:
+- [例子之贪婪模式 - regex101](https://regex101.com/r/bLKSc8/1)
+- [例子之非贪婪模式 - regex101](https://regex101.com/r/bLKSc8/2)
+
+## 贪婪匹配和非贪婪匹配的规则
+
+正则匹配时，如果遇到下面这些标识符，代表是贪婪匹配，会尽可能多的去匹配内容:
+
+`+`，`?`，`*`，`{n}`，`{n,}`，`{n,m}`
+
+与之对应的非贪婪匹配标识符如下: 
+
+`+?`，`??`，`*?`，`{n}?`，`{n,}?`，`{n,m}?`
+
+可以看到，非贪婪模式的标识符其实就是在贪婪模式的标识符后面加上一个 `?`
+
+## 最终代码
+
+因此只需要将一开始匹配 src 属性的正则改为非贪婪模式即可: `/<img.*?src="(.*?)"/g`
+
+![匹配 src 属性之非贪婪模式](https://static.webjam.cn/images/202405/regex101-demo02.webp)
+
+结果和预期相同, 匹配到了全部的 src 属性, 您可以点击查看: [匹配 src 属性之非贪婪模式 - regex101](https://regex101.com/r/dCCFvi/2)
+
+最后完整代码如下:
+
+```js
+function getSrc(content) {
+  const regex = /<img.*?src="(.*?)"/g;
+
+  // 使用正则表达式的 exec 方法来找到所有匹配的链接
+  let match;
+  const links = [];
+
+  while ((match = regex.exec(content)) !== null) {
+    // match[1] 匹配到的链接
+    links.push(match[1]);
+  }
+
+  console.log(links);
+  return links
+}
+```
+
+```js
+const html = `<div class="row">
+    <!-- 注意里面三个 img 标签是在同一行 -->
+    <img src="https://static.fastadmin.net/assets/images/app/code.png" alt=""> <img src="https://static.fastadmin.net/assets/images/app/browser.png" alt=""> <img src="https://static.fastadmin.net/assets/images/app/laptop.png" alt="">
+</div>`
+
+getSrc(html)
+
+// 得到全部的 src 属性值
+// [
+//     "https://static.fastadmin.net/assets/images/app/code.png",
+//     "https://static.fastadmin.net/assets/images/app/browser.png",
+//     "https://static.fastadmin.net/assets/images/app/laptop.png"
+// ]
+```
+
+
+## Reference
+
+- [Regular Expression in Python. Regex | by Anurag | Medium](https://nowitsanurag.medium.com/regular-expression-in-python-f42483e80daa)
+- [The Complete Guide to Regular Expressions (Regex) - CoderPad](https://coderpad.io/blog/development/the-complete-guide-to-regular-expressions-regex/)
+- [js中的正则表达式入门 - 陈水水 - 博客园](https://www.cnblogs.com/chenmeng0818/p/6370819.html)
+- [正则表达式之 贪婪与非贪婪模式详解（概述）_正则表达式_脚本之家](https://www.jb51.net/article/31491.htm)
+- [正则表达式 – 元字符 | 菜鸟教程](https://www.runoob.com/regexp/regexp-metachar.html)
+- [【正则表达式系列】贪婪与非贪婪模式 | Dailc的个人主页](http://www.dailichun.com/2017/07/06/regularExpressionGreedyAndLazy.html)
