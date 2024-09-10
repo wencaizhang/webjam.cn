@@ -34,6 +34,7 @@ const Layout = ({ children }: LayoutProps) => {
     pageName === 'playground' ||
     pageName === 'blog' ||
     router.pathname.startsWith('/blog/') ||
+    router.pathname.startsWith('/tools/') ||
     router.pathname.startsWith('/learn/');
 
   // const isShowChatButton = pageName !== 'guestbook';
