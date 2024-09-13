@@ -17,12 +17,14 @@ import Image from '../../elements/Image';
 import ThemeToggleButton from '../../elements/ThemeToggleButton';
 import Tooltip from '../../elements/Tooltip';
 import Profile from '../../sidebar/Profile';
+import useIsMobile from '../../../hooks/useIsMobile';
 
 const HeaderTop = () => {
   const { setIsOpen } = useContext(CommandPaletteContext);
   const [showMenu, setShowMenu] = useState(false);
 
   const router = useRouter();
+  const isMobile = useIsMobile();
 
   const menus = MENU_ITEMS.filter(
     (item) => item.isShow && item.title !== 'Home'
@@ -82,7 +84,7 @@ const HeaderTop = () => {
 
           {!showMenu && (
             <>
-              <ThemeToggleButton />
+              {!isMobile && <ThemeToggleButton />}
               <CommandIcon
                 onClick={() => setIsOpen(true)}
                 className='cursor-pointer'
