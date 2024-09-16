@@ -6,7 +6,7 @@ import BlogHeader from './BlogHeader';
 
 const BlogDetail = (blogData: BlogDetailProps) => {
   return (
-    <>
+    <article>
       <BlogHeader
         title={blogData.frontMatter.title}
         comments_count={0}
@@ -33,7 +33,7 @@ const BlogDetail = (blogData: BlogDetailProps) => {
         </div>
       )}
       <Breakline className='!my-10' />
-    </>
+    </article>
   );
 };
 
