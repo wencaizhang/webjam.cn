@@ -1,20 +1,25 @@
 ---
 title: await-to-js 的使用和源码分析
 slug: await-to-js
-summary: TODO
+summary: await-to-js 的使用和源码分析，await-to-js 可以让我们更简单的处理错误
 date: '2024-06-05'
 featured: true
 tags:
   - 异步
-draft: true
-featured_image_url: https://static.webjam.cn/images/202405/vscode-search-01.webp
+  - 'await-to-js'
+  - promise
+  - async
+draft: false
+featured_image_url: https://static.webjam.cn/images/202406/await-to-js-cover.webp
 ---
 
-## 介绍 `await-to-js`
+## 背景
 
 最近发现了一个 [await-to-js](https://www.npmjs.com/package/await-to-js)，它的作用就是把 promise 包装一层，方便我们处理错误。
 
-我们知道 Promise 的出现解决了回调地狱的问题，async await 能将异步代码以同步代码的方式来书写，但是这两者在开发过程中都少不了对错误的捕捉，前者使用 [Promise.prototype.catch()](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Promise/catch) 后者使用 [try...catch](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Statements/try...catch)
+我们知道 Promise 的出现解决了回调地狱的问题，async await 能将异步代码以同步代码的方式来书写，但是这两者在开发过程中都少不了对错误的捕捉，前者使用 [Promise.prototype.catch()](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Promise/catch) 后者使用 [try...catch](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Statements/try...catch)。
+
+例如：
 
 ```js
 const p = Promise.reject('这是错误信息')
@@ -32,25 +37,60 @@ try {
 
 提醒一句，在实际开发中，有些同学嫌麻烦不喜欢捕捉错误，但是我强烈建议不要这样，否则你总有一天会迟到苦头的（别问我为什么知道😭）。
 
-`await-to-js` 的作用就是更优雅的处理对错误的捕捉，简单示例如下：
+
+## 什么是 `await-to-js`
+
+我们原来写 async 函数的时候需要这样写：
+
+```js
+async function asyncFn () {
+  try {
+    const data = await promiseFn(1)
+    // 这里有一大堆处理逻辑
+    // ...
+  } catch (error) {
+    console.log('出现了一些错误: ', error)
+  }
+}
+```
+
+其中 `promiseFn` 是一个返回 Promise 实例的函数。
+
+使用 try...catch 捕获错误就会让核心处理逻辑放在 try 后面的代码块内部，如果逻辑代码比较长，这样看起来总是不够简洁，又或者 `data` 还需要在 try...catch 之后再次使用，那就需要把 data 的定义提升到 try...catch 之前，然后在 try 的代码块中赋值，这样的结果就是除了不够简洁之外还需要注意类型问题。
+
+然而使用 `await-to-js` 之后，就可以不用 try...catch 包裹了，代码如下：
 
 ```js
 import to from 'await-to-js';
 
-const [ err, data ] = await to(promiseFn(1));
+async function asyncFn () {
+  const [ err, data ] = await to(promiseFn(1));
+
+  if (err) {
+    console.log('出现了一些错误: ', error)
+    return;
+  }
+
+  // 这里有一大堆处理逻辑
+  // ...
+}
 ```
 
+`promiseFn()` 经过 `to()` 函数处理会返回一个新的 Promise 实例，这个新 Promise 实例无论执行成功还是失败总是返回一个数组。
 
-其中 `promiseFn` 是一个返回 Promise 实例的函数，我们假定这个 Promise 执行成功时返回结果为 `data`，执行失败时的错误为 `error`。
+数组第一项用来存放 promiseFn() 的错误信息，如果没有错误信息则为 `null`，第二项用来存放 promiseFn() 执行成功的结果，如果没有则为 `undefined`。
 
-经过 `to()` 函数处理会返回一个新的 Promise 实例，这个新实例最终返回的数据结构是固定的，它总是返回一个数组，当原 promise 执行成功时，新 promise 返回的是 `[null, data]`，原 promise 执行失败时，新 promise 返回的是 `[error, undefined]`。
+然而由于 promiseFn() 最终状态要么是成功要么是失败，不可能同时是成功和失败，因此数组中要么第一项为 `null`，要么第二项为 `undefined`。
 
 ![await-to-js](https://static.webjam.cn/images/202406/await-to-js.webp)
 
-换种说法就是 `to()` 函数返回了两把座椅，第一把座椅是 `error` 专属，如果出现 `error` 了，就让它坐下来，如果没有 `error` 就把椅子空着，第二把同理，这是 `data` 专属，原 promise 执行成功了，就让执行结果坐第二把椅子，要不就空着。
+举一个形象一点的例子就是 `to()` 函数返回了两把座椅，第一把座椅是 `error` 专属，如果出现 `error` 了，就让它坐下来，如果没有 `error` 就把椅子空着，第二把是 `data` 专属，原 promise 执行成功了，就让执行结果坐第二把椅子，要不就空着。
 
-也因此，两者不可兼得，若有 `error` 则无 `data`，若有 `data` 则无 `error`。所以可以根据 `error` 是否存在来判断原 promise 的执行状态。
+由于这个特点我们就可以根据 `error` 是否存在来判断原 promise 的执行状态，可以在 error 存在的情况下直接 `return` 提前结束函数。
 
+那么 `try...catch` 还需要写吗？
+
+答案是，不用。请继续看下面的源码（源码超简单的）。
 
 ## 源码
 
@@ -80,13 +120,19 @@ export default to;
 //# sourceMappingURL=await-to-js.es5.js.map
 ```
 
-没错，实际上就只有一个函数，分别在原 promise 的 `.then` 和 `.catch` 中返回了前面说的固定结构的数组。
+没错，实际上源码就只有一个函数，分别在原 promise 的 `.then` 和 `.catch` 中返回了前面说的固定结构的数组。
 
-看了源码我们能发现有一点是 [await-to-js](https://www.npmjs.com/package/await-to-js) 文档没有说的，`to()` 函数可以传入第二个参数，这个参数会被合并到 `error` 错误对象中。
+看了源码我们还能有额外收获，`to()` 函数可以传入第二个参数，这个参数会被合并（`Object.assign()`）到 `error` 错误对象中，这一点是 [await-to-js](https://www.npmjs.com/package/await-to-js) 文档没有提到的（大概是使用概率很低）。
 
+有一个细节需要提一下，`catch` 中直接返回了数组，这会导致 `to()` 总是成功状态，这也就是外层调用 `to()` 的时候不需要使用 `try...catch` 捕获错误的原因。
 
-另外有一个 promise 的基础知识值得提一下，我估计很多同学都没注意到，那就是 `promise.catch()` 回调函数的返回值决定了这个 promise 最终状态。
+至于你本来的 `promise` 执行失败已经在 `to()` 内部捕获了，并且将 `err` 传递出来由调用者来决定如何处理。
 
+## 探寻 `promise.catch()` 返回值对 promise 状态的影响。
+
+上面提到的细节我估计很多同学不一定注意到，那就是 `promise.catch()` 回调函数的返回值决定了这个 promise 最终状态。
+
+举个最简单的例子：
 
 ```js
 const p = () => {
@@ -116,6 +162,49 @@ const p2 = p().catch(() => {
 
 简而言之就是 p2 的结果（状态）由 `.then` 和 `.catch` 执行链条中的最后一个决定。
 
+## 源码给我的启发
+
+看完源码，我觉得 `[error, data]` 这个结构也很适合在做一些校验的函数中作为返回值使用。
+
+比如之前我们会在检验通过返回检验值，检验未通过的时候返回 `false`，调用校验的时候就根据返回值是否为 `false` 来判断是否通过。
+
+但是这样的问题就是返回值类型不确定，而且传递信息有限，比如想要返回未通过检验的原因，那就需要将 `false` 改为更复杂的结构。
+
+如果改成 `[error, data]` 结构，我们就能根据第一项是否有值来判断是否通过校验，而且 `error` 本身就可以是未通过校验的原因，这样会更优雅。
+
+我们以「值是否大于 10」为例来写一个校验函数：
+
+```js
+function isMoreThan10(value) {
+
+  if(typeof value !== 'number') {
+    return [`${value} 不是数字类型`, undefined]
+  }
+
+  if(isNan(value)) {
+    return [`${value} 为 NaN，无法进行比较`, undefined]
+  }
+
+  if(value <= 10) {
+    return [`${value} 小于或等于 10`, undefined]
+  }
+
+  return [null, value]
+}
+```
+
+接下来调用校验函数：
+
+```js
+const [error, value] = isMoreThan10(4)
+if(error) {
+  console.log(error)
+}
+```
+
+得益于 `[error, data]` 结构，我们可以直接拿到 error 进行打印或者对用户进行提示，而且校验函数的返回值结构还总是固定的。
+
+怎么样，代码是不是简洁优雅了许多😄
 
 ## Reference
 - [Promise - JavaScript | MDN](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Promise)
