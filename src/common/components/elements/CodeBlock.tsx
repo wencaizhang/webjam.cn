@@ -89,7 +89,7 @@ const CodeBlock = ({
           </SyntaxHighlighter>
         </div>
       ) : (
-        <code className='font-light bg-neutral-200 text-sky-600 dark:text-sky-300 dark:bg-neutral-700 py-1 px-2 rounded-md text-[14px]'>
+        <code className='font-light bg-neutral-200 text-sky-600 dark:text-sky-300 dark:bg-neutral-700 py-1 px-1 rounded-md text-[14px]'>
           {children}
         </code>
       )}
