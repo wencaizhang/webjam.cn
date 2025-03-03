@@ -1,67 +1,58 @@
-import defaultIcon from '~public/icons/stack/code.svg';
-import gitlab from '~public/icons/stack/gitlab.svg';
-import lerna from '~public/icons/stack/lerna.svg';
-import prisma from '~public/icons/stack/prisma.svg';
-import ts from '~public/icons/stack/ts.svg';
-
-import Pinia from '~public/icons/stack/Pinia.svg';
-import css3 from '~public/icons/stack/css3.svg';
-import go from '~public/icons/stack/go.svg';
-import less from '~public/icons/stack/less.svg';
-import ps from '~public/icons/stack/ps.svg';
-import vant from '~public/icons/stack/vant.png';
-
 import actionvue from '~public/icons/stack/actionvue.png';
-import golang from '~public/icons/stack/golang.svg';
-import mysql from '~public/icons/stack/mysql.svg';
-import psv from '~public/icons/stack/psv.png';
-import vim from '~public/icons/stack/vim.svg';
-
 import angular from '~public/icons/stack/angular.svg';
-import docker from '~public/icons/stack/docker.svg';
-import html from '~public/icons/stack/html.svg';
-import nestjs from '~public/icons/stack/nestjs.svg';
-import python from '~public/icons/stack/python.svg';
-import vite from '~public/icons/stack/vite.svg';
-
 import antdv from '~public/icons/stack/antdv.png';
-import eleplus from '~public/icons/stack/ele+.png';
-import nextjs from '~public/icons/stack/nextjs.svg';
-import raspberrypi from '~public/icons/stack/raspberry-pi.svg';
-import vscode from '~public/icons/stack/vscode.svg';
-
 import axios from '~public/icons/stack/axios.webp';
-import ele from '~public/icons/stack/ele.png';
-import java from '~public/icons/stack/java.svg';
-import nginx from '~public/icons/stack/nginx.svg';
-import reactnative from '~public/icons/stack/react-native.svg';
-import vue from '~public/icons/stack/vue.svg';
-
 import babel from '~public/icons/stack/babel.svg';
-import es from '~public/icons/stack/es.svg';
-import nodejs from '~public/icons/stack/nodejs.svg';
-import react from '~public/icons/stack/react.svg';
-import webpack from '~public/icons/stack/webpack.svg';
-
 import caddy from '~public/icons/stack/caddy.png';
-import firefox from '~public/icons/stack/firefox.svg';
-import jenkins from '~public/icons/stack/jenkins.svg';
-import npm from '~public/icons/stack/npm.svg';
-import sass from '~public/icons/stack/sass.svg';
-import wordpress from '~public/icons/stack/wordpress.svg';
-
 import chrome from '~public/icons/stack/chrome.svg';
+import defaultIcon from '~public/icons/stack/code.svg';
+import css3 from '~public/icons/stack/css3.svg';
+import docker from '~public/icons/stack/docker.svg';
+import ele from '~public/icons/stack/ele.png';
+import eleplus from '~public/icons/stack/ele+.png';
+import es from '~public/icons/stack/es.svg';
+import firefox from '~public/icons/stack/firefox.svg';
 import flutter from '~public/icons/stack/flutter.svg';
-import js from '~public/icons/stack/javascript.svg';
-import php from '~public/icons/stack/php.svg';
-import shopify from '~public/icons/stack/shopify.svg';
-import yarn from '~public/icons/stack/yarn.svg';
-
 import git from '~public/icons/stack/git.svg';
+import gitlab from '~public/icons/stack/gitlab.svg';
+import go from '~public/icons/stack/go.svg';
+import golang from '~public/icons/stack/golang.svg';
+import html from '~public/icons/stack/html.svg';
+import java from '~public/icons/stack/java.svg';
+import js from '~public/icons/stack/javascript.svg';
+import jenkins from '~public/icons/stack/jenkins.svg';
 import k8s from '~public/icons/stack/k8s.svg';
+import lerna from '~public/icons/stack/lerna.svg';
+import less from '~public/icons/stack/less.svg';
+import mysql from '~public/icons/stack/mysql.svg';
+import nestjs from '~public/icons/stack/nestjs.svg';
+import nextjs from '~public/icons/stack/nextjs.svg';
+import nginx from '~public/icons/stack/nginx.svg';
+import nodejs from '~public/icons/stack/nodejs.svg';
+import npm from '~public/icons/stack/npm.svg';
+import php from '~public/icons/stack/php.svg';
+import Pinia from '~public/icons/stack/Pinia.svg';
 import postcss from '~public/icons/stack/postcss.svg';
+import prisma from '~public/icons/stack/prisma.svg';
+import ps from '~public/icons/stack/ps.svg';
+import psv from '~public/icons/stack/psv.png';
+import python from '~public/icons/stack/python.svg';
+import raspberrypi from '~public/icons/stack/raspberry-pi.svg';
+import react from '~public/icons/stack/react.svg';
+import reactnative from '~public/icons/stack/react-native.svg';
+import sass from '~public/icons/stack/sass.svg';
+import shopify from '~public/icons/stack/shopify.svg';
 import tailwindcss from '~public/icons/stack/tailwind-css.svg';
 import terminal from '~public/icons/stack/terminal.svg';
+import ts from '~public/icons/stack/ts.svg';
+import vant from '~public/icons/stack/vant.png';
+import vim from '~public/icons/stack/vim.svg';
+import vite from '~public/icons/stack/vite.svg';
+import vscode from '~public/icons/stack/vscode.svg';
+import vue from '~public/icons/stack/vue.svg';
+import webpack from '~public/icons/stack/webpack.svg';
+import wordpress from '~public/icons/stack/wordpress.svg';
+import yarn from '~public/icons/stack/yarn.svg';
 
 export const StackIconsMap = {
   defaultIcon,

@@ -52,16 +52,16 @@ featured_image_url: https://static.webjam.cn/images/202403/echarts-pie.webp
 
 ```html
 <script>
-  import debounce from 'lodash.debounce'
+  import debounce from 'lodash.debounce';
 
   export default {
-    data () {
+    data() {
       return {
-        myChart: null
-      }
+        myChart: null,
+      };
     },
     // ... 其他代码放在下面单独解释
-  }
+  };
 </script>
 ```
 
@@ -88,7 +88,9 @@ mounted () {
   window.addEventListener('resize', this.handleResizeChart)
 },
 ```
+
 这里做了三件事：
+
 1. 在 `mounted` 阶段先渲染图表(调用 `renderECharts()`)
 2. 封装重新渲染图表函数，使用防抖函数包裹
 3. 监听 `resize` 事件，重新渲染图表。
@@ -103,8 +105,7 @@ destroyed () {
 
 至此，`echarts` 图表根据浏览器窗口大小自动渲染问题算是解决了。
 
-
 ## Reference
 
-- [echartsInstance.resize  - Apache ECharts](https://echarts.apache.org/zh/api.html#echartsInstance.resize)
+- [echartsInstance.resize - Apache ECharts](https://echarts.apache.org/zh/api.html#echartsInstance.resize)
 - [监听图表容器的大小并改变图表大小 - Apache ECharts](https://echarts.apache.org/handbook/zh/concepts/chart-size/#%E7%9B%91%E5%90%AC%E5%9B%BE%E8%A1%A8%E5%AE%B9%E5%99%A8%E7%9A%84%E5%A4%A7%E5%B0%8F%E5%B9%B6%E6%94%B9%E5%8F%98%E5%9B%BE%E8%A1%A8%E5%A4%A7%E5%B0%8F)

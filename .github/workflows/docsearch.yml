@@ -1,8 +1,8 @@
 name: docsearch
 
 on:
-   - workflow_dispatch
-   - deployment
+  - workflow_dispatch
+  - deployment
 jobs:
   algolia:
     runs-on: ubuntu-latest

@@ -83,7 +83,10 @@ function myInsertAfter(newElement, targetElement) {
 
 ```js
 function myInsertAfter(newElement, targetElement) {
-  return targetElement.parentNode.insertBefore(newElement, targetElement.nextSibling);
+  return targetElement.parentNode.insertBefore(
+    newElement,
+    targetElement.nextSibling
+  );
 }
 ```
 

@@ -3,12 +3,12 @@ import { NextSeo } from 'next-seo';
 
 import BackButton from '@/common/components/elements/BackButton';
 import Container from '@/common/components/elements/Container';
+import NavigationSection from '@/common/components/elements/NavigationSection';
 import { getCollection, getEntry } from '@/common/libs/mdx';
 import { MdxFileContentProps } from '@/common/types/learn';
 import { siteMetadata } from '@/contents/siteMetadata';
 import ContentDetail from '@/modules/weekly/components/ContentDetail';
 import ContentDetailHeader from '@/modules/weekly/components/ContentDetailHeader';
-import NavigationSection from '@/common/components/elements/NavigationSection';
 
 type PageInfo = { title: string; href: string };
 interface WeeklyDetailPageProps {

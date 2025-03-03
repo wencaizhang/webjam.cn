@@ -10,15 +10,19 @@ draft: true
 featured_image_url: https://static.webjam.cn/images/202405/regexp.webp
 ---
 
-
 遇到一个需求: 现在有一段 HTML 字符串, 需要拿到这里面所有的 img 标签的 src 属性.
 
-HTML 字符串如下(已经过简化): 
+HTML 字符串如下(已经过简化):
 
 ```html
 <div class="row">
-    <!-- 注意里面三个 img 标签是在同一行 -->
-    <img src="https://static.fastadmin.net/assets/images/app/code.png" alt=""> <img src="https://static.fastadmin.net/assets/images/app/browser.png" alt=""> <img src="https://static.fastadmin.net/assets/images/app/laptop.png" alt="">
+  <!-- 注意里面三个 img 标签是在同一行 -->
+  <img src="https://static.fastadmin.net/assets/images/app/code.png" alt="" />
+  <img
+    src="https://static.fastadmin.net/assets/images/app/browser.png"
+    alt=""
+  />
+  <img src="https://static.fastadmin.net/assets/images/app/laptop.png" alt="" />
 </div>
 ```
 
@@ -42,8 +46,8 @@ HTML 字符串如下(已经过简化):
 
 ![例子之非贪婪模式](https://static.webjam.cn/images/202405/regex101-greedy-02.webp)
 
-
 这两个例子也都可以点击查看:
+
 - [例子之贪婪模式 - regex101](https://regex101.com/r/bLKSc8/1)
 - [例子之非贪婪模式 - regex101](https://regex101.com/r/bLKSc8/2)
 
@@ -53,7 +57,7 @@ HTML 字符串如下(已经过简化):
 
 `+`，`?`，`*`，`{n}`，`{n,}`，`{n,m}`
 
-与之对应的非贪婪匹配标识符如下: 
+与之对应的非贪婪匹配标识符如下:
 
 `+?`，`??`，`*?`，`{n}?`，`{n,}?`，`{n,m}?`
 
@@ -83,7 +87,7 @@ function getSrc(content) {
   }
 
   console.log(links);
-  return links
+  return links;
 }
 ```
 
@@ -91,9 +95,9 @@ function getSrc(content) {
 const html = `<div class="row">
     <!-- 注意里面三个 img 标签是在同一行 -->
     <img src="https://static.fastadmin.net/assets/images/app/code.png" alt=""> <img src="https://static.fastadmin.net/assets/images/app/browser.png" alt=""> <img src="https://static.fastadmin.net/assets/images/app/laptop.png" alt="">
-</div>`
+</div>`;
 
-getSrc(html)
+getSrc(html);
 
 // 得到全部的 src 属性值
 // [
@@ -103,12 +107,11 @@ getSrc(html)
 // ]
 ```
 
-
 ## Reference
 
 - [Regular Expression in Python. Regex | by Anurag | Medium](https://nowitsanurag.medium.com/regular-expression-in-python-f42483e80daa)
 - [The Complete Guide to Regular Expressions (Regex) - CoderPad](https://coderpad.io/blog/development/the-complete-guide-to-regular-expressions-regex/)
-- [js中的正则表达式入门 - 陈水水 - 博客园](https://www.cnblogs.com/chenmeng0818/p/6370819.html)
-- [正则表达式之 贪婪与非贪婪模式详解（概述）_正则表达式_脚本之家](https://www.jb51.net/article/31491.htm)
+- [js 中的正则表达式入门 - 陈水水 - 博客园](https://www.cnblogs.com/chenmeng0818/p/6370819.html)
+- [正则表达式之   贪婪与非贪婪模式详解（概述）*正则表达式*脚本之家](https://www.jb51.net/article/31491.htm)
 - [正则表达式 – 元字符 | 菜鸟教程](https://www.runoob.com/regexp/regexp-metachar.html)
-- [【正则表达式系列】贪婪与非贪婪模式 | Dailc的个人主页](http://www.dailichun.com/2017/07/06/regularExpressionGreedyAndLazy.html)
+- [【正则表达式系列】贪婪与非贪婪模式 | Dailc 的个人主页](http://www.dailichun.com/2017/07/06/regularExpressionGreedyAndLazy.html)

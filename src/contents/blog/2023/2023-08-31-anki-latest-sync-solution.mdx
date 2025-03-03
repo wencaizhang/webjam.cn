@@ -17,7 +17,6 @@ Anki 从 `2.1.57+` 开始已经内置了一个同步服务器，这意味着你�
 
 首先，根据你的电脑系统安装 Anki（安装方式见[各平台客户端下载地址](#各平台客户端下载地址))，这个软件我估计大家早已经安装了，不过要注意在 `2.1.57` 之后的版本才有同步服务功能，所以请检查你的软件版本。
 
-
 ### 执行命令启动服务
 
 然后如果你是 windows 系统，需要打开 `cmd.exe` 执行下面命令:
@@ -26,7 +25,7 @@ Anki 从 `2.1.57+` 开始已经内置了一个同步服务器，这意味着你�
 set SYNC_USER1=user:pass "\Program Files\anki\anki.exe" --syncserver
 ```
 
-如果你是苹果系统，则打开终端 Terminal.app 执行下面命令: 
+如果你是苹果系统，则打开终端 Terminal.app 执行下面命令:
 
 ```bash
 SYNC_USER1=user:pass /Applications/Anki.app/Contents/MacOS/anki --syncserver
@@ -37,7 +36,6 @@ SYNC_USER1=user:pass /Applications/Anki.app/Contents/MacOS/anki --syncserver
 所以执行上面命令之前需要把 `user` 和 `pass` 替换为你希望使用的用户名和密码，然后这个命令会创建一个新用户，然后你的各端 APP 就使用这个用户名和密码登录和同步。
 
 另外要注意 Windows 用户需要把命令里面的路径改为你电脑上真实的安装路径，苹果系统的路径一般是不需要改动了，只需要替换上你想使用的用户名和密码即可。
-
 
 ### 可选项：自定义端口号
 

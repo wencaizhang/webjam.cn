@@ -11,7 +11,6 @@ draft: true
 featured_image_url: https://static.webjam.cn/images/202405/vscode-search-01.webp
 ---
 
-
 ## 序
 
 项目开发维护过程中难免需要对代码「修修补补」，那么如何快速找到对应的代码位置呢？
@@ -23,7 +22,6 @@ featured_image_url: https://static.webjam.cn/images/202405/vscode-search-01.webp
 具体方法就是多个关键字同时搜索，嘻嘻，就是这么简单。想想也是，根据单个关键词查找出来的结果很可能比较多，关键词越多搜索结果就越少，代码定位也就越准确。
 
 但是常规的搜索无法做到同时搜索多个关键词，因此需要借助搜索功能的**正则模式**。开启正则模式的开关就是下面示例截图中最右侧的 `.*` 符号，高亮状态就表示处于开启状态。
-
 
 ## 具体示例
 
@@ -39,7 +37,7 @@ featured_image_url: https://static.webjam.cn/images/202405/vscode-search-01.webp
 
 ![](https://static.webjam.cn/images/202405/vscode-search-02.webp)
 
-好吧，看起来并没有多大效果，这主要是刚好这两个关键字在业务中的关联性比较强，总是一起出现😄，不要灰心，此时可以继续增加关键字。
+好吧，看起来并没有多大效果，这主要是刚好这两个关键字在业务中的关联性比较强，总是一起出现 😄，不要灰心，此时可以继续增加关键字。
 
 ![](https://static.webjam.cn/images/202405/vscode-search-03.webp)
 
@@ -71,7 +69,6 @@ featured_image_url: https://static.webjam.cn/images/202405/vscode-search-01.webp
 
 2、还有就是选取的关键字最好是中文、英文、数字这三种类型，因为有一些符号在正则里面有特殊含义，遇到这些符号需要进行转义，反而更费时间，还记得咱们的目标吗？快速定位代码位置！
 
-
 ### （3） 辅助判断
 
 稍有经验的开发者都会按照一定的规范和语义来组织代码文件结构，因此可以根据搜索结果中的文件路径进行辅助判断
@@ -88,7 +85,6 @@ featured_image_url: https://static.webjam.cn/images/202405/vscode-search-01.webp
 - `*` 表示匹配一个或者多个，用于限制次数；
 - 跟在 `*` 后面的 `?` 表示「非贪婪匹配模式」，这样的话关键词组合出现几次就匹配几次，如果没有 `?` 则最多匹配到一次。
 
-
 下面也列出了一些能满足更特殊格式的正则
 
 #### 两个关键字在同一行
@@ -97,15 +93,13 @@ featured_image_url: https://static.webjam.cn/images/202405/vscode-search-01.webp
 关键词A(.*?)关键词B
 ```
 
-
 #### 两个关键字在相邻的两行
 
 ```
 关键词A(.*?\n.*?)关键词B
 ```
 
-
-## 一个奇怪的bug
+## 一个奇怪的 bug
 
 按道理在正则中 `[\w\W]` 和 `[\s\S]` 的效果应该是一样的，但是我替换成 `[\s\S]` 之后却搜索失败，没有搜到任何结果。
 
@@ -129,7 +123,7 @@ const match = str.match(regex);
 if (match) {
   console.log(match[0]);
 } else {
-  console.log("没有匹配到相关字符串");
+  console.log('没有匹配到相关字符串');
 }
 ```
 

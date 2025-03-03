@@ -6,19 +6,18 @@ date: '2024-05-09'
 featured: true
 tags:
   - antdv
-  - "Ant Design Vue"
+  - 'Ant Design Vue'
   - Vue
-  - "bug"
+  - 'bug'
 draft: false
 featured_image_url: https://static.webjam.cn/images/202405/antdv-table-select.webp
 ---
 
 ## 背景
 
-有一个 Vue （vue2.6 版本）项目使用了 [Ant Design Vue](https://www.antdv.com/) （1.6.5版本） 作为 UI 库，其中组件[表格 Table - Ant Design Vue](https://www.antdv.com/components/table-cn#components-table-demo-row-selection-and-operation) 提供了选择行的功能。
+有一个 Vue （vue2.6 版本）项目使用了 [Ant Design Vue](https://www.antdv.com/) （1.6.5 版本） 作为 UI 库，其中组件[表格 Table - Ant Design Vue](https://www.antdv.com/components/table-cn#components-table-demo-row-selection-and-operation) 提供了选择行的功能。
 
 ![](https://static.webjam.cn/images/202405/antdv-table-select.webp)
-
 
 核心代码如下：
 
@@ -30,20 +29,22 @@ featured_image_url: https://static.webjam.cn/images/202405/antdv-table-select.we
 </template>
 <script>
   export default {
-    data () {
+    data() {
       return {
-        selectedRowKeys: []
-      }
+        selectedRowKeys: [],
+      };
     },
     methods: {
-      onChange (selectedRowKeys) {
-        this.selectedRowKeys = selectedRowKeys
-      }
-    }
-  }
+      onChange(selectedRowKeys) {
+        this.selectedRowKeys = selectedRowKeys;
+      },
+    },
+  };
 </script>
 ```
+
 其中：
+
 - `a-table` 的 `row-selection` 属性接收 `selectedRowKeys` 用于回显当前已选中的行，每当行选择发生变化时候触发 `onChange`
 - `data` 中有一个数组 `selectedRowKeys` 保存所有选中行的 `id`
 - 方法 `onChange` 用来监听行的选中和取消选中的变化，每次变化形参 `selectedRowKeys` 是变化之后由 `a-table` 组件传递过来的当前选中行的 `id` 数组，我们拿到之后就存到 `this.selectedRowKeys` 上。
@@ -77,7 +78,6 @@ onChange (selectedRowKeys) {
 经过反复点击试验, 并不是每一行都会出现这个 Bug，会出现这个 Bug 的行都有这样的特点：曾经勾选的时候被 `onChange` 阻止选中。
 
 也就是说只要被「阻止选中」过，都需要点击两次才能完成勾选，而其他行就没有这个问题。
-
 
 ## 分析 Bug 找出原因
 
@@ -117,11 +117,10 @@ onChange (selectedRowKeys) {
 
 由于 `onChange` 事件无法拿到事件对象 `event`，所以通过文档找到了另外一个事件处理函数 `onSelect`，在 `onSelect` 中能够拿到原生的 `event` 对象，通过 `event` 对象就可以控制 `input` 的状态了。
 
-|  参数   | 描述  | 类型 |
-|  ----  | ----  | --- |
-| onChange  | 选中项发生变化时的回调 | `Function(selectedRowKeys, selectedRows)` |
-| onSelect  | 用户手动选择/取消选择某列的回调 | `Function(record, selected, selectedRows, nativeEvent)` |
-
+| 参数     | 描述                            | 类型                                                    |
+| -------- | ------------------------------- | ------------------------------------------------------- |
+| onChange | 选中项发生变化时的回调          | `Function(selectedRowKeys, selectedRows)`               |
+| onSelect | 用户手动选择/取消选择某列的回调 | `Function(record, selected, selectedRows, nativeEvent)` |
 
 最终代码如下：
 
@@ -133,24 +132,24 @@ onChange (selectedRowKeys) {
 </template>
 <script>
   export default {
-    data () {
+    data() {
       return {
-        selectedRowKeys: []
-      }
+        selectedRowKeys: [],
+      };
     },
     methods: {
       onSelect(record, selected, selectedRows, nativeEvent) {
-        const selectedRowKeys = selectedRows.map(item => item.id)
+        const selectedRowKeys = selectedRows.map((item) => item.id);
         if (selectedRowKeys.length > 2) {
           // 恢复 checkbox 的选中状态
-          nativeEvent.target.checked = false
-          console.log('最多可以选择两行')
+          nativeEvent.target.checked = false;
+          console.log('最多可以选择两行');
         } else {
-          this.selectedNetworkRowKeys = selectedRowKeys
+          this.selectedNetworkRowKeys = selectedRowKeys;
         }
-      }
-    }
-  }
+      },
+    },
+  };
 </script>
 ```
 

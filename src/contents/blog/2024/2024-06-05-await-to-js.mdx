@@ -22,34 +22,33 @@ featured_image_url: https://static.webjam.cn/images/202406/await-to-js-cover.web
 例如：
 
 ```js
-const p = Promise.reject('这是错误信息')
-p.catch(err => {
-  console.log(err)
-})
+const p = Promise.reject('这是错误信息');
+p.catch((err) => {
+  console.log(err);
+});
 
 // 或者
 try {
-  const result = await p
+  const result = await p;
 } catch (err) {
-  console.log(err)
+  console.log(err);
 }
 ```
 
-提醒一句，在实际开发中，有些同学嫌麻烦不喜欢捕捉错误，但是我强烈建议不要这样，否则你总有一天会迟到苦头的（别问我为什么知道😭）。
-
+提醒一句，在实际开发中，有些同学嫌麻烦不喜欢捕捉错误，但是我强烈建议不要这样，否则你总有一天会迟到苦头的（别问我为什么知道 😭）。
 
 ## 什么是 `await-to-js`
 
 我们原来写 async 函数的时候需要这样写：
 
 ```js
-async function asyncFn () {
+async function asyncFn() {
   try {
-    const data = await promiseFn(1)
+    const data = await promiseFn(1);
     // 这里有一大堆处理逻辑
     // ...
   } catch (error) {
-    console.log('出现了一些错误: ', error)
+    console.log('出现了一些错误: ', error);
   }
 }
 ```
@@ -63,11 +62,11 @@ async function asyncFn () {
 ```js
 import to from 'await-to-js';
 
-async function asyncFn () {
-  const [ err, data ] = await to(promiseFn(1));
+async function asyncFn() {
+  const [err, data] = await to(promiseFn(1));
 
   if (err) {
-    console.log('出现了一些错误: ', error)
+    console.log('出现了一些错误: ', error);
     return;
   }
 
@@ -106,7 +105,9 @@ async function asyncFn () {
  */
 function to(promise, errorExt) {
   return promise
-    .then(function (data) { return [null, data]; })
+    .then(function (data) {
+      return [null, data];
+    })
     .catch(function (err) {
       if (errorExt) {
         Object.assign(err, errorExt);
@@ -137,10 +138,10 @@ export default to;
 ```js
 const p = () => {
   return setTimeout(() => {
-    Promise.reject('错误信息')
+    Promise.reject('错误信息');
   }, 10);
-}
-const p1 = p()
+};
+const p1 = p();
 ```
 
 上面的 `p()` 函数直接执行，最终将得到一个 `rejected` 状态的 Promise 实例，如果稍微改写一下：
@@ -148,12 +149,12 @@ const p1 = p()
 ```js
 const p = () => {
   return setTimeout(() => {
-    Promise.reject('错误信息')
+    Promise.reject('错误信息');
   }, 10);
-}
+};
 const p2 = p().catch(() => {
   // 什么都不做
-})
+});
 ```
 
 添加一个 `.catch` 即使什么都不做，`p2` 也将变成 `fulfilled` 状态的的 Promise 实例。
@@ -176,37 +177,37 @@ const p2 = p().catch(() => {
 
 ```js
 function isMoreThan10(value) {
-
-  if(typeof value !== 'number') {
-    return [`${value} 不是数字类型`, undefined]
+  if (typeof value !== 'number') {
+    return [`${value} 不是数字类型`, undefined];
   }
 
-  if(isNan(value)) {
-    return [`${value} 为 NaN，无法进行比较`, undefined]
+  if (isNan(value)) {
+    return [`${value} 为 NaN，无法进行比较`, undefined];
   }
 
-  if(value <= 10) {
-    return [`${value} 小于或等于 10`, undefined]
+  if (value <= 10) {
+    return [`${value} 小于或等于 10`, undefined];
   }
 
-  return [null, value]
+  return [null, value];
 }
 ```
 
 接下来调用校验函数：
 
 ```js
-const [error, value] = isMoreThan10(4)
-if(error) {
-  console.log(error)
+const [error, value] = isMoreThan10(4);
+if (error) {
+  console.log(error);
 }
 ```
 
 得益于 `[error, data]` 结构，我们可以直接拿到 error 进行打印或者对用户进行提示，而且校验函数的返回值结构还总是固定的。
 
-怎么样，代码是不是简洁优雅了许多😄
+怎么样，代码是不是简洁优雅了许多 😄
 
 ## Reference
+
 - [Promise - JavaScript | MDN](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Promise)
 - [Promise.prototype.catch() - JavaScript | MDN](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Promise/catch)
 - [try...catch - JavaScript | MDN](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Statements/try...catch)

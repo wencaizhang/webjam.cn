@@ -17,19 +17,19 @@ draft: true
  * @returns Object 类型的表单数据
  */
 function getFormValues(formEleSelector) {
-  const formEle = document.querySelector(formEleSelector)
+  const formEle = document.querySelector(formEleSelector);
   if (!formEle) {
-    throw Error(`getFormValues: 未找到元素 ${formEleSelector}`)
+    throw Error(`getFormValues: 未找到元素 ${formEleSelector}`);
   }
   const formData = new FormData(formEle);
-  return Object.fromEntries(formData.entries())
+  return Object.fromEntries(formData.entries());
 }
 ```
 
 示例：
 
 ```js
-getFormValues("#form");
+getFormValues('#form');
 // { email: 'test@email.com', name: 'Test Name' }
 ```
 

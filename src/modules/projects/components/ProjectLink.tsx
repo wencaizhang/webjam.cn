@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { ReactNode } from 'react';
 import { BsGithub as GithubIcon } from 'react-icons/bs';
 import { FiExternalLink as LinkIcon } from 'react-icons/fi';
+
 import Tooltip from '@/common/components/elements/Tooltip';
 
 interface LinkComponentProps {

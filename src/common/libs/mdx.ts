@@ -85,7 +85,7 @@ export const getCollection = (
   if (withContent) {
     return files;
   }
-  return files.map(({ content, ...rest }) => ({ ...rest }));
+  return files.map(({ content: _content, ...rest }) => ({ ...rest }));
 };
 
 export const getEntry = (

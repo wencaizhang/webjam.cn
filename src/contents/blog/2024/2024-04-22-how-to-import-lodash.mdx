@@ -16,17 +16,16 @@ featured_image_url: https://static.webjam.cn/images/202405/how-to-import-lodash.
 
 ![](https://static.webjam.cn/images/202405/lodash-weekly-download.webp)
 
-
 ## 全量引入
 
 引入 lodash 最常见也最简单的的方式是：
 
 ```js
 // 方式1：引入整个lodash对象
-import _ from "lodash"
+import _ from 'lodash';
 
 // 方式2：按名称引入特定的函数
-import { cloneDeep } from "lodash"
+import { cloneDeep } from 'lodash';
 ```
 
 但是这两种方式都会引入整个 lodash 库。由于 Lodash 内部使用 CommonJS 模块规范, 而 CommonJS 模块的一个特点是不能很好地支持树摇。Webpack 和其他现代的 JavaScript 打包工具无法进行有效的静态分析，很难确定哪些导入的模块和函数在代码中实际被使用, 因此很难删除未使用的部分，导致打包后的体积较大。
@@ -36,7 +35,6 @@ import { cloneDeep } from "lodash"
 但是**仅在 Nodejs 项目推荐这种方式**, web 端还是比较在意代码体积的, 所以 web 端尽量还是使用按需加载来减少构建后的文件体积.
 
 ## 按需引入
-
 
 ### 方法一: 使用 ES 版本 `lodash-es` 库(强烈推荐)
 
@@ -61,8 +59,8 @@ import { isEmpty } from 'lodash-es';
 
 如果是一个大量使用 lodash 方法的项目, 又不想全局替换 `lodash-es`, 那么有一些插件可以在打包的时候去掉不必要的 lodash 代码，减小产物体积。
 
-- [babel-plugin-lodash](https://www.npmjs.com/package/babel-plugin-lodash "https://www.npmjs.com/package/babel-plugin-lodash")
-- [lodash-webpack-plugin](https://www.npmjs.com/package/lodash-webpack-plugin "https://www.npmjs.com/package/lodash-webpack-plugin")
+- [babel-plugin-lodash](https://www.npmjs.com/package/babel-plugin-lodash 'https://www.npmjs.com/package/babel-plugin-lodash')
+- [lodash-webpack-plugin](https://www.npmjs.com/package/lodash-webpack-plugin 'https://www.npmjs.com/package/lodash-webpack-plugin')
 
 具体使用方法看对应的文档.
 
@@ -71,8 +69,8 @@ import { isEmpty } from 'lodash-es';
 例如下面, 只引入 array 和 cloneDeep 模块的功能
 
 ```js
-import array from "lodash/array";
-import cloneDeep from "lodash/cloneDeep";
+import array from 'lodash/array';
+import cloneDeep from 'lodash/cloneDeep';
 ```
 
 这种方式只会引入引用路径对应的模块，无需使用插件，也不会有冗余代码。不过缺点嘛也挺明显, 写起来比较啰嗦, 每个 `import` 语句只能引入一个函数，可能导致多个 `import` 语句。
@@ -81,7 +79,7 @@ import cloneDeep from "lodash/cloneDeep";
 
 ### 方法四: 使用单独的函数库(勉强接受)
 
-Lodash 为每个方法提供了[单独的 npm 包](https://www.npmjs.com/search?q=keywords:lodash-modularized "https://www.npmjs.com/search?q=keywords:lodash-modularized")，你可以只下载你想要的函数。
+Lodash 为每个方法提供了[单独的 npm 包](https://www.npmjs.com/search?q=keywords:lodash-modularized 'https://www.npmjs.com/search?q=keywords:lodash-modularized')，你可以只下载你想要的函数。
 
 例如 `debounce` 方法:
 
@@ -91,14 +89,12 @@ pnpm i lodash.debounce
 ```
 
 ```js
-import debounce from 'lodash.debounce'
+import debounce from 'lodash.debounce';
 ```
 
 这种方法的好处不仅仅是最终打包结果体积很小, 而且依赖包的体积也比较小.
 
 但是除非你的整个项目只用到了 1-2 个 lodash 方法, 否则还是不建议这样使用. 首先，**它并不像看起来一样轻量**，因为每个 lodash 的方法都会使用一些公共代码, 这种方式下公用代码会存在于每一个函数包中, 这样就会导致重复引入公共代码。其次，每个方法都是独立的 npm 包，意味着多次安装、多个 `package.json` 依赖项以及多个 node_modules 目录, 而且和方法二一样, 每个 import 引入一个函数, 写起来也比较啰嗦。
-
-
 
 ## TypeScript 支持
 
@@ -114,7 +110,7 @@ pnpm add -D @types/lodash
 
 #### 小技巧之如何找到第三方库的 TypeScript 类型声明
 
- npm 网站会显示对应包的类型声明信息, 比如 [vue - npm](https://www.npmjs.com/package/vue) 这个库会显示一个 `TS` 的图标, 鼠标放上去会提示这个库有内置的 TypeScript 声明, 这样的就无需另外安装 `@types/xxx` 之类的库了.
+npm 网站会显示对应包的类型声明信息, 比如 [vue - npm](https://www.npmjs.com/package/vue) 这个库会显示一个 `TS` 的图标, 鼠标放上去会提示这个库有内置的 TypeScript 声明, 这样的就无需另外安装 `@types/xxx` 之类的库了.
 
 ![](https://static.webjam.cn/images/202405/npm-vue-ts.webp)
 
@@ -123,8 +119,6 @@ pnpm add -D @types/lodash
 ![](https://static.webjam.cn/images/202405/npm-lodash-es-dt.webp)
 
 > Definitely Typed 缩写为 DT, 它是一个开源项目，它的目标是为 JavaScript 各种库提供类型定义文件, 见: [DefinitelyTyped](https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/README.zh-Hans.md)
-
-
 
 ## Refer
 

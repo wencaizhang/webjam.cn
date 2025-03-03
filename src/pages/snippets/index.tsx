@@ -6,8 +6,8 @@ import Container from '@/common/components/elements/Container';
 import PageHeading from '@/common/components/elements/PageHeading';
 import { getCollection } from '@/common/libs/mdx';
 import { MdxFileContentProps } from '@/common/types/snippets';
-import { siteMetadata } from '@/contents/siteMetadata';
 import { BrandIcon } from '@/common/types/StackIcon';
+import { siteMetadata } from '@/contents/siteMetadata';
 
 interface ContentPageProps {
   contentList: MdxFileContentProps[];

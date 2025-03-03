@@ -12,9 +12,7 @@ featured_image_url: https://static.webjam.cn/images/202405/import-esm-in-cjs-fil
 
 ![](https://static.webjam.cn/images/202405/import-esm-in-cjs-file.webp)
 
-
-前面写了关于[如何在 ESM 模块中引入 CJS 模块](./import-cjs-in-esm-file)的文章, 没过多久就又遇到了在 CJS 模块中引入 ES 模块的需求😅
-
+前面写了关于[如何在 ESM 模块中引入 CJS 模块](./import-cjs-in-esm-file)的文章, 没过多久就又遇到了在 CJS 模块中引入 ES 模块的需求 😅
 
 ## 问题介绍
 
@@ -26,10 +24,9 @@ featured_image_url: https://static.webjam.cn/images/202405/import-esm-in-cjs-fil
 
 npm 包大致分为三类, 第一类是仅支持 CJS 规范的, 这一类一般都是年代特别久远的 npm 包, 而且已经很久不更新了, 第二类是同时支持 CJS 和 ESM 规范, 它们一般通过打包工具完成对不同规范的支持, 第三类则是只支持 ESM 规范, 因为创建时间比较晚, 所以没有 CJS 的历史包袱.
 
+说回这次的问题, 因为 Nestjs 默认就是 ESM 规范的写法, 例如 `import { log } from '../utils';`, 所以我就认为 Nestjs 使用的是 ESM 规范, 而 [coder-hxl/x-crawl](https://github.com/coder-hxl/x-crawl) 也是支持 ESM 规范的, 但引入之后却始终报错提示模块引入错误.
 
-说回这次的问题, 因为 Nestjs 默认就是 ESM 规范的写法, 例如 `import { log } from '../utils';`, 所以我就认为 Nestjs 使用的是 ESM 规范, 而  [coder-hxl/x-crawl](https://github.com/coder-hxl/x-crawl) 也是支持 ESM 规范的, 但引入之后却始终报错提示模块引入错误.
-
-但其实呢问题出在 Nestjs 框架上, 使用 Nestjs 框架写代码使用 ESM 规范, 但是它最终打包产物却使用了 CJS 规范 😯. 我按照 ESM 规范写出来的代码, 最终会编译成 CJS 规范的代码, 而通过 `import` 引入模块的语句, 也会变成 CJS 规范下的 `require` 语句. 
+但其实呢问题出在 Nestjs 框架上, 使用 Nestjs 框架写代码使用 ESM 规范, 但是它最终打包产物却使用了 CJS 规范 😯. 我按照 ESM 规范写出来的代码, 最终会编译成 CJS 规范的代码, 而通过 `import` 引入模块的语句, 也会变成 CJS 规范下的 `require` 语句.
 
 问题就出现在这一步, 如果是引入了 npm 包, 因为打包之后变成了 CJS 规范的 `require` 语句进行引入, 因此遇到只支持 ESM 规范, 不支持 CJS 规范的 npm 包, 那自然是模块导入失败, 提示引入错误也就合情合理了吧 🤔
 
@@ -47,20 +44,17 @@ npm 包大致分为三类, 第一类是仅支持 CJS 规范的, 这一类一般�
 
 ```js
 const importDynamic = new Function('modulePath', 'return import(modulePath)');
-importDynamic('x-crawl').then(xCrawl => {
-  const { createCrawl } = xCrawl
+importDynamic('x-crawl').then((xCrawl) => {
+  const { createCrawl } = xCrawl;
   // do something
-})
+});
 ```
 
 `modulePath` 则是 ESM 模块的相对路径或者绝对路径, 如果是 npm 包则直接写包名即可.
 
 关于这个问题的复现代码我也单独创建了一个 repo 在这里 [https://github.com/wencaizhang/nestjs-crawl-bug-demo](https://github.com/wencaizhang/nestjs-crawl-bug-demo) 有兴趣可以狠狠点击查看具体代码.
 
-
-
 ## 其他
-
 
 ### 只支持 ESM 的 npm 包
 
@@ -75,10 +69,6 @@ importDynamic('x-crawl').then(xCrawl => {
 
 ### 一些文档
 
-- [关于纯ESM包 --- Pure ESM package](https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c)
+- [关于纯 ESM 包 --- Pure ESM package](https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c)
 - [import()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/import)
 - [Function() 构造函数 - JavaScript | MDN](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Function/Function)
-
-
-
-
