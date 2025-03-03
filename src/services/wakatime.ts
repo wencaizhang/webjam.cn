@@ -47,6 +47,7 @@ export const getReadStats = async (): Promise<{
   });
 
   const status = response.status;
+  // eslint-disable-next-line no-console
   console.log('aulianza ~ getReadStats ~ status : ', status);
 
   if (status >= 400) return { status, data: [] };

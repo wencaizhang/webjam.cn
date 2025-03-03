@@ -4,13 +4,6 @@ import GiscusComment from '@/modules/blog/components/GiscusComment';
 import ContentBody from './ContentBody';
 import ContentPlayground from './ContentPlayground';
 
-interface ContentListItemProps {
-  id: number;
-  parent_slug: string;
-  slug: string;
-  title: string;
-}
-
 interface ContentDetailProps {
   content: string;
   frontMatter: SubContentMetaProps;
