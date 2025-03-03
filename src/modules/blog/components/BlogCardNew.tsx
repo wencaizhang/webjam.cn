@@ -17,7 +17,7 @@ import { author, siteMetadata } from '@/contents/siteMetadata';
 const BlogCardNew = (blogData: BlogItemProps) => {
   const [isHovered, setIsHovered] = useState<boolean>(false);
 
-  const defaultImage = '/images/placeholder.png';
+  const src = blogData.frontMatter.featured_image_url;
 
   const slideDownVariants = {
     hidden: { opacity: 0, y: -10 },
@@ -39,11 +39,11 @@ const BlogCardNew = (blogData: BlogItemProps) => {
           }}
         >
           <Image
-            src={blogData.frontMatter.featured_image_url || defaultImage}
+            src={src}
             alt={blogData.frontMatter.title}
             fill={true}
             sizes='100vw, 100vh'
-            className='object-cover object-left w-full h-full transform transition-transform duration-300 group-hover:scale-105 group-hover:blur-sm'
+            className='relative object-cover object-left w-full h-full transform transition-transform duration-300 group-hover:scale-105 group-hover:blur-sm'
           />
           <div className='absolute inset-0 bg-gradient-to-b from-black/20 to-black opacity-80 transition-opacity duration-300'></div>
         </div>

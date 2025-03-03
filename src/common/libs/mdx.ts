@@ -40,6 +40,11 @@ export const _loadMdxFiles = (dirPath: string): MdxFileProps[] => {
         ? file.replace('.mdx', '')
         : file.replace('.md', '');
 
+      if (!data.featured_image_url) {
+        const randomSrc = `/images/bg/bg${Math.floor(Math.random() * 15)}.svg`;
+        data.featured_image_url = randomSrc;
+      }
+
       return {
         slug: data.slug || filename,
         frontMatter: data,
