@@ -1,0 +1,255 @@
+---
+title: 使用 Caddy 部署单页面应用
+slug: caddy
+summary: Caddy 是使用 go 开发的高性能可拓展 web 服务器，它还有一个独特的功能就是自动 HTTPS.
+date: '2024-06-05'
+featured: true
+tags:
+  - Caddy
+  - Nginx
+  - Proxy
+  - 反向代理
+draft: true
+featured_image_url: https://static.webjam.cn/images/202407/caddy-width.webp
+---
+
+## 这篇文章写什么？
+
+这篇文章写如何安装使用 Caddy 以及如何部署单页应用
+
+## 对谁有用
+
+对想要自己部署网站，特别是希望能使用 https 部署的人有用
+
+## 前置条件
+
+有一台电脑（服务器）
+
+## 什么是 Caddy
+
+官网地址： [https://caddyserver.com/](https://caddyserver.com/)
+
+Caddy 是使用 go 开发的高性能可拓展 web 服务器，它还有一个独特的功能就是自动 HTTPS.
+
+## 如何安装
+
+安装手册：[https://caddyserver.com/docs/install](https://caddyserver.com/docs/install)
+
+```bash
+# Ubuntu
+apt install caddy
+
+# Mac
+brew install caddy
+```
+
+## 如何启动
+
+这是在前台启动 caddy 服务。也就是说关闭终端，那么 Caddy 也随之关闭。
+
+```bash
+caddy run
+```
+
+也可以手动按 `Ctrl` + `C` 来主动停止 Caddy 服务。
+
+我们通常更希望启动 Caddy 并让它在后台运行，这时候你可以执行：
+
+```bash
+caddy start
+```
+
+此时 Caddy 在后台运行， 这种情况按 `Ctrl` + `C` 无法停止 Caddy，停止 Caddy 服务有专用的命令：
+
+```bash
+caddy stop
+```
+
+## 配置文件
+
+### 配置文件格式
+
+Caddy 支持两种格式配置文件，一种是 JSON 格式，一种是叫做 `Caddyfile` (没有后缀) 的文件。
+
+关于两种格式的对比，官方文档给出了一个表格，详情查看：[JSON vs. Caddyfile](https://caddyserver.com/docs/getting-started#json-vs-caddyfile)
+
+我的建议是大部分需求直接使用 Caddyfile 即可，优点是写起来更简单。
+
+例如启动一个静态文件服务器
+
+```txt
+localhost:8080 {
+  root * /var/www/mysite
+  file_server
+}
+```
+
+### 如何加载配置文件
+
+Ubuntu 使用 apt 安装 Caddy 后默认配置文件是 `/etc/caddy/Caddyfile`，Mac 使用 brew 安装的默认配置文件是 `/opt/homebrew/etc/Caddyfile`。
+
+但其实 Caddy 不限制配置文件的存放位置，不过执行命令时所处的路径和配置文件的路径的相对关系会影响启动命令的参数。
+
+**如果当前目录中存在名为 `Caddyfile` 的文件:**
+
+```bash
+caddy run
+```
+
+无需指定配置文件，Caddy 会从当前目录查找并加载配置文件。
+
+**如果 Caddyfile 在其他地方，那么需要通过 `--config` 指定文件路径:**
+
+```bash
+caddy run --config /path/to/Caddyfile
+```
+
+**如果配置文件没有用 `Caddyfile` 来命名，需要指定 `--adapter caddyfile`:**
+
+```bash
+caddy run --config /path/to/config-file --adapter caddyfile
+```
+
+**如果想要使用上次启动时加载的配置，有一个简单的写法：**
+
+```bash
+caddy run --resume
+```
+
+如果想要在后台运行 Caddy，将上面命令中的 `caddy run` 替换为 `caddy start` 即可。
+
+## 配置文件的格式
+
+// todo
+
+## 常见的使用场景
+
+### 静态文件服务
+
+```txt
+localhost:8080 {
+  # 指定文件目录
+  root * /var/www/mysite
+  # 启用压缩
+  encode zstd gzip
+  # 静态文件服务
+  file_server
+}
+```
+
+如果目录下没有 `index.html` 作为索引文件，但是希望能把目录下的文件都列出来，需要增加 `browse` 参数：
+
+```txt
+localhost:8080 {
+  # 指定文件目录
+  root * /var/www/mysite
+  # 启用压缩
+  encode zstd gzip
+  # 静态文件服务
+  file_server browse
+}
+```
+
+甚至还可以隐藏指定文件和目录：
+
+```txt
+localhost:8080 {
+  # 指定文件目录
+  root * /var/www/mysite
+  # 启用压缩
+  encode zstd gzip
+  # 静态文件服务
+  file_server browse {
+    hide .DS_Store .git
+  }
+}
+```
+
+更多细节参考文档：[file_server](https://caddyserver.com/docs/caddyfile/directives/file_server)
+
+### 部署前端应用(反向代理)
+
+参考文档：[reverse_proxy (Caddyfile directive) — Caddy Documentation](https://caddyserver.com/docs/caddyfile/directives/reverse_proxy)
+
+实际上前端应用基本上和上面的静态文件服务一样，不过一般会多一个对接口的反向代理。
+
+#### 匹配到特定前缀后直接转发请求
+
+```txt
+spa.local {
+  root * /var/www/mysite
+  encode zstd gzip
+  file_server
+
+  reverse_proxy /api/* {
+    to localhost:9000
+  }
+}
+```
+
+这个配置的意思是遇到以 `/api` 开头的请求，会**直接转发**到 `localhost:9000`
+
+#### 移除前缀
+
+通常适用于部署 web 应用，需要对接口请求进行反向代理
+
+```txt
+spa.local {
+  root * /var/www/mysite
+  encode zstd gzip
+  file_server
+
+  handle_path /prefix/* {
+    reverse_proxy localhost:9000
+  }
+}
+```
+
+上面的配置会将 `/prefix` 开头的请求**去掉前缀** `/prefix` 后都转发到 `localhost:9000`。
+
+#### 替换一个路径前缀
+
+```txt
+spa.local {
+  root * /var/www/mysite
+  encode zstd gzip
+  file_server
+
+  handle_path /old-prefix/* {
+    rewrite * /new-prefix{path}
+    reverse_proxy localhost:9000
+  }
+}
+```
+
+上面的配置会将 `/old-prefix` 开头的请求**替换前缀**为 `/new-prefix` 后都转发到 `localhost:9000`
+
+#### 反向代理所有请求到本地后端
+
+```txt
+api.local {
+ reverse_proxy 127.0.0.1:9300
+}
+```
+
+#### 负载均衡
+
+通过指定多个目标服务端口，就可以实现负载均衡。
+
+```txt
+api.local {
+ reverse_proxy 127.0.0.1:9300 127.0.0.1:9301 127.0.0.1:9302
+}
+```
+
+## HTTPS
+
+Caddyfile 是第一个也是唯一一个默认自动启用 HTTPS 协议的 web 服务器。—— [Automatic HTTPS — Caddy Documentation](https://caddyserver.com/docs/automatic-https)
+
+默认情况下，Caddy 通过 HTTPS 为所有站点提供服务。而且 Caddy 保持所有管理证书更新，并自动将 HTTP（默认端口 80 ）重定向到 HTTPS（默认端口 443 ）。
+
+因此，我们无需额外操作，就能享受 HTTPS 协议服务。
+
+## 完
+
+本文完，感谢阅读。
