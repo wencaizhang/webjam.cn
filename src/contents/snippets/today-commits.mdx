@@ -1,0 +1,60 @@
+---
+title: 脚本获取今天的 commit 记录
+description: 最近想要记录自己每日产出(填写周报)，作为一个程序员，那么自然就要拿到每天的 commit 记录，所以就写了个脚本自动帮我过滤并且拼接成 markdown 格式。
+slug: today-commit
+date: '2025-05-12'
+featured: fasle
+type: bash
+draft: true
+---
+
+最近想要记录自己每日产出(填写周报)，作为一个程序员，那么自然就要拿到每天的 commit 记录，所以就写了个脚本自动帮我过滤并且拼接成 markdown 格式, 最终效果如下：
+
+![今天的 commit](https://static.webjam.cn/images/202505/today-commit.webp)
+
+## 脚本内容
+
+在 `~/bin` 下创建文件 `today-commits.sh`, 内容如下：
+
+```sh
+#!/bin/bash
+
+# 获取今天的日期
+TODAY=$(date +%Y-%m-%d)
+
+# 获取当前git用户名
+CURRENT_USER=$(git config user.name)
+
+# 输出markdown标题
+echo "# ${TODAY} ${CURRENT_USER} 的提交记录"
+echo
+# 获取今天的git提交记录并格式化为markdown，使用tr命令去除多余空行，最后添加换行符
+git log --since="00:00:00" --until="23:59:59" \
+    --author="$CURRENT_USER" \
+    --pretty=format:"- %s" | tr -s '\n' && echo
+```
+
+## 封装全局命令 alias
+
+然后定义成全局 alias 方便在任意项目中执行这个脚本，打开 `~/.zshrc` 文件，添加下面这行代码即可：
+
+```
+alias tc='~/bin/today-commits.sh'
+```
+
+## 使用
+
+每次修改 `~/.zshrc` 之后，一定重新加载一下该文件，否则 alias 不会生效，执行下面命令即可：
+
+```bash
+source ~/.zshrc
+```
+
+然后在任意项目中执行 `tc` 命令即可查看今天的 commit 记录了。
+
+甚至可以和 `pbcopy` 命令组合，一键复制到剪切板中：
+
+```bash
+tc | pbcopy
+```
+
