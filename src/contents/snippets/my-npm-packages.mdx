@@ -1,0 +1,78 @@
+---
+title: 我常用的全局 npm 包
+description: 有一些 npm 包非常好用，但是使用 nvm 切换 node 版本之后，就不能直接使用了，因为 nvm 切换 node 版本之后，全局安装的 npm 包路径就变了，所以需要重新安装这些包。
+slug: my-npm-packages
+date: '2025-05-12'
+featured: false
+type: npm
+draft: true
+---
+
+有一些 npm 包非常好用，但是使用 nvm 切换 node 版本之后，全局安装的 npm 包路径就变了，所以需要重新安装这些包。
+
+## 常用的包有哪些
+
+这里记录一下我常用的 npm 包，方便后面切换 node 版本之后重新安装。
+
+- **http-server**: 一个简单的 http 服务器，可以用来查看本地文件
+- **pm2**: 一个进程管理器，可以用来管理 node 服务
+- **nrm**: 一个 npm 源管理器，可以用来切换 npm 源(对 pnpm 也生效， 如果你使用 yarn 可以安装 yrm)
+- **git-open**: 可以用来在命令行中打开仓库对应的网页
+- **npkill**: 帮助查找和删除 node_modules 文件夹，释放磁盘空间
+- **openapi-typescript**: 一个生成 typescript 类型的工具，可以从 OpenAPI 规范生成 TypeScript 类型
+
+安装命令如下:
+
+```bash
+npm install -g http-server pm2 nrm openapi-typescript git-open npkill
+```
+
+## 如何查看全局包有哪些
+
+根据你使用的包管理器，选择相应的命令即可查看全局安装的包：
+
+- **npm:** `npm list -g` 或 `npm list -g --depth=0`
+- **Yarn:** `yarn global list`
+- **pnpm:** `pnpm list -g` 或 `pnpm list -g --depth 0`
+
+## 解决 nvm 切换版本后全局包丢失问题
+
+使用 nvm 切换 Node.js 版本后，全局安装的包会"丢失"，这是因为每个 Node.js 版本有独立的全局包安装路径。以下是几种解决方案：
+
+### 方案一：为每个版本重新安装全局包
+
+最直接的方法是在切换到新版本后，重新安装所需的全局包：
+
+```bash
+# 切换到新版本
+nvm use 18
+# 安装全局包
+npm install -g http-server pm2 nrm
+```
+
+### 方案二：使用 nvm 的 reinstall-packages 命令
+
+nvm 提供了一个命令，可以将一个版本的全局包重新安装到另一个版本：
+
+```bash
+# 从 Node.js 16 安装包到当前版本
+nvm reinstall-packages 16
+```
+
+### 方案三：创建一个脚本自动安装常用包
+
+可以创建一个脚本，在切换版本后自动安装常用的全局包：
+
+```bash
+# 创建 install-globals.sh
+echo '#!/bin/bash
+npm install -g http-server pm2 nrm openapi-typescript git-open npkill
+' > install-globals.sh
+
+# 添加执行权限
+chmod +x install-globals.sh
+
+# 使用时
+./install-globals.sh
+```
+
