@@ -1,0 +1,16 @@
+{
+  "cleanUrls": true,
+  "trailingSlash": true,
+  "rewrites": [{ "source": "/api/**", "destination": "/404.html" }],
+  "headers": [
+    {
+      "source": "**/*.@(jpg|jpeg|gif|png|webp|svg|ico|css|js)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    }
+  ]
+}
