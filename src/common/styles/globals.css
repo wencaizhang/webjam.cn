@@ -50,7 +50,8 @@ a {
 }
 
 ::-webkit-scrollbar {
-  @apply w-1;
+  /* @apply w-1; */
+  width: 0.25rem;
 }
 
 ::-webkit-scrollbar-track {
@@ -58,5 +59,6 @@ a {
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply rounded-[3px] border-2 border-neutral-300 bg-neutral-600 dark:bg-neutral-400;
+  /* todo: 暂时注释，后面再看 */
+  /* @apply rounded-[3px] border-2 border-neutral-300 bg-neutral-600 dark:bg-neutral-400; */
 }

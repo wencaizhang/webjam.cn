@@ -1,3 +1,5 @@
+'use client';
+
 import React, { createContext, ReactNode, useState } from 'react';
 
 interface CommandPaletteContextType {
