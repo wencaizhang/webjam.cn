@@ -58,7 +58,7 @@
 - [x] 增加 「代码段」模块
 - [ ] 重构代码结构（ contents 放在最外层，nextjs 代码作为主题放在某个子目录下）
 - [ ] 增加分享功能：https://github.com/nygardk/react-share?tab=readme-ov-file
-- [ ] 递增式静态再生ISR： https://vercel.com/templates/next.js/isr-blog-nextjs-wordpress 增量
+- [ ] 递增式静态再生 ISR： https://vercel.com/templates/next.js/isr-blog-nextjs-wordpress 增量
 
 ## 如何运行
 
