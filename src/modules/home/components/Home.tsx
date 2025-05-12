@@ -1,3 +1,5 @@
+'use client';
+
 import Breakline from '@/common/components/elements/Breakline';
 import { BlogItemProps } from '@/common/types/blog';
 

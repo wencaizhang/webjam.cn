@@ -1,3 +1,5 @@
+'use client';
+
 import { useContext } from 'react';
 import { BiCommand as CommandIcon } from 'react-icons/bi';
 import { useWindowSize } from 'usehooks-ts';

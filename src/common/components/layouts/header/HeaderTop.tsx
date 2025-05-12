@@ -1,6 +1,8 @@
+'use client';
+
 import clsx from 'clsx';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
+import { usePathname } from 'next/navigation';
 import { useContext, useState } from 'react';
 import { BiCommand as CommandIcon } from 'react-icons/bi';
 import { FiMenu as MenuIcon } from 'react-icons/fi';
@@ -23,7 +25,7 @@ const HeaderTop = () => {
   const { setIsOpen } = useContext(CommandPaletteContext);
   const [showMenu, setShowMenu] = useState(false);
 
-  const router = useRouter();
+  const pathname = usePathname();
   const isMobile = useIsMobile();
 
   const menus = MENU_ITEMS.filter(
@@ -47,7 +49,7 @@ const HeaderTop = () => {
           {!showMenu && (
             <div className='flex items-center gap-3'>
               <Link href='/' passHref>
-                <h2 className='flex-grow text-lg lg:text-xl font-sora font-medium'>
+                <h2 className='grow text-lg lg:text-xl font-sora font-medium'>
                   {siteMetadata.siteShortTitle}
                 </h2>
               </Link>
@@ -72,8 +74,8 @@ const HeaderTop = () => {
                   passHref
                   className={clsx(
                     'text-neutral-700 hover:text-neutral-800 dark:text-neutral-400 hover:dark:text-neutral-100',
-                    router.pathname === menu?.href &&
-                      '!text-neutral-800 dark:!text-neutral-100'
+                    pathname === menu?.href &&
+                      'text-neutral-800! dark:text-neutral-100!'
                   )}
                 >
                   <div>{menu.title}</div>

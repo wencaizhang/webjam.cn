@@ -1,3 +1,5 @@
+'use client';
+
 import clsx from 'clsx';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
@@ -78,7 +80,7 @@ const BlogCardNew = (blogData: BlogItemProps) => {
                 </p>
               )}
             </div>
-            <Breakline className='!border-neutral-700' />
+            <Breakline className='border-neutral-700!' />
             <div className='flex justify-between gap-4 text-neutral-400 px-0.5'>
               <Tooltip title={`by ${author.name}`}>
                 <Image

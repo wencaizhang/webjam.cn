@@ -10,7 +10,7 @@ const BlogFeaturedHeroSkeleton = () => {
         <Skeleton
           height={400}
           containerClassName='flex'
-          className='!rounded-xl'
+          className='rounded-xl!'
         />
       </Card>
     </SkeletonLoader>

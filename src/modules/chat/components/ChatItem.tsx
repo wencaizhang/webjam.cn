@@ -59,7 +59,7 @@ const ChatItem = ({
               {name}
             </div>
             {email === authorEmail && (
-              <div className='flex items-center gap-0.5 text-violet-50 bg-gradient-to-bl from-purple-800 via-violet-900 to-purple-800 rounded-full px-1.5 py-0.5 text-medium'>
+              <div className='flex items-center gap-0.5 text-violet-50 bg-linear-to-bl from-purple-800 via-violet-900 to-purple-800 rounded-full px-1.5 py-0.5 text-medium'>
                 <AdminIcon size={13} />
                 <span className='text-[10px] font-sora'>Author</span>
               </div>

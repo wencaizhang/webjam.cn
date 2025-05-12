@@ -1,3 +1,5 @@
+'use client';
+
 import {
   MdOutlineFullscreen as FullScreenIcon,
   MdOutlineFullscreenExit as ExitFullScreenIcon,

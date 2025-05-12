@@ -1,3 +1,5 @@
+'use client';
+
 import Breakline from '@/common/components/elements/Breakline';
 import MDXComponent from '@/common/components/elements/MDXComponent';
 import { BlogDetailProps } from '@/common/types/blog';
@@ -32,7 +34,7 @@ const BlogDetail = (blogData: BlogDetailProps) => {
           </div>
         </div>
       )}
-      <Breakline className='!my-10' />
+      <Breakline className='my-10!' />
     </article>
   );
 };

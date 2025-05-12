@@ -1,3 +1,5 @@
+'use client';
+
 import clsx from 'clsx';
 import { AnimatePresence } from 'framer-motion';
 import { useEffect, useState } from 'react';
@@ -48,7 +50,7 @@ const Profile = ({ isScrolled = false }: ProfileProps) => {
     <MenuContext.Provider value={{ hideNavbar }}>
       <div
         className={clsx(
-          'z-20 fixed shadow-sm sm:shadow-none lg:border-none dark:border-b dark:border-neutral-800 bg-light dark:bg-dark lg:!bg-transparent w-full p-5 lg:relative lg:p-0',
+          'z-20 fixed shadow-sm sm:shadow-none lg:border-none dark:border-b dark:border-neutral-800 bg-light dark:bg-dark lg:bg-transparent! w-full p-5 lg:relative lg:p-0',
           expandMenu && 'pb-0'
         )}
       >
@@ -67,7 +69,7 @@ const Profile = ({ isScrolled = false }: ProfileProps) => {
               className={clsx(
                 'flex lg:hidden items-center gap-5 mt-2',
                 expandMenu &&
-                  '!items-end flex-col-reverse justify-between h-[120px] pb-1'
+                  'items-end! flex-col-reverse justify-between h-[120px] pb-1'
               )}
             >
               <ThemeToggleButton />

@@ -1,3 +1,5 @@
+'use client';
+
 import { BiLeftArrowCircle as BackButton } from 'react-icons/bi';
 import Typewriter from 'typewriter-effect';
 

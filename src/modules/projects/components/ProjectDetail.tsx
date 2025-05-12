@@ -1,3 +1,5 @@
+'use client';
+
 import Image from '@/common/components/elements/Image';
 import MDXComponent from '@/common/components/elements/MDXComponent';
 import Tooltip from '@/common/components/elements/Tooltip';

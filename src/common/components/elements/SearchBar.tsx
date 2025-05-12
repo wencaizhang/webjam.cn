@@ -1,3 +1,5 @@
+'use client';
+
 import { BiSearchAlt as SearchIcon, BiX as ClearIcon } from 'react-icons/bi';
 
 interface SearchBarProps {

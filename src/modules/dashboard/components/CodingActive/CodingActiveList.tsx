@@ -59,7 +59,7 @@ const CodingActiveList = ({ data }: CodingActiveListProps) => {
       total: getLanguagesTotalTimeDisplay,
       data: data?.languages,
       styles: {
-        bg: 'bg-gradient-to-r from-amber-400 to-rose-600',
+        bg: 'bg-linear-to-r from-amber-400 to-rose-600',
       },
     },
     {
@@ -67,7 +67,7 @@ const CodingActiveList = ({ data }: CodingActiveListProps) => {
       total: getEditorTotalTimeDisplay,
       data: data?.categories,
       styles: {
-        bg: 'bg-gradient-to-r from-blue-400 to-purple-600',
+        bg: 'bg-linear-to-r from-blue-400 to-purple-600',
       },
     },
   ];

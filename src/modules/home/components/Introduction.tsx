@@ -1,3 +1,5 @@
+'use client';
+
 import { author, siteMetadata } from '@/contents/siteMetadata';
 
 const Introduction = () => {

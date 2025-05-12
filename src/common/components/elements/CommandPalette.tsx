@@ -1,6 +1,8 @@
+'use client';
+
 import { Combobox, Dialog, Transition } from '@headlessui/react';
 import clsx from 'clsx';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import { useTheme } from 'next-themes';
 import { Fragment, useContext, useEffect, useState } from 'react';
 import {
@@ -156,7 +158,9 @@ const CommandPalette = () => {
   };
 
   const isActiveRoute = (href: string) => {
-    return router.pathname === href;
+    // 在 App Router 中，router.pathname 已被替换为 router.pathname
+    // 我们可以使用 window.location.pathname 作为替代
+    return window.location.pathname === href;
   };
 
   useEffect(() => {
@@ -209,7 +213,7 @@ const CommandPalette = () => {
     <Transition.Root show={isOpen} as={Fragment}>
       <Dialog
         onClose={setIsOpen}
-        className='fixed inset-0 z-[999] overflow-y-auto p-4 pt-[25vh]'
+        className='fixed inset-0 z-999 overflow-y-auto p-4 pt-[25vh]'
       >
         <Transition.Child
           as={Fragment}
@@ -257,7 +261,7 @@ const CommandPalette = () => {
               <div
                 className={clsx(
                   'max-h-80 overflow-y-auto py-2 px-1',
-                  isEmptyState && '!py-0'
+                  isEmptyState && 'py-0!'
                 )}
               >
                 {filterMenuOptions.map((menu) => (

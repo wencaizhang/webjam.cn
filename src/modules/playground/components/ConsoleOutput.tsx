@@ -1,3 +1,5 @@
+'use client';
+
 import clsx from 'clsx';
 
 interface ConsoleOutputProps {
@@ -16,7 +18,7 @@ const ConsoleOutput = ({
       className={clsx(
         'bg-neutral-900 text-neutral-50 py-3 px-4 overflow-y-auto',
         isFullScreen ? `h-[70vh]` : 'h-[500px]',
-        isError && `!text-red-400`
+        isError && `text-red-400!`
       )}
     >
       <code

@@ -1,3 +1,5 @@
+'use client';
+
 import { TbMoodSadSquint as MoodIcon } from 'react-icons/tb';
 
 type EmptyStatePageProps = {

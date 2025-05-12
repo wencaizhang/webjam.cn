@@ -1,3 +1,5 @@
+'use client';
+
 import clsx from 'clsx';
 import Link from 'next/link';
 import {
@@ -42,7 +44,7 @@ const Pagination: React.FC<PaginationProps> = ({
             key={index}
             className={clsx(
               'mx-1 px-4 py-1.5 rounded items-center',
-              '!bg-transparent !cursor-default',
+              'bg-transparent! cursor-default!',
               'bg-neutral-200 text-neutral-700 dark:bg-neutral-700 dark:text-neutral-200'
             )}
           >

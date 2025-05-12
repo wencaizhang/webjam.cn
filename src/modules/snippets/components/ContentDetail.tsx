@@ -1,3 +1,5 @@
+'use client';
+
 import { SnippetsMetaProps } from '@/common/types/snippets';
 import GiscusComment from '@/modules/blog/components/GiscusComment';
 

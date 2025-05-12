@@ -1,3 +1,5 @@
+'use client';
+
 import clsx from 'clsx';
 import Link from 'next/link';
 import { MdVerified as VerifiedIcon } from 'react-icons/md';
@@ -17,8 +19,8 @@ const ProfileHeader = ({ expandMenu, imageSize }: ProfileHeaderProps) => {
   return (
     <div
       className={clsx(
-        'flex items-center lg:items-start gap-4 lg:gap-0.5 flex-grow lg:flex-col w-full',
-        expandMenu && 'flex-col !items-start'
+        'flex items-center lg:items-start gap-4 lg:gap-0.5 grow lg:flex-col w-full',
+        expandMenu && 'flex-col items-start!'
       )}
     >
       <Image
@@ -31,7 +33,7 @@ const ProfileHeader = ({ expandMenu, imageSize }: ProfileHeaderProps) => {
       />
       <div className='flex gap-2 items-center mt-1 lg:mt-4'>
         <Link href='/' passHref>
-          <h2 className='flex-grow text-lg lg:text-xl font-sora font-medium'>
+          <h2 className='grow text-lg lg:text-xl font-sora font-medium'>
             {siteMetadata.siteShortTitle}
           </h2>
         </Link>

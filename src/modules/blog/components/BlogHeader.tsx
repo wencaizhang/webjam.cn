@@ -1,3 +1,5 @@
+'use client';
+
 import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { FaRegEye as ViewIcon } from 'react-icons/fa';

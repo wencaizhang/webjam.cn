@@ -1,3 +1,5 @@
+'use client';
+
 import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { useDebounce } from 'usehooks-ts';
@@ -28,6 +30,12 @@ const BlogListNew = ({
   const [searchTerm, setSearchTerm] = useState<string>('');
 
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
+
+  console.log('BlogListNew props:', {
+    postsLength: posts?.length,
+    initialDisplayPostsLength: initialDisplayPosts?.length,
+    pagination,
+  });
 
   const featuredBlogData = initialDisplayPosts.filter(
     (item) => item.frontMatter.featured

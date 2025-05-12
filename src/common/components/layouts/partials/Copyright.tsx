@@ -1,3 +1,5 @@
+'use client';
+
 import { siteMetadata, socialAccounts } from '@/contents/siteMetadata';
 
 const Copyright = () => {

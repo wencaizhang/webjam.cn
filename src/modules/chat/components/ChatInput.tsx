@@ -47,7 +47,7 @@ const ChatInput = ({
           value={message}
           onChange={handleChange}
           placeholder='Type a message...'
-          className='flex-grow border dark:border-neutral-600 rounded-md p-2 focus:outline-none'
+          className='grow border dark:border-neutral-600 rounded-md p-2 focus:outline-none'
           disabled={isSending}
           ref={inputRef}
           autoFocus
@@ -57,7 +57,7 @@ const ChatInput = ({
           onClick={handleSendMessage}
           className={clsx(
             'ml-2 bg-sky-600 text-white p-3 rounded-md',
-            !message.trim() && '!bg-neutral-600 cursor-not-allowed'
+            !message.trim() && 'bg-neutral-600! cursor-not-allowed'
           )}
           disabled={isSending || !message.trim()}
           data-umami-event='Chat Widget: Send Chat'

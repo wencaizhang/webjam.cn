@@ -8,7 +8,7 @@ import Resume from './Resume';
 import Skills from './Skills';
 import Story from './Story';
 
-interface AboutProps {
+export interface AboutProps {
   content: string;
   frontMatter: {
     resume: string;

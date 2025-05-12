@@ -1,3 +1,5 @@
+'use client';
+
 type BreaklineProps = {
   className?: string;
   [propName: string]: string | undefined;

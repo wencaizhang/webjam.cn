@@ -1,4 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+'use client';
+
 import MonacoEditor, { EditorProps } from '@monaco-editor/react';
 
 interface CodeEditorProps {

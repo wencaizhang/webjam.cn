@@ -1,3 +1,5 @@
+'use client';
+
 import MDXComponent from '@/common/components/elements/MDXComponent';
 
 interface ContentBodyProps {

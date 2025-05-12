@@ -34,7 +34,7 @@ const NowPlayingBar = () => {
   if (!playingData?.songUrl) return null;
 
   return (
-    <div className='hidden lg:block fixed bottom-0 w-full z-[99999]'>
+    <div className='hidden lg:block fixed bottom-0 w-full z-99999'>
       <div className='flex justify-between bg-green-400 dark:bg-green-500 pt-[2.5px] pb-0.5 px-4 text-neutral-800 dark:text-neutral-900 text-[14px]'>
         {playingData?.songUrl ? (
           <Popover className='relative'>

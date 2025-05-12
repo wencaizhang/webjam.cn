@@ -11,22 +11,22 @@ const BlogCardSkeleton = () => {
           <Skeleton
             height={192}
             containerClassName='flex'
-            className='!rounded-t-xl !rounded-b-none'
+            className='rounded-t-xl! rounded-b-none!'
           />
         </div>
         <div className='flex flex-col p-5 space-y-3 h-[126px]'>
           <Skeleton count={2} />
           <div className='flex gap-4'>
             <Skeleton
-              className='h-4 !rounded-full'
+              className='h-4 rounded-full!'
               containerClassName='w-1/3'
             />
             <Skeleton
-              className='h-4 !rounded-full'
+              className='h-4 rounded-full!'
               containerClassName='w-1/3'
             />
             <Skeleton
-              className='h-4 !rounded-full'
+              className='h-4 rounded-full!'
               containerClassName='w-1/3'
             />
           </div>

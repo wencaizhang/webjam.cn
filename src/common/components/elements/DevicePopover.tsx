@@ -42,7 +42,7 @@ const DevicePopover = ({ devices, isShow }: DevicePopoverProps) => {
               className='flex items-center w-full justify-between gap-3'
             >
               {device?.icon}
-              <div className='flex flex-col flex-grow pl-0.5 pr-2'>
+              <div className='flex flex-col grow pl-0.5 pr-2'>
                 <span className='font-medium font-sora'>{device?.name}</span>
                 <span className='text-xs font-light text-neutral-600 dark:text-neutral-400'>
                   {device?.model}

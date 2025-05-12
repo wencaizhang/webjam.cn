@@ -1,3 +1,5 @@
+'use client';
+
 import axios from 'axios';
 import clsx from 'clsx';
 import { useState } from 'react';
@@ -63,7 +65,7 @@ const ContactForm = () => {
 
   return (
     <form onSubmit={handleSubmit}>
-      <div className='flex flex-col flex-grow gap-5'>
+      <div className='flex flex-col grow gap-5'>
         <div className='flex flex-col md:flex-row gap-5'>
           <input
             className='w-full py-2 px-3 rounded-md border border-neutral-200 focus:outline-none dark:border-neutral-700'

@@ -21,7 +21,7 @@ const CommentItem = ({ body_html, created_at, user }: CommentItemProps) => {
 
   return (
     <div className='flex gap-5 dark:text-neutral-400 break-all'>
-      <div className='flex-shrink-0'>
+      <div className='shrink-0'>
         <Image
           src={user?.profile_image_90}
           alt={user?.name}

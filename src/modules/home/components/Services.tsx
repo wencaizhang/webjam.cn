@@ -1,3 +1,5 @@
+'use client';
+
 import Link from 'next/link';
 import { BiRocket as RocketIcon } from 'react-icons/bi';
 

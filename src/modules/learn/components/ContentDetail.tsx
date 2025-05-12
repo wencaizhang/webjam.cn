@@ -1,3 +1,5 @@
+'use client';
+
 import { SubContentMetaProps } from '@/common/types/learn';
 import GiscusComment from '@/modules/blog/components/GiscusComment';
 

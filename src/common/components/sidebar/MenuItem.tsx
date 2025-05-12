@@ -1,6 +1,8 @@
+'use client';
+
 import clsx from 'clsx';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
+import { usePathname } from 'next/navigation';
 import { useContext, useState } from 'react';
 import { BsArrowRightShort as ExternalLinkIcon } from 'react-icons/bs';
 
@@ -20,12 +22,12 @@ const MenuItem = ({
   const [isHovered, setIsHovered] = useState(false);
   const isExternalUrl = href?.includes('http');
   const isHashLink = href === '#';
-  const router = useRouter();
+  const pathname = usePathname();
 
   const activeClasses = `flex font-sora items-center gap-2 py-2 px-4 text-neutral-700 dark:text-neutral-400 hover:text-neutral-900 hover:dark:text-neutral-300 rounded-lg group ${
-    router.pathname === href
-      ? 'bg-neutral-200 dark:bg-neutral-800 text-neutral-900 dark:!text-neutral-200'
-      : 'hover:dark:lg:bg-neutral-800 hover:dark:!text-neutral-300 hover:lg:bg-neutral-200 hover:lg:rounded-lg lg:hover:scale-105 lg:transition-all lg:duration-300'
+    pathname === href
+      ? 'bg-neutral-200 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-200!'
+      : 'hover:dark:lg:bg-neutral-800 hover:dark:text-neutral-300! hover:lg:bg-neutral-200 hover:lg:rounded-lg lg:hover:scale-105 lg:transition-all lg:duration-300'
   }`;
 
   const handleClick = () => {
@@ -48,7 +50,7 @@ const MenuItem = ({
     onMouseLeave: handleMouseLeave,
   };
 
-  const isActiveRoute = router.pathname === href;
+  const isActiveRoute = pathname === href;
 
   const itemComponent = () => {
     return (
@@ -63,7 +65,7 @@ const MenuItem = ({
             {icon}
           </div>
         )}
-        <div className='flex-grow ml-0.5'>{title}</div>
+        <div className='grow ml-0.5'>{title}</div>
         {children && <>{children}</>}
         {isActiveRoute && (
           <ExternalLinkIcon size={22} className='text-gray-500 animate-pulse' />

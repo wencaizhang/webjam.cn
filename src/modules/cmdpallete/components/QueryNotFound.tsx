@@ -1,3 +1,5 @@
+'use client';
+
 import { Combobox } from '@headlessui/react';
 import clsx from 'clsx';
 import { BiLogoGoogle as GoogleIcon } from 'react-icons/bi';
@@ -54,7 +56,7 @@ const QueryNotFound = ({
             {featureSwich.ai && (
               <Button
                 onClick={onAskAiAssistant}
-                className='justify-center !bg-green-600'
+                className='justify-center bg-green-600!'
                 data-umami-event='Click Ask AI Assistant'
               >
                 <AiIcon size={20} /> Ask AI Assistant
@@ -62,7 +64,7 @@ const QueryNotFound = ({
             )}
             <Button
               onClick={onFindGoogle}
-              className='justify-center !bg-indigo-600'
+              className='justify-center bg-indigo-600!'
               data-umami-event='Click Find in Google'
             >
               <GoogleIcon size={20} />

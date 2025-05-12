@@ -1,3 +1,5 @@
+'use client';
+
 // import { ABOUT } from '@/common/constant/about';
 import MDXComponent from '@/common/components/elements/MDXComponent';
 

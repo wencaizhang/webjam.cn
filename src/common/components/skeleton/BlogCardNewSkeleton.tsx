@@ -10,7 +10,7 @@ const BlogCardNewSkeleton = () => {
         <Skeleton
           height={398}
           containerClassName='flex'
-          className='!rounded-xl'
+          className='rounded-xl!'
         />
       </Card>
     </SkeletonLoader>

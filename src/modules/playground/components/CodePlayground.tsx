@@ -1,4 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
+'use client';
+
 import clsx from 'clsx';
 import { useEffect, useRef } from 'react';
 import { LuPlay as PlayIcon, LuTrash2 as ClearIcon } from 'react-icons/lu';
@@ -100,7 +102,7 @@ const CodePlayground = ({
                     size={18}
                     className={clsx(
                       'text-sky-500',
-                      !code && '!text-neutral-400'
+                      !code && 'text-neutral-400!'
                     )}
                   />
                 </div>

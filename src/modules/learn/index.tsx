@@ -1,3 +1,5 @@
+'use client';
+
 import { motion } from 'framer-motion';
 
 import { ContentProps } from '@/common/types/learn';

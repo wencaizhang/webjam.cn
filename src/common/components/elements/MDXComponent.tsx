@@ -1,3 +1,5 @@
+'use client';
+
 /* eslint-disable unused-imports/no-unused-vars */
 import { ReactNode } from 'react';
 import ReactMarkdown from 'react-markdown';

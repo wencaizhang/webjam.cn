@@ -1,3 +1,5 @@
+'use client';
+
 import clsx from 'clsx';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
@@ -66,7 +68,7 @@ const BlogFeaturedHero = ({ data }: BlogFeaturedProps) => {
           sizes='100vw, 100vh'
           className='object-cover w-full h-full transform transition-transform duration-300'
         />
-        <div className='absolute inset-0 bg-gradient-to-b from-transparent to-black opacity-70 transition-opacity duration-300'></div>
+        <div className='absolute inset-0 bg-linear-to-b from-transparent to-black opacity-70 transition-opacity duration-300'></div>
       </div>
 
       <div className='absolute flex w-full justify-between inset-0 z-10'>

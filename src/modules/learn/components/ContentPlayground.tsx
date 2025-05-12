@@ -1,3 +1,5 @@
+'use client';
+
 import { SiJavascript } from 'react-icons/si';
 
 import Playground from '@/modules/playground';

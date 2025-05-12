@@ -1,3 +1,5 @@
+'use client';
+
 import styled from '@emotion/styled';
 import { ReactNode, useEffect, useState } from 'react';
 import { BiCodeAlt as SkillsIcon } from 'react-icons/bi';

@@ -22,7 +22,7 @@ const ProjectCard = ({
     <Link href={`/projects/${slug}`}>
       <Card className='group relative border border-neutral-200 dark:border-neutral-900 lg:hover:scale-[102%] cursor-pointer'>
         {is_featured && (
-          <div className='flex items-center gap-1 absolute top-0 right-0 bg-lime-300 text-emerald-950 text-[13px] font-medium py-1 px-2 rounded-bl-xl rounded-tr-xl z-[2]'>
+          <div className='flex items-center gap-1 absolute top-0 right-0 bg-lime-300 text-emerald-950 text-[13px] font-medium py-1 px-2 rounded-bl-xl rounded-tr-xl z-2'>
             <PinIcon size={15} />
             <span>Featured</span>
           </div>

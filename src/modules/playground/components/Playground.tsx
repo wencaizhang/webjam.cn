@@ -1,4 +1,6 @@
 /* eslint-disable no-console */
+'use client';
+
 import { useState } from 'react';
 
 import ModalWrapper from '@/common/components/elements/ModalWrapper';
