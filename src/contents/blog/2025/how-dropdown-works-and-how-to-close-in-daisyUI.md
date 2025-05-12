@@ -47,7 +47,7 @@ Dropdown 也叫下拉菜单，用于点击按钮时打开菜单或其他元素�
   <div tabindex="0" role="button" class="btn m-1">Click</div>
   <ul
     tabindex="0"
-    class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow"
+    class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow"
   >
     <li><a>Item 1</a></li>
     <li><a>Item 2</a></li>
@@ -125,7 +125,7 @@ input:focus {
   <div tabindex="0" role="button" class="btn m-1">Click</div>
   <ul
     tabindex="0"
-    class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow"
+    class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow"
   >
     <li><a>Item 1</a></li>
     <li><a>Item 2</a></li>
@@ -163,7 +163,7 @@ const Dropdown = () => {
       </div>
       <ul
         tabIndex={0}
-        className='dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow'
+        className='dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow'
       >
         <li onClick={handleClick}>
           <a>Item 1</a>
