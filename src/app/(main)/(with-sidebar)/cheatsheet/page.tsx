@@ -9,8 +9,8 @@ import { getCollection } from '@/common/libs/mdx';
 import { BrandIcon } from '@/common/types/StackIcon';
 import { siteMetadata } from '@/contents/siteMetadata';
 
-const title = '代码段';
-const description = '这里是代码片段，可以直接过来拷贝使用';
+const title = '开发速查表';
+const description = '精选的代码片段、命令和配置示例，提高开发效率的得力助手';
 
 export const metadata: Metadata = {
   title: `${title} - ${siteMetadata.author}`,
@@ -34,7 +34,7 @@ export default async function SnippetsPage() {
   }
 
   const activeClasses = `flex justify-between w-full font-sora items-center gap-2 rounded-lg group
-    text-neutral-700 dark:text-neutral-400 hover:text-neutral-900 hover:dark:text-neutral-300 
+    text-neutral-700 dark:text-neutral-400 hover:text-neutral-900 hover:dark:text-neutral-300
      hover:dark:text-neutral-300! hover:lg:rounded-lg lg:transition-all lg:duration-300
   `;
 
@@ -46,7 +46,7 @@ export default async function SnippetsPage() {
           {contentList.map((item) => (
             <Link
               className={activeClasses}
-              href={`/snippets/${item.slug}`}
+              href={`/cheatsheet/${item.slug}`}
               key={item.slug}
               title={item.frontMatter.description || item.frontMatter.title}
             >

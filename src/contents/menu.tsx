@@ -72,8 +72,8 @@ export const MENU_ITEMS: MenuItemProps[] = [
     type: 'Pages',
   },
   {
-    title: 'Snippets',
-    href: '/snippets',
+    title: 'Cheatsheet',
+    href: '/cheatsheet',
     icon: <SnippetsIcon size={iconSize} />,
     isShow: true,
     isExternal: false,

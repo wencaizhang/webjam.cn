@@ -75,7 +75,7 @@ export default async function SnippetDetailPage({
   return (
     <AnimatedContainer>
       <Container className='mb-10'>
-        <BackButton url='/snippets' />
+        <BackButton url='/cheatsheet' />
         <ContentDetailHeader title={frontMatter.title} />
         <ContentDetail content={content} frontMatter={frontMatter} />
       </Container>
