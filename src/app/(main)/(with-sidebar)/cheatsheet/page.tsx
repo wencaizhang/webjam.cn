@@ -59,7 +59,7 @@ export default async function SnippetsPage() {
                     {' '}
                     {item.frontMatter.title}{' '}
                   </h3>
-                  <p className='text-gray-600 dark:text-gray-400 text-sm lg:text-base'>
+                  <p className='text-gray-600 dark:text-gray-400 text-sm lg:text-base line-clamp-2'>
                     {item.frontMatter.description}
                   </p>
                 </div>
