@@ -3,6 +3,8 @@ import angular from '~public/icons/stack/angular.svg';
 import antdv from '~public/icons/stack/antdv.png';
 import axios from '~public/icons/stack/axios.webp';
 import babel from '~public/icons/stack/babel.svg';
+import bash from '~public/icons/stack/bash.svg';
+import linux from '~public/icons/stack/linux.svg';
 import caddy from '~public/icons/stack/caddy.png';
 import chrome from '~public/icons/stack/chrome.svg';
 import defaultIcon from '~public/icons/stack/code.svg';
@@ -60,6 +62,10 @@ export const StackIconsMap = {
   lerna,
   prisma,
   ts,
+  bash,
+  zsh: bash,
+  sh: bash,
+  linux,
 
   Pinia,
   css3,
