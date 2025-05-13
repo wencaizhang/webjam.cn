@@ -1,14 +1,17 @@
 ---
-title: MacOS 系统中设置命令行中代理
-description: MacOS 系统中设置命令行中代理
+title: 终端设置命令行代理
+description: 有时候需要在终端中通过代理访问一些网络，这时候就要让代理在终端中也生效，这里有两个函数可以帮你快速开启和关闭代理。
 slug: proxy-in-terminal
 date: '2021-05-26'
 featured: fasle
-type: terminal
+type: bash
 draft: true
 ---
 
 有时候需要在终端中通过代理访问一些网络，这时候就要让代理在终端中也生效，这里有两个函数可以帮你快速开启和关闭代理。
+
+![](https://static.webjam.cn/images/202405/proxy-in-terminal.webp)
+
 
 将下面两个函数放在 `~/.bash_profile` 或者 `~/.zshrc` 文件最后：
 
@@ -35,6 +38,5 @@ source ~/.bash_profile
 source ~/.zshrc
 ```
 
-然后当你需要启用代理的时候，直接在终端执行 `proxy_on` 命令即可:
+然后当你需要启用代理的时候，直接在终端执行 `proxy_on` 命令即可，关闭代理则执行 `proxy_off`。
 
-![](https://static.webjam.cn/images/202405/proxy-in-terminal.webp)
