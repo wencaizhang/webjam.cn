@@ -1,0 +1,293 @@
+---
+title: 使用 Mkcert 轻松创建本地开发环境的 HTTPS 证书
+slug: mkcert-local-https-certificates
+summary: Mkcert 是一个简单易用的工具，可以为本地开发环境创建可信的 HTTPS 证书，无需复杂配置，让开发者能够在本地模拟生产环境的 HTTPS 连接。
+date: '2024-07-12'
+featured: true
+tags:
+  - Mkcert
+  - HTTPS
+  - 开发工具
+  - 本地证书
+  - 安全开发
+draft: false
+featured_image_url: https://static.webjam.cn/images/202505/https.webp
+---
+
+## 什么是 Mkcert？
+
+[Mkcert](https://github.com/FiloSottile/mkcert) 是一个零配置的工具，用于在本地开发环境中创建和安装可信的 HTTPS 证书。在现代 Web 开发中，许多 API 和功能（如地理位置、推送通知、PWA 等）都要求网站通过 HTTPS 提供服务。而在开发阶段，我们通常在本地环境（localhost）工作，配置真实的 HTTPS 证书可能比较麻烦。
+
+![](https://static.webjam.cn/images/202505/https.webp)
+
+Mkcert 解决了这个问题，它可以：
+
+- 创建本地信任的证书颁发机构（CA）
+- 生成由该 CA 签名的证书
+- 自动将 CA 添加到系统和浏览器的信任存储中
+- 支持多种操作系统和浏览器
+
+这样，您就可以在本地开发环境中使用 HTTPS，而不会遇到浏览器警告或安全错误。
+
+## 安装 Mkcert
+
+### macOS 系统
+
+macOS 系统可以使用 Homebrew 安装：
+
+```bash
+brew install mkcert
+brew install nss # 如果需要在 Firefox 浏览器中使用，需要额外安装 nss
+```
+
+### Windows 系统
+
+Windows 系统有多种安装方式：
+
+1. 使用 [Chocolatey](https://chocolatey.org/) 包管理器：
+
+```bash
+choco install mkcert
+```
+
+2. 使用 [Scoop](https://scoop.sh/) 包管理器：
+
+```bash
+scoop bucket add extras
+scoop install mkcert
+```
+
+3. 直接从 GitHub 下载预编译的二进制文件：[https://github.com/FiloSottile/mkcert/releases](https://github.com/FiloSottile/mkcert/releases)
+
+### Linux 系统
+
+对于 Debian/Ubuntu 系统：
+
+```bash
+apt install libnss3-tools
+wget -O mkcert https://github.com/FiloSottile/mkcert/releases/download/v1.4.4/mkcert-v1.4.4-linux-amd64
+chmod +x mkcert
+sudo mv mkcert /usr/local/bin/
+```
+
+对于 CentOS/RHEL 系统：
+
+```bash
+yum install nss-tools
+wget -O mkcert https://github.com/FiloSottile/mkcert/releases/download/v1.4.4/mkcert-v1.4.4-linux-amd64
+chmod +x mkcert
+sudo mv mkcert /usr/local/bin/
+```
+
+## 使用 Mkcert 创建证书
+
+### 安装根证书
+
+首先，我们需要安装本地根证书颁发机构（CA）。这一步只需要执行一次，它会在您的系统中创建一个受信任的 CA：
+
+```bash
+$ mkcert -install
+Created a new local CA 💥
+The local CA is now installed in the system trust store! ⚡️
+The local CA is now installed in the Firefox trust store (requires browser restart)! 🦊
+```
+
+安装完成后，您需要重启浏览器以确保更改生效，特别是对于 Firefox 浏览器。
+
+### 创建证书
+
+建议创建一个专门的目录来存储您的证书，以便于管理：
+
+```bash
+mkdir -p ~/.local/share/mkcert
+cd ~/.local/share/mkcert
+```
+
+#### 为单个域名创建证书
+
+最简单的用法是为 localhost 创建证书：
+
+```bash
+mkcert localhost
+```
+
+这将生成两个文件：
+- `localhost.pem`（证书文件）
+- `localhost-key.pem`（私钥文件）
+
+#### 为多个域名创建证书
+
+您也可以在一个证书中包含多个域名或 IP 地址：
+
+```bash
+mkcert example.com "*.example.com" localhost 127.0.0.1 ::1
+```
+
+这将创建一个同时适用于 example.com、所有 example.com 子域名、localhost 以及 IPv4 和 IPv6 本地地址的证书。
+
+#### 指定输出文件名
+
+您可以使用 `-cert-file` 和 `-key-file` 参数指定输出文件的名称：
+
+```bash
+mkcert -cert-file cert.pem -key-file key.pem example.com
+```
+
+### 在开发服务器中使用证书
+
+#### Node.js
+
+```javascript
+const https = require('https');
+const fs = require('fs');
+const express = require('express');
+
+const app = express();
+app.get('/', (req, res) => {
+  res.send('Hello HTTPS!');
+});
+
+const server = https.createServer({
+  key: fs.readFileSync('path/to/key.pem'),
+  cert: fs.readFileSync('path/to/cert.pem')
+}, app);
+
+server.listen(3000, () => {
+  console.log('HTTPS server running on https://localhost:3000');
+});
+```
+
+#### Webpack Dev Server
+
+在 webpack.config.js 中：
+
+```javascript
+module.exports = {
+  // ...其他配置
+  devServer: {
+    https: {
+      key: fs.readFileSync('path/to/key.pem'),
+      cert: fs.readFileSync('path/to/cert.pem'),
+    }
+  }
+};
+```
+
+#### Vite
+
+在 vite.config.js 中：
+
+```javascript
+import fs from 'fs';
+
+export default {
+  server: {
+    https: {
+      key: fs.readFileSync('path/to/key.pem'),
+      cert: fs.readFileSync('path/to/cert.pem'),
+    }
+  }
+}
+```
+### 在部署服务器中使用证书
+
+#### Nginx
+
+在 Nginx 配置文件中（通常是 `/etc/nginx/conf.d/default.conf` 或 `/etc/nginx/sites-available/default`）：
+
+```nginx
+server {
+    listen 443 ssl;
+    server_name localhost;
+
+    ssl_certificate     /path/to/cert.pem;
+    ssl_certificate_key /path/to/key.pem;
+
+    # 推荐的 SSL 配置
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_prefer_server_ciphers on;
+    ssl_ciphers ECDHE-RSA-AES256-GCM-SHA512:DHE-RSA-AES256-GCM-SHA512:ECDHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES256-GCM-SHA384;
+
+    location / {
+        root   /usr/share/nginx/html;
+        index  index.html index.htm;
+    }
+}
+
+# 可选：将 HTTP 重定向到 HTTPS
+server {
+    listen 80;
+    server_name localhost;
+    return 301 https://$host$request_uri;
+}
+```
+
+重新加载 Nginx 配置：
+
+```bash
+sudo nginx -t       # 测试配置是否有效
+sudo nginx -s reload  # 重新加载配置
+```
+
+#### Caddy
+
+Caddy 是一个现代化的 Web 服务器，它默认启用 HTTPS 并自动管理证书。使用 mkcert 生成的证书非常简单：
+
+创建一个 `Caddyfile`：
+
+```
+localhost {
+    tls /path/to/cert.pem /path/to/key.pem
+
+    # 静态文件服务
+    root * /path/to/your/site
+    file_server
+
+    # 或者反向代理
+    # reverse_proxy localhost:3000
+}
+```
+
+启动 Caddy：
+
+```bash
+caddy run
+```
+
+Caddy 的优势在于配置非常简洁，并且它会自动处理 HTTP 到 HTTPS 的重定向。
+
+## 常见问题
+
+### 证书过期怎么办？
+
+Mkcert 生成的证书默认有效期为 825 天。当证书过期时，只需重新运行相同的命令来生成新证书即可。
+
+### 如何查看根证书的位置？
+
+使用以下命令可以查看根证书的位置：
+
+```bash
+mkcert -CAROOT
+```
+
+### 如何卸载根证书？
+
+如果您不再需要 mkcert 创建的根证书，可以使用以下命令卸载：
+
+```bash
+mkcert -uninstall
+```
+
+### 在 Docker 容器中使用 mkcert 证书？
+
+如果您在 Docker 容器中运行应用程序，需要将证书文件挂载到容器中，并确保应用程序配置为使用这些证书。
+
+## 总结
+
+Mkcert 是一个非常实用的开发工具，它解决了本地开发环境中配置 HTTPS 的痛点。通过简单的几个命令，您就可以为本地开发环境创建可信的 HTTPS 证书，所以说掌握 Mkcert 的使用是一项非常有价值的技能。
+
+## 参考资料
+
+- [Mkcert GitHub 仓库](https://github.com/FiloSottile/mkcert)
+- [Web 安全上下文 (MDN)](https://developer.mozilla.org/zh-CN/docs/Web/Security/Secure_Contexts)
+- [HTTPS 本地开发最佳实践](https://web.dev/articles/how-to-use-local-https)
