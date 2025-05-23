@@ -6,7 +6,7 @@ import Card from '@/common/components/elements/Card';
 import Image from '@/common/components/elements/Image';
 import Tooltip from '@/common/components/elements/Tooltip';
 import { ProjectItemProps } from '@/common/types/projects';
-import { STACKS } from '@/contents/stacks';
+import { STACKS, defaultStackIcon } from '@/contents/stacks';
 
 const ProjectCard = ({
   title,
@@ -33,27 +33,34 @@ const ProjectCard = ({
             width={400}
             height={200}
             alt={title}
-            className='rounded-t-xl h-48 object-cover object-left'
+            className='object-cover object-left h-48 rounded-t-xl'
           />
-          <div className='flex gap-1 absolute top-0 left-0 w-full h-full bg-black opacity-0 transition-opacity duration-300 justify-center items-center text-white group-hover:opacity-80 rounded-t-xl text-sm font-medium'>
+          <div className='absolute top-0 left-0 flex items-center justify-center w-full h-full gap-1 text-sm font-medium text-white transition-opacity duration-300 bg-black opacity-0 group-hover:opacity-80 rounded-t-xl'>
             <span>View Project</span>
             <ViewIcon size={20} />
           </div>
         </div>
         <div className='p-5 space-y-2'>
           <div className='flex justify-between'>
-            <div className='text-lg font-sora cursor-pointer text-neutral-700 dark:text-neutral-300 lg:group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-all duration-300'>
+            <div className='text-lg transition-all duration-300 cursor-pointer font-sora text-neutral-700 dark:text-neutral-300 lg:group-hover:text-teal-600 dark:group-hover:text-teal-400'>
               {title}
             </div>
           </div>
-          <p className='text-neutral-700 dark:text-neutral-400 text-[15px] leading-relaxed'>
+          <p
+            className='text-neutral-700 line-clamp-2 dark:text-neutral-400 text-[15px] leading-relaxed'
+            title={description}
+          >
             {description}
           </p>
           <div className='flex flex-wrap items-center gap-3 pt-2'>
             {stacksArray?.map((stack) => (
-              <div key={stack}>
-                <Tooltip title={stack}>{STACKS[stack]}</Tooltip>
-              </div>
+              <Tooltip key={stack} title={stack}>
+                {STACKS[stack] || (
+                  <span className='px-2 py-1 text-xs font-semibold text-white rounded-full bg-cyan-500'>
+                    {stack}
+                  </span>
+                )}
+              </Tooltip>
             ))}
           </div>
         </div>

@@ -1,4 +1,5 @@
 import { BsFillBootstrapFill, BsRobot } from 'react-icons/bs';
+
 import {
   SiAngular,
   SiAntdesign,
@@ -28,6 +29,7 @@ import {
   SiVuedotjs,
   SiWebpack,
 } from 'react-icons/si';
+import { IoLogoElectron } from 'react-icons/io5';
 
 export type stacksProps = {
   [key: string]: JSX.Element;
@@ -239,4 +241,5 @@ export const STACKS: stacksProps = {
       />{' '}
     </svg>
   ),
+  Electron: <IoLogoElectron size={iconSize} className='text-slate-700' />,
 };

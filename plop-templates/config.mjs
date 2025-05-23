@@ -33,6 +33,7 @@ export const STACK_CHOICES = [
   'Remix',
   'Express',
   'Vben',
+  'Electron'
 ];
 
 // cheatsheet 使用的 type 字段
