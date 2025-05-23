@@ -29,7 +29,7 @@ const ProjectDetail = ({
             {stacksArray?.map((stack) => (
               <Tooltip key={stack} title={stack}>
                 {STACKS[stack] || (
-                  <span className='px-2 py-1 text-xs font-semibold text-white rounded-full bg-cyan-500'>
+                  <span className='block px-2 py-1 text-xs font-semibold leading-none text-white rounded-full bg-cyan-500'>
                     {stack}
                   </span>
                 )}
