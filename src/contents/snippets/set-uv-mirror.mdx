@@ -1,0 +1,74 @@
+---
+title: 如何设置uv镜像源加速Python包安装
+description: 详细指南：修改uv镜像源为国内源以加速Python包下载
+slug: set-uv-mirror
+date: '2025-05-22'
+featured: true
+type: python
+draft: false
+---
+
+## TLDR
+
+在 `~/.config/uv/uv.toml` 或者 `/etc/uv/uv.toml` 填写下面的内容：
+
+```toml
+[[index]]
+url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple/"
+default = true
+```
+
+## 详细配置指南
+
+### 1. 配置文件位置
+
+uv会按以下顺序查找配置文件：
+1. `~/.config/uv/uv.toml` (用户级配置)
+2. `/etc/uv/uv.toml` (系统级配置)
+
+### 2. 国内推荐镜像源
+
+1. 清华大学：`https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple/`
+2. 阿里云：`https://mirrors.aliyun.com/pypi/simple/`
+3. 豆瓣：`https://pypi.douban.com/simple/`
+
+### 3. 配置多个镜像源
+修改 `~/.config/uv/uv.toml` （或 `/etc/uv/uv.toml`）：
+
+```toml
+[[index]]
+url = "https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple/"
+default = true
+
+[[index]]
+url = "https://mirrors.aliyun.com/pypi/simple/"
+```
+
+注意如果同时使用pip和uv，需要分别配置镜像源
+
+### 4. 验证配置是否生效
+
+```bash
+uv pip install --dry-run numpy
+```
+观察输出中使用的源地址
+
+
+## 常见问题
+
+**Q: 如何恢复默认源？**
+A: 删除或注释掉配置文件中的`[[index]]`部分
+
+**Q: Windows系统如何配置？**
+A: 配置文件路径为：`%APPDATA%\uv\uv.toml`
+
+**Q: 配置后安装仍然很慢？**
+A: 尝试：
+1. 检查网络连接
+2. 更换其他镜像源
+3. 检查是否有防火墙限制
+
+## 参考文档
+
+- [uv官方文档](https://docs.astral.sh/uv/)
+- [uv配置指南](https://docs.astral.sh/uv/configuration/files/)

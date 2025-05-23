@@ -1,0 +1,50 @@
+---
+title: Debian/Ubuntu极简安装Docker和Docker Compose
+description: 最简步骤在Debian系Linux安装Docker环境
+slug: install-docker-and-docker-compose-in-linux
+date: '2025-05-22'
+featured: true
+type: docker
+draft: false
+---
+
+## 一键安装Docker
+
+```bash
+# 安装依赖和Docker
+sudo apt update && sudo apt install -y apt-transport-https ca-certificates curl gnupg lsb-release
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+sudo apt update && sudo apt install -y docker-ce docker-ce-cli containerd.io
+```
+
+## 一键安装Docker Compose
+
+```bash
+# 安装最新版Docker Compose
+sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+```
+
+## 基本配置
+
+```bash
+# 启动服务并加入用户组
+sudo systemctl enable --now docker
+sudo usermod -aG docker $USER
+newgrp docker
+```
+
+## 验证安装
+
+```bash
+docker --version
+docker-compose --version
+docker run hello-world
+```
+
+## 常用命令
+
+- `docker ps` 查看容器
+- `docker images` 查看镜像
+- `docker-compose up -d` 启动服务
