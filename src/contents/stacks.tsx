@@ -28,6 +28,7 @@ import {
   SiVite,
   SiVuedotjs,
   SiWebpack,
+  SiStrapi,
 } from 'react-icons/si';
 import { IoLogoElectron } from 'react-icons/io5';
 
@@ -80,6 +81,7 @@ export const STACKS: stacksProps = {
   Remix: <SiRemix size={iconSize} />,
   Express: <SiExpress size={iconSize} />,
   jQuery: <SiJquery size={iconSize} className='jquery' />,
+  Strapi: <SiStrapi size={iconSize} className='text-blue-600' />,
   // TODO 把图标改为外链
   Vben: (
     <svg
