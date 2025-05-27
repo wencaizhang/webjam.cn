@@ -1,0 +1,167 @@
+---
+title: Electron 拖拽文件获取绝对路径的完整解决方案
+slug: electron-drag-drop-file-path-solution
+summary: 在开发 Electron + React 应用时，拖拽文件功能是一个常见需求。然而，在 Electron 32+ 版本中，由于安全性改进，传统的 `File.path` 属性被移除，导致许多开发者在获取拖拽文件的绝对路径时遇到困难。本文将详细介绍这个问题的背景、解决方案，以及完整的实现过程。
+date: '2025-05-26'
+featured: false
+tags:
+- Electron
+- 拖拽上传
+draft: true
+featured_image_url: https://static.webjam.cn/images/202505/electron-remove-file.path.webp
+---
+
+## 前言
+
+Electron 32+ 版本移除了 `File.path` 属性，本文提供完整的解决方案来获取拖拽文件的绝对路径。
+
+## 问题背景
+
+### Electron 32.0.0 的重大变更
+
+在 Electron 32.0.0 版本中，官方移除了非标准的 `File.path` 属性。这个属性曾经是获取文件绝对路径的便捷方法：
+
+```javascript
+// ❌ 在 Electron 32+ 中不再可用
+const file = e.dataTransfer.files[0];
+const filePath = file.path; // undefined
+```
+
+![](https://static.webjam.cn/images/202505/electron-remove-file.path.webp)
+
+### 为什么要移除 File.path？
+
+1. **标准化考虑**：`File.path` 不是 Web 标准的一部分
+2. **安全性提升**：避免 Web 内容直接访问文件系统路径
+3. **架构优化**：推动更好的进程间通信模式
+
+## 解决方案
+
+推荐在预加载脚本中统一处理文件路径获取：
+
+```typescript
+// preload.ts
+import { contextBridge, webUtils } from 'electron'
+
+const api = {
+  getPathForFile: (file: File) => {
+    return webUtils.getPathForFile(file)
+  }
+}
+
+contextBridge.exposeInMainWorld('api', api)
+```
+
+```typescript
+// renderer.tsx
+const handleDrop = (e: React.DragEvent) => {
+  const files = Array.from(e.dataTransfer.files);
+  const filePath = window.api.getPathForFile(files[0]);
+  console.log('文件路径:', filePath);
+}
+```
+
+## 完整实现方案
+
+### 1. Preload 脚本
+
+```typescript
+// src/preload/index.ts
+import { electronAPI } from '@electron-toolkit/preload'
+import { contextBridge, webUtils } from 'electron'
+
+const api = {
+  getPathForFile: (file: File) => webUtils.getPathForFile(file)
+}
+
+if (process.contextIsolated) {
+  try {
+    contextBridge.exposeInMainWorld('electron', electronAPI)
+    contextBridge.exposeInMainWorld('api', api)
+  } catch (error) {
+    console.error(error)
+  }
+} else {
+  window.electron = electronAPI
+  window.api = api
+}
+```
+
+### 2. 类型定义
+
+```typescript
+// src/preload/index.d.ts
+import { ElectronAPI } from '@electron-toolkit/preload'
+
+declare global {
+  interface Window {
+    electron: ElectronAPI
+    api: {
+      getPathForFile: (file: File) => string
+    }
+  }
+}
+```
+
+### 3. 拖拽组件
+
+```typescript
+import { useState } from 'react'
+
+const APP = ({ onSelectFile }) => {
+  const [isDragging, setIsDragging] = useState(false)
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault()
+    setIsDragging(false)
+
+    const files = Array.from(e.dataTransfer.files)
+
+    if (files.length > 0) {
+      const filePath = window.api.getPathForFile(videoFiles[0])
+      console.log('文件路径:', filePath)
+      // 处理文件路径...
+    }
+  }
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault()
+    setIsDragging(true)
+  }
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault()
+    setIsDragging(false)
+  }
+
+  return (
+    <div
+      className={`border-2 border-dashed rounded-lg p-8 text-center ${
+        isDragging ? 'border-blue-500 bg-blue-50' : 'border-gray-300'
+      }`}
+      onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
+      onDrop={handleDrop}
+    >
+      <p>拖拽文件到此区域</p>
+    </div>
+  )
+}
+```
+
+## 总结
+
+Electron 32+ 移除了 `File.path` 属性，使用 `webUtils.getPathForFile()` 是官方推荐的解决方案。通过在预加载脚本中统一处理，可以确保安全性和维护性。
+
+## 参考资源
+
+- [\[Bug\]: File API: it is no longer possible to get a dropped file's absolute path · Issue #44370 · electron/electron](https://github.com/electron/electron/issues/44370)
+- [Electron 32.0.0 | 移除: File.path](https://www.electronjs.org/zh/blog/electron-32-0#%E7%A7%BB%E9%99%A4-filepath)
+- [feat: add webUtils module with getPathForFile method by MarshallOfSound](https://github.com/electron/electron/pull/38776)
+- [Electron webUtils API Documentation](https://electronjs.org/docs/latest/api/web-utils)
+- [Electron Breaking Changes](https://electronjs.org/docs/latest/breaking-changes)
+
+---
+
+*本文基于实际项目开发经验总结，如有问题欢迎交流讨论。*
+
