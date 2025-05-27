@@ -29,7 +29,7 @@ export const generateMetadata = async (): Promise<Metadata> => {
 
 // 获取项目数据
 async function getProjects() {
-  const collection = await getCollection('project');
+  const collection = getCollection('project', false);
   const list = collection
     .filter((item) => item.frontMatter.is_show)
     .map((item) => item.frontMatter);

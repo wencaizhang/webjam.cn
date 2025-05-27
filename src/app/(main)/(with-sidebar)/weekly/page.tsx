@@ -27,7 +27,7 @@ export const metadata: Metadata = {
 };
 
 export default async function WeeklyPage() {
-  const contentList = await getCollection('weekly');
+  const contentList = getCollection('weekly', false);
 
   if (!contentList.length) {
     notFound();

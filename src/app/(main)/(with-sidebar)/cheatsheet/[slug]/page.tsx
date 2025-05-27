@@ -52,7 +52,8 @@ export async function generateMetadata({
 
 // 生成静态路径
 export async function generateStaticParams() {
-  const contentList = await getCollection('snippets');
+  // 对于生成静态路径，我们只需要 slug，不需要内容
+  const contentList = getCollection('snippets', false);
   return contentList.map((content) => ({
     slug: content.slug,
   }));
@@ -64,7 +65,7 @@ export default async function SnippetDetailPage({
   params: { slug: string };
 }) {
   const slug = params.slug;
-  const contentData = await getEntry('snippets', slug);
+  const contentData = getEntry('snippets', slug);
 
   if (!contentData) {
     notFound();

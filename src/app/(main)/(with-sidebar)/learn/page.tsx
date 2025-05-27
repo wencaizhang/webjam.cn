@@ -20,13 +20,13 @@ export const metadata: Metadata = {
 
 // 获取学习内容
 async function getContents() {
-  const collection = await getCollection('learn/');
+  const collection = getCollection('learn/', false);
   const contents = collection
     .filter((item) => filterIndex(item))
     .map((item) => ({
       ...item.frontMatter,
       slug: item.frontMatter.dir,
-      lessonCount: getCollection('learn/' + item.frontMatter.dir).filter(
+      lessonCount: getCollection('learn/' + item.frontMatter.dir, false).filter(
         (item) => !filterIndex(item)
       ).length,
     }));

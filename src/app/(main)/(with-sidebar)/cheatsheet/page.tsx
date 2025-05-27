@@ -27,7 +27,8 @@ export const metadata: Metadata = {
 };
 
 export default async function SnippetsPage() {
-  const contentList = await getCollection('snippets');
+  // 对于列表页面，我们不需要完整内容
+  const contentList = getCollection('snippets', false);
 
   if (!contentList.length) {
     notFound();

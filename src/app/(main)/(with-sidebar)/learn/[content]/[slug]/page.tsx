@@ -59,7 +59,7 @@ export async function generateMetadata({
 
 // 生成静态路径
 export async function generateStaticParams() {
-  const list = await getCollection('learn').filter(
+  const list = getCollection('learn', false).filter(
     (item) => !filterIndex(item)
   );
 
@@ -81,8 +81,8 @@ export default async function LearnContentDetailPage({
   const slug = params.slug;
   const dir = 'learn/' + parentContent;
 
-  const collection = await getCollection(dir);
-  const contentData = await getEntry(dir, slug);
+  const collection = getCollection(dir, false);
+  const contentData = getEntry(dir, slug);
 
   if (!contentData) {
     notFound();

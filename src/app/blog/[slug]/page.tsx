@@ -15,8 +15,8 @@ type Props = {
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const slug = params.slug;
-  const blogData = await getEntry('blog', slug);
+  const { slug } = await params;
+  const blogData = getEntry('blog', slug);
 
   if (!blogData) {
     return {
@@ -50,7 +50,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export async function generateStaticParams() {
-  const blogs = await getCollection('blog');
+  const blogs = getCollection('blog', false);
 
   return blogs.map((blog) => ({
     slug: blog.slug,
@@ -58,8 +58,8 @@ export async function generateStaticParams() {
 }
 
 export default async function BlogDetailPage({ params }: Props) {
-  const { slug } = params;
-  const mdxData = await getEntry('blog', slug);
+  const { slug } = await params;
+  const mdxData = getEntry('blog', slug);
 
   if (!mdxData) {
     return <div>Not Found</div>;
@@ -85,7 +85,7 @@ export default async function BlogDetailPage({ params }: Props) {
     },
   };
 
-  const blogs = getCollection('blog');
+  const blogs = getCollection('blog', false);
 
   // 查找前一篇和后一篇文章
   const currentIndex = blogs.findIndex((blog) => blog.slug === slug);

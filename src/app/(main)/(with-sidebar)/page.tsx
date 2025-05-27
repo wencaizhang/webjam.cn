@@ -26,7 +26,7 @@ export default async function HomePage() {
   try {
     // console.log('Fetching blog posts for homepage...');
     // 在服务器组件中直接获取数据
-    const mdxFiles = await getCollection('blog');
+    const mdxFiles = getCollection('blog', false);
     // console.log(`Found ${mdxFiles.length} blog posts for homepage`);
 
     // 转换为BlogItemProps类型

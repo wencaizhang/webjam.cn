@@ -30,7 +30,8 @@ function convertToBlogItemProps(mdxFiles: MdxFileProps[]): BlogItemProps[] {
 // 生成静态路径
 export async function generateStaticParams() {
   const pageSize = siteMetadata.postPageSize || 10;
-  const totalPosts = await getCollection('blog');
+  // 对于生成静态路径，我们只需要数量，不需要内容
+  const totalPosts = getCollection('blog', false);
   const totalPages = Math.ceil(totalPosts.length / pageSize);
 
   return Array.from({ length: totalPages }, (_, i) => ({
@@ -51,7 +52,8 @@ export default async function BlogPaginationPage({
   }
 
   const pageSize = siteMetadata.postPageSize || 10;
-  const mdxFiles = await getCollection('blog');
+  // 对于分页页面，我们也不需要完整内容
+  const mdxFiles = getCollection('blog', false);
   const posts = convertToBlogItemProps(mdxFiles);
 
   const totalPages = Math.ceil(posts.length / pageSize);

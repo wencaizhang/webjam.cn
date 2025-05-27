@@ -56,7 +56,7 @@ export async function generateMetadata({
 
 // 生成静态路径
 export async function generateStaticParams() {
-  const contentList = await getCollection('weekly');
+  const contentList = getCollection('weekly', false);
 
   return contentList.map((content) => ({
     slug: content.slug,
@@ -69,7 +69,7 @@ export default async function WeeklyDetailPage({
   params: { slug: string };
 }) {
   const slug = params.slug;
-  const contentData = await getEntry('weekly', slug);
+  const contentData = getEntry('weekly', slug);
 
   if (!contentData) {
     notFound();
@@ -78,7 +78,7 @@ export default async function WeeklyDetailPage({
   const { content, frontMatter } = contentData;
 
   // 查找前一个和后一个内容
-  const contentList = await getCollection('weekly');
+  const contentList = getCollection('weekly', false);
   const index = contentList.findIndex((item) => item.slug === slug);
 
   // 默认按时间顺序
