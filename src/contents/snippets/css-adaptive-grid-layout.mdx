@@ -1,0 +1,30 @@
+---
+title: 快速实现自适应的网格布局
+description: 自适应的网格布局，既要根据容器宽度自动调整列数，又要保证每个项目有合适的最小宽度
+slug: css-adaptive-grid-layout
+date: '2025-06-03'
+featured: false
+type: css3
+draft: true
+---
+
+目标是实现自适应的网格布局：既要根据容器宽度自动调整列数，又要保证每个项目有合适的最小宽度。
+
+使用 CSS Grid 的 `minmax()` 函数：
+
+```css
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+  gap: 4px 8px;
+}
+```
+
+对应的 Tailwind CSS 类：
+
+```html
+<div class="grid grid-cols-[repeat(auto-fit,minmax(80px,1fr))] gap-x-1 gap-y-2">
+  <!-- 网格项 -->
+</div>
+```
+
