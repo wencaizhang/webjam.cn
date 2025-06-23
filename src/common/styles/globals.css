@@ -1,6 +1,96 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  /* Font families */
+  --font-family-sans: var(--jakartaSans-font);
+  --font-family-sora: var(--soraSans-font);
+  --font-family-code: var(--firaCode-font);
+  --font-family-emoji: 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+
+  /* Custom colors */
+  --color-dark-text: #e4e6eb;
+  --color-dark: #121212;
+  --color-light: #fafafa;
+
+  /* Animation names */
+  --animate-waving-hand: wave 2s linear infinite;
+  --animate-flying-card: flying 3s infinite normal;
+  --animate-badge-pulse: badge 1.5s ease-out infinite;
+  --animate-looping-tag: loop 100s linear infinite;
+
+  /* Box shadows */
+  --shadow-popover: -0.0625rem 0 1.25rem rgba(23, 24, 24, 0.05),
+    0 0.0625rem 0.3125rem rgba(0, 0, 0, 0.15);
+  --shadow-popover-dark: 0.0625rem 0 1.25rem rgba(242, 242, 242, 0.05),
+    0 -0.0625rem 0.3125rem rgba(255, 255, 255, 0.15);
+  --shadow-intense: rgba(17, 17, 26, 0.1) 0px 0px 16px;
+  --shadow-intense-dark: rgba(255, 255, 255, 0.1) 0px 0px 16px;
+  --shadow-subtle: rgba(0, 0, 0, 0.2) 0px 20px 40px -7px;
+  --shadow-subtle-dark: rgba(255, 255, 255, 0.1) 0px 20px 40px -7px;
+  --shadow-nextjs: 0 8px 30px rgb(0, 0, 0, 0.12);
+  --shadow-nextjs-dark: 0 8px 30px rgb(255, 255, 255, 0.12);
+  --shadow-demure: rgba(0, 0, 0, 0.3) 0 35px 60px -15px;
+  --shadow-mondegreen: 5px 5px rgba(0, 98, 90, 0.4),
+    10px 10px rgba(0, 98, 90, 0.3), 15px 15px rgba(0, 98, 90, 0.2),
+    20px 20px rgba(0, 98, 90, 0.1), 25px 25px rgba(0, 98, 90, 0.05);
+}
+
+/* Define keyframes for animations */
+@keyframes wave {
+  0% {
+    transform: rotate(0deg);
+  }
+  10% {
+    transform: rotate(14deg);
+  }
+  20% {
+    transform: rotate(-8deg);
+  }
+  30% {
+    transform: rotate(14deg);
+  }
+  40% {
+    transform: rotate(-4deg);
+  }
+  50% {
+    transform: rotate(10deg);
+  }
+  60% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes flying {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(0.5rem);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes badge {
+  100% {
+    transform: scaleY(1.7) scaleX(1.25);
+    opacity: 0;
+  }
+}
+
+@keyframes loop {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
 
 :root {
   --color-dark: #121212;
