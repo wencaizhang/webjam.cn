@@ -9,6 +9,7 @@ import { getCollection, getEntry } from '@/common/libs/mdx';
 import { siteMetadata } from '@/contents/siteMetadata';
 import BlogDetail from '@/modules/blog/components/BlogDetail';
 import GiscusComment from '@/modules/blog/components/GiscusComment';
+import TableOfContents from '@/modules/blog/components/TableOfContents';
 
 type Props = {
   params: { slug: string };
@@ -112,13 +113,27 @@ export default async function BlogDetailPage({ params }: Props) {
       <AnimatedContainer>
         <Container>
           <BackButton url='/blog' />
-          <BlogDetail {...blogData} />
 
-          <section id='comments'>
-            <GiscusComment />
-          </section>
+          {/* 左右分布布局 */}
+          <div className='flex gap-8 xl:gap-12'>
+            {/* 主要内容区域 */}
+            <div className='flex-1 min-w-0'>
+              <BlogDetail {...blogData} />
 
-          <NavigationSection prev={prevInfo} next={nextInfo} />
+              <section id='comments'>
+                <GiscusComment />
+              </section>
+
+              <NavigationSection prev={prevInfo} next={nextInfo} />
+            </div>
+
+            {/* TOC 侧边栏 */}
+            <aside className='flex-shrink-0 hidden w-64 xl:block'>
+              {blogData.content && (
+                <TableOfContents content={blogData.content} />
+              )}
+            </aside>
+          </div>
         </Container>
       </AnimatedContainer>
     </LayoutWithHeader>

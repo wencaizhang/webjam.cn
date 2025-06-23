@@ -6,6 +6,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
 import { siteMetadata } from '@/contents/siteMetadata';
+import { generateHeadingId } from '@/common/utils/generateHeadingId';
 
 import CodeBlock from './CodeBlock';
 
@@ -41,20 +42,26 @@ const MDXComponent = ({ children }: MarkdownRendererProps) => {
           />
         ),
         p: (props) => <div {...props} />,
-        h2: (props) => (
-          <h2
-            className='text-xl font-medium dark:text-neutral-300'
-            id={props.children[0] as string}
-            {...props}
-          />
-        ),
-        h3: (props) => (
-          <h3
-            className='text-[18px] leading-snug pt-4 font-medium dark:text-neutral-300'
-            id={props.children[0] as string}
-            {...props}
-          />
-        ),
+        h2: (props) => {
+          const id = generateHeadingId(props.children);
+          return (
+            <h2
+              className='text-xl font-medium dark:text-neutral-300'
+              id={id}
+              {...props}
+            />
+          );
+        },
+        h3: (props) => {
+          const id = generateHeadingId(props.children);
+          return (
+            <h3
+              className='text-[18px] leading-snug pt-4 font-medium dark:text-neutral-300'
+              id={id}
+              {...props}
+            />
+          );
+        },
         ul: ({ ordered, ...props }) => (
           <ul className='pl-10 space-y-3 list-disc pb-2' {...props} />
         ),
