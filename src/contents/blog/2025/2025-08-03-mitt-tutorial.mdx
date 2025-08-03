@@ -1,0 +1,226 @@
+---
+title: mitt 上手教程
+slug: mitt-tutorial
+summary: mitt 是一个非常轻量级的事件发射器（Event Emitter），它的核心思想是提供一个简单的发布/订阅（Pub/Sub）模式，让你可以轻松地在应用程序的不同部分之间进行通信，而无需它们直接相互依赖。
+date: '2025-08-03'
+featured: false
+tags: mitt
+draft: false
+featured_image_url: 
+---
+
+`mitt` 是一个非常轻量级的事件发射器（Event Emitter），它的核心思想是提供一个简单的发布/订阅（Pub/Sub）模式，让你可以轻松地在应用程序的不同部分之间进行通信，而无需它们直接相互依赖。
+
+## 一、基础用法：创建、监听与触发
+
+`mitt` 的 API 非常直观，主要围绕以下三个核心方法：`on`、`emit` 和 `off`。
+
+### 1. 创建事件总线 (Emitter)
+
+`mitt()` 实际上是一个工厂函数，它返回一个 `mitt` 实例。
+
+```js
+// emitter.js
+import mitt from 'mitt';
+
+export const emitter = mitt();
+```
+
+### 2. 监听事件 (on)
+
+使用 `on` 方法来订阅一个事件。
+
+它接收两个参数：**事件名**（字符串）和**回调函数**。当事件被触发时，回调函数就会被执行。
+
+```js
+import emitter from 'emitter.js'
+
+// 监听 'foo' 事件
+emitter.on('foo', (eventData) => {
+  console.log('事件 "foo" 被触发了！', eventData);
+});
+```
+
+这一点类似 jQuery 的事件监听，不过事件名是可以自由定义的。
+
+### 3. 触发事件 (emit)
+
+使用 `emit` 方法来发布或触发一个事件。它接收两个参数：**事件名**（字符串）和可选的**事件数据**。事件数据可以是你想要的任何类型，比如对象、字符串或数字。
+
+```js
+import emitter from 'emitter.js'
+
+// 触发 'foo' 事件，并传递一个对象作为数据
+emitter.emit('foo', { message: 'Hello World!' });
+```
+
+那么在上一节的「监听 'foo' 事件」代码中就会打印：
+
+```txt
+事件 "foo" 被触发了！ { message: 'Hello World!' }
+```
+
+
+### 4. 移除监听器 (off)
+
+当某个组件不再需要监听事件时，你可以使用 `off` 方法来移除监听器。`off` 也需要传入**事件名**和**回调函数**。
+
+以 Vue3 代码为例， 在组件卸载前通常需要移除监听器：
+
+```js
+import { inject, ref, onMounted, onUnmounted } from 'vue';
+import emitter from 'emitter.js'
+
+const message = ref('');
+
+const handleEvent = (data) => {
+  message.value = data;
+};
+
+onMounted(() => {
+  // 在组件挂载时添加监听器
+  emitter.on('global-event', handleEvent);
+  console.log('监听器已添加');
+});
+
+onUnmounted(() => {
+  // 在组件卸载前移除监听器
+  emitter.off('global-event', handleEvent);
+  console.log('监听器已移除');
+});
+```
+
+传入的回调函数必须是监听时使用的**同一个函数引用**，否则无法移除。这一点和 JS 的 addEventListener 类似。
+
+## 二、进阶用法：更强大的功能与实践模式
+
+### 1. 监听所有事件
+
+**监听所有事件**：`mitt` 支持使用 `'*'` 作为事件名来监听所有被触发的事件。你的回调函数会接收到两个参数：`eventName` 和 `eventData`。
+
+```js
+emitter.on('*', (eventName, eventData) => {
+  console.log(`[全局监听] 事件 "${eventName}" 被触发了，数据是:`, eventData);
+});
+
+emitter.emit('user:login', { username: 'Alice' });
+emitter.emit('cart:update', { items: 5 });
+// -> 控制台输出:
+// [全局监听] 事件 "user:login" 被触发了，数据是: { username: 'Alice' }
+// [全局监听] 事件 "cart:update" 被触发了，数据是: { items: 5 }
+```
+
+### 2. 移除所有监听器
+
+当你只传入第一个参数（事件名）时，所有与该事件名关联的监听器都会被移除。
+
+```js
+// 只传入事件名，移除该事件的所有监听器
+emitter.off('my-event');
+```
+
+`mitt` 的 `off` 方法是一个重载函数，它的行为取决于你传入的参数数量：
+
+- `emitter.off(type)` ：移除该 `type` 事件的所有监听器。
+- `**`emitter.off(type, handler)`：移除该 `type` 事件中特定的 `handler` 监听器。
+
+你还可以使用 `emitter.all.clear()` 方法，一次性清除所有事件的所有监听器。
+
+```js
+emitter.on('foo', () => {});
+emitter.on('bar', () => {});
+console.log('移除前监听器数量:', emitter.all.size); // -> 2
+
+emitter.all.clear();
+console.log('移除后监听器数量:', emitter.all.size); // -> 0
+```
+
+`emitter.all` 实际上是一个 `Map` 类型，因此可以使用 `clear()` 和 `size()` 以及其他 `Map` 实例的方法: [Map - JavaScript | MDN](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Map#%E5%AE%9E%E4%BE%8B%E6%96%B9%E6%B3%95)。
+
+### 3. 命名空间: 通过事件命名规范实现轻量级隔离
+
+在只使用一个 `emitter` 实例时，你可以通过为事件名添加前缀来创建“命名空间”，从而避免事件冲突和增强可读性。
+
+命名方式建议使用冒号或斜杠分隔符，如 `'user:login'`、`'cart/add-item'`，核心思想是：`[命名空间]` + `[事件名]`。
+
+例如：
+
+```js
+emitter.on('user:login', (user) => {
+  console.log('用户已登录:', user.name);
+});
+emitter.on('cart:update', (items) => {
+  console.log('购物车更新了:', items.length, '件商品');
+});
+
+
+emitter.emit('user:login', { name: 'Bob' });
+emitter.emit('cart:update', [1, 2]);
+```
+
+使用命名空间后，你可以利用字符串操作来做一些灵活的批量处理。 例如，如果你想监听所有与用户相关的事件，你只需要在监听器中判断事件名是否以 `user:` 开头即可。
+
+```js
+emitter.on('*', (type, payload) => {
+  if (type.startsWith('user:')) {
+    console.log(`一个用户事件发生了: ${type}`, payload);
+  }
+});
+```
+
+这种模式让你在同一个 `mitt` 实例上，也能实现类似**分组**的效果，大大提升了事件处理的灵活性。
+
+
+总的来说，命名空间的方式有三个好处：
+1. 避免冲突，增强代码健壮性
+2. 提高可读性，一眼看懂事件来源
+3. 实现批量操作和灵活筛选
+
+但缺点也很明显，那就是命名空间是一种**人为的约束**，依赖于团队的纪律性。
+
+### 4. 创建多个独立实例：实现物理隔离
+
+在大型或复杂的应用中，为不同的功能模块创建独立的 `mitt` 实例是更好的选择。这是一种**代码层面的强制隔离**，更安全、更健壮。
+
+直接为不同模块创建单独的 `mitt` 实例，可以让你更好地控制事件的范围和范围内的通信。
+
+```js
+// 用于用户模块
+export const userEmitter = mitt();
+
+// 用于购物车模块
+export const cartEmitter = mitt();
+```
+
+然后在不同模块中，只需要导入对应的 `mitt` 实例，就可以进行事件的发布和订阅。
+
+```js
+// 在用户相关的组件中
+import { userEmitter } from './user.js';
+userEmitter.on('login', () => console.log('用户模块收到了登录事件'));
+userEmitter.emit('login', { id: 123 }); // 只在 userEmitter 上触发
+```
+
+
+```js
+// 在购物车相关的组件中
+import { cartEmitter } from './cart.js';
+cartEmitter.on('update', () => console.log('购物车模块收到了更新事件'));
+cartEmitter.emit('update', { items: 5 }); // 只在 cartEmitter 上触发
+```
+
+不同的 `mitt` 实例之间是完全隔离的，互不影响。
+
+```js
+// 以下代码不会触发任何监听器，因为事件总线是独立的
+userEmitter.emit('update', '测试');
+```
+
+## 三、结语
+
+`mitt` 是一个非常轻量级的事件发射器，它提供了一种简单、灵活的发布/订阅模式，可以帮助你在应用程序的不同部分之间进行通信。
+
+它的 API 非常直观，使用起来也很方便，但它也有一些局限性，比如命名空间的约束、批量操作的不便，而且大量使用 `mitt` 会增加代码的复杂度，增加维护难度，并且难以跟踪和管理，从长期来看维护起来会让人头疼。
+
+不过，如果你有更复杂的需求，比如需要实现更高级的功能，或者需要更灵活的架构，`mitt` 也是一个不错的选择。
+
