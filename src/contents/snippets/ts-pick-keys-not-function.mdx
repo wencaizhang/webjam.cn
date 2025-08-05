@@ -1,0 +1,48 @@
+---
+title: TypeScript 用三元表达式来获取非函数属性的键
+description: 
+slug: ts-pick-keys-not-function
+date: '2025-08-05'
+featured: false
+type: ts
+draft: true
+---
+
+
+## TypeScript 中可以使用三元表达式
+
+想要在 TypeScript 中获取非函数属性的键，可以使用三元表达式。比如你想定义一个除了函数以外的类型，可以使用以下代码：
+
+```ts
+type NonFunctionKeys<T> = T extends Function ? never : T
+```
+
+或者这样写
+
+```ts
+type NonFunctionKeys<T> = T extends (...args: any[]) => any ? never : T
+```
+
+这个类型定义是一个条件类型，它的作用是：
+
+  - 如果传入的类型 `T` 是一个函数类型，那么它就会返回 `never`。`never` 类型在联合类型中会被自动移除，这让它非常适合用来“过滤”掉函数。
+  - 如果传入的类型 `T` 不是一个函数类型，那么它就会返回 `T` 本身。
+
+
+## 从对象中提取非函数属性的键
+
+挑选出所有非函数属性的键
+
+```ts
+type StateKeys = {
+  [K in keyof T]: T[K] extends (...args: any[]) => any ? never : K;
+}[keyof T];
+```
+
+这个类型的工作原理是：
+
+1. `[K in keyof T]` 遍历 `T` 的所有键。
+2. `T[K] extends (...args: any[]) => any` 检查属性 `K` 的类型是否是函数。
+3. 如果它是函数，则返回 `never`。`never` 类型在联合类型中会被移除。
+4. 如果它不是函数，则返回键 `K` 本身。
+5. 最后，`[keyof T]` 会将所有返回的类型组合成一个联合类型。由于 `never` 会被移除，最终结果就是所有非函数键的联合类型。
