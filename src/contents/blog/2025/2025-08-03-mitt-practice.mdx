@@ -1,0 +1,381 @@
+---
+title: 如何在（Vue/React）项目中的应用 mitt
+slug: mitt-practice
+summary: 
+date: '2025-08-03'
+featured: false
+tags: 
+  - mitt
+draft: true
+featured_image_url: 
+---
+
+> `mitt` 是一个非常轻量级的事件发射器（Event Emitter），它的核心思想是提供一个简单的发布/订阅（Pub/Sub）模式，让你可以轻松地在应用程序的不同部分之间进行通信，而无需它们直接相互依赖。
+
+在上一片文章中我介绍了 mitt 的基本概念和用法，这篇文章将介绍在 Vue 和 React 项目中如何使用 mitt。
+
+## 直接 import 使用
+
+直接 import 使用是最简单最直接的方式，前一篇文章中所有的例子都是这种方式。
+
+
+第一步，安装 mitt 并创建实例
+
+```js
+// emitter.js
+import mitt from 'mitt';
+
+export const emitter = mitt();
+```
+
+接下来需要在哪里使用就可以引入emitter 了。
+
+例如监听事件：
+
+```js
+import emitter from 'emitter.js'
+
+// 监听 'foo' 事件
+emitter.on('foo', (eventData) => {
+  console.log('事件 "foo" 被触发了！', eventData);
+});
+```
+
+触发事件：
+
+```js
+import emitter from 'emitter.js'
+
+// 触发 'foo' 事件，并传递一个对象作为数据
+emitter.emit('foo', { message: 'Hello World!' });
+```
+
+这种直接 import 的方式，几乎适合任何项目。
+
+
+
+## 挂载到 Vue 实例
+
+### Vue2 版本挂载到实例
+
+在 Vue2 版本的时候比较常用这种方式：
+
+
+```js
+// main.js
+Vue.prototype.emitter = mitt();
+```
+
+然后在 Vue 组件中通过 `this.$emitter` 来使用它：
+
+```html
+<template>
+  <button @click="emitEvent">触发事件</button>
+</template>
+
+<script>
+export default {
+  methods: {
+    emitEvent() {
+      this.$emitter.emit('my-event', '来自 MyComponent 的消息');
+    }
+  },
+  mounted() {
+    this.$emitter.on('other-event', (data) => {
+      console.log('接收到其他组件的事件:', data);
+    });
+  },
+  beforeUnmount() {
+    // 组件卸载前务必移除监听器，防止内存泄漏 
+    this.$emitter.off('other-event');
+  }
+}
+```
+
+这种方式的好处是，不需要在每个组件中都 import mitt，只需要在入口文件中创建实例，然后在组件中通过 `this.$emitter` 来使用它。
+
+### Vue3 版本挂载到实例
+
+Vue3 版本中有些不太一样了，需要使用 `createApp` 方法来创建应用实例，然后通过 `app.config.globalProperties` 来挂载实例。
+
+```js
+// main.js
+import { createApp } from 'vue';
+import mitt from 'mitt';
+import App from './App.vue';
+
+const app = createApp(App);
+app.config.globalProperties.$emitter = mitt(); // 挂载到全局属性
+
+app.mount('#app');
+```
+
+然后在任何组件中都可以通过 `this.$emitter` 来使用它，这一点和 Vue2 版本是一样的。
+
+```html
+<template>
+  <button @click="emitEvent">触发事件</button>
+</template>
+
+<script>
+export default {
+  methods: {
+    emitEvent() {
+      this.$emitter.emit('my-event', '来自 MyComponent 的消息');
+    }
+  },
+  mounted() {
+    this.$emitter.on('other-event', (data) => {
+      console.log('接收到其他组件的事件:', data);
+    });
+  },
+  beforeUnmount() {
+    // 组件卸载前务必移除监听器，防止内存泄漏
+    this.$emitter.off('other-event');
+  }
+}
+</script>
+```
+
+不过这需要使用 Options API 的方式，如果你使用的是 Composition API，可以这样写：
+
+```html
+<template>
+  <button @click="emitEvent">触发事件</button>
+</template>
+
+<script setup>
+import { getCurrentInstance } from 'vue';
+
+// 获取当前组件实例
+const instance = getCurrentInstance();
+
+const emitEvent = () => {
+  // 通过 instance.appContext.config.globalProperties 访问全局属性
+  const emitter = instance.appContext.config.globalProperties.$emitter;
+  if (emitter) {
+    emitter.emit('my-event', '来自 setup 的消息');
+  }
+};
+</script>
+```
+
+可以看到我们用到了 `getCurrentInstance` 方法来获取当前组件实例，然后通过 `appContext.config.globalProperties` 来访问全局属性。
+
+虽然它能解决问题，但 Vue 官方不推荐经常使用 `getCurrentInstance`，甚至现在已经将它从文档中删除掉了。
+
+*个人感觉这个写法比较复杂，不如直接 import 方式简单易用。*
+
+因此相对而言更推荐使用 import 的方式或者下面的 povide/inject 的方式。
+
+
+## 使用 `provide / inject` 共享实例（推荐）
+
+除了挂载到全局属性上，在 Vue 3 中，更推荐使用 `provide / inject` 来精确地控制 `emitter` 实例的作用域，这能更好地实现**解耦**。
+
+你可以在入口文件中直接对 app 提供 `emitter` 实例：
+
+```js
+// main.js
+import { createApp } from 'vue';
+import mitt from 'mitt';
+import App from './App.vue';
+
+const app = createApp(App);
+const emitter = mitt();
+
+// 提供 emitter 实例
+app.provide('emitter', emitter);
+
+app.mount('#app');
+```
+
+你也可以在任意一级组件开始提供 `emitter` 实例，然后在子组件中通过 `inject` 来接收它。
+
+```html
+<template>
+  <button @click="emitEvent">触发事件</button>
+  <ChildComponent />
+</template>
+
+<script setup>
+import { provide } from 'vue';
+import mitt from 'mitt';
+import ChildComponent from './ChildComponent.vue';
+
+// 创建一个 mitt 实例，并提供给所有子组件
+const emitter = mitt();
+provide('emitter', emitter);
+
+const emitEvent = () => {
+  emitter.emit('parent-event', '来自 ParentComponent 的消息');
+};
+</script>
+```
+
+在子组件中，通过 `inject` 来接收 `emitter`。
+
+```html
+<template>
+  <div>子组件已挂载</div>
+</template>
+
+<script setup>
+import { inject, onMounted, onUnmounted } from 'vue';
+
+// 注入父组件提供的 emitter
+const emitter = inject('emitter');
+
+const onParentEvent = (data) => {
+  console.log('接收到父组件的事件:', data);
+};
+
+onMounted(() => {
+  // 在组件挂载时监听事件
+  emitter.on('parent-event', onParentEvent);
+});
+
+onUnmounted(() => {
+  // 组件卸载前务必移除监听器，防止内存泄漏
+  emitter.off('parent-event', onParentEvent);
+});
+</script>
+```
+
+## 为什么我更推荐 provide / inject
+
+对于简单的项目，直接 `import` 看起来更快更方便。但从工程实践的角度来看，我强烈推荐使用 `provide / inject`。这不仅仅是个人偏好，更是为了**解耦、可维护性和可测试性**。
+
+下面，我将深入探讨为什么 `provide / inject` 是更优的选择，以及它背后的设计思想。
+
+### 直接 `import`：全局单例的便利与风险
+
+当你在一个文件中创建 `mitt` 实例并将其 `export`，然后在其他组件中直接 `import` 时，你实际上是在使用**全局单例模式**。
+
+这种做法简单直接，但它存在几个核心问题：
+
+1. **强耦合**：你的组件与 `emitter.js` 文件的路径和具体实现产生了**硬编码**依赖。如果你想更换事件总线库，或者将 `emitter` 分割成多个实例，你必须修改所有 `import` 过它的组件。这就像公司里的所有员工都只知道一个特定电话号码，一旦号码更换，所有人都得去更新通讯录。
+    
+2. **可测试性差**：在单元测试中，所有组件都共享同一个全局 `emitter` 实例。这意味着一个测试用例发出的事件可能会影响到另一个测试用例，导致测试结果不确定。为了确保测试的纯粹性，你需要在每个测试用例之后手动清理 `emitter` 的状态，这增加了测试的复杂性。
+    
+3. **缺乏作用域控制**：这种全局单例模式使得任何组件都可以订阅和发布任何事件。虽然可以通过命名规范来缓解，但它无法从代码层面强制隔离。这增加了事件冲突和意外副作用的风险。
+    
+
+
+### 为什么说 `provide / inject` 更好？
+
+先说说 `provide` 和 `inject` 的核心作用
+
+`provide` 和 `inject` 模式就是 Vue 的“依赖注入”机制，它主要用来解决**跨层级组件通信**的问题。
+
+- **`provide`**：**提供者（Provider）**。它是一个发布动作。在父组件中，你使用 `provide` 来注册一个依赖（比如 `mitt` 实例），并给它起一个唯一的键名（比如 `'emitter'`）。**它向下传递，但不会向上或向兄弟组件传递。**
+- **`inject`**：**消费者（Consumer）**。它是一个获取动作。在任何子孙组件中，你都可以使用 `inject` 来获取父级提供的依赖。它会沿着组件树向上查找，直到找到第一个匹配的 `provide`。
+
+这种模式有巨大的架构优势：
+
+1. **弱耦合**：组件只通过一个**字符串键名**（如 `'emitter'`）来请求依赖，它完全不关心这个依赖是如何创建的，也不关心它来自哪个文件。这让你的组件与具体的实现解耦，使它们更加独立和可复用。
+2. **可测试性强**：在单元测试中，你可以轻松地**模拟（mock）**依赖。你只需 `provide` 一个假的 `emitter` 对象，就可以完全控制事件的发送和接收，而不会影响到其他测试。这大大简化了测试环境的搭建。
+3. **灵活的作用域控制**：`provide / inject` 允许你在组件树的任意层级提供 `emitter` 实例，从而实现**作用域化**的事件总线。你可以为用户模块提供一个 `userEmitter`，为购物车模块提供一个 `cartEmitter`，将事件通信限定在各自的子树内，从根本上杜绝了模块间的意外耦合。
+
+
+现在我们来详细对比为什么这种模式在很多场景下比直接 `import` 更有优势。
+
+| 特性 | `import` 方式 | `provide / inject` 方式 |
+| --- | --- | --- |
+| **依赖关系** | **强耦合**：组件直接依赖于 `emitter.js` 文件的路径和具体实现。 | **弱耦合**：组件只依赖于一个键名（`'emitter'`），它不关心具体实现和文件位置。 |
+| **作用域** | **全局单例**：整个应用只有一个 `emitter` 实例。如果一个事件被触发，所有监听者都会收到，这可能导致意外的副作用。 | **可控制作用域**：你可以在组件树的任意层级提供 `emitter`，形成局部作用域。一个父组件提供的 `emitter` 只对它的子孙组件可见，避免了全局污染。 |
+| **可测试性** | **难以隔离**：所有测试都共用同一个 `emitter` 实例，测试之间可能互相影响。需要手动清理状态。 | **易于模拟**：在测试时，可以轻松地 `provide` 一个模拟的 `emitter`，从而完全控制测试环境，实现更纯粹的单元测试。 |
+| **灵活性** | **僵化**：要更换事件总线库，你需要修改所有 `import` 的文件。 | **灵活**：提供者可以随时更换 `mitt` 实例的实现（比如换成一个功能更强大的事件总线库），而子孙组件的代码无需改动。 |
+
+
+### 结论：从全局依赖到局部控制
+
+在 Vue 中，`provide / inject` 模式将组件从“如何获取依赖”的困境中解放出来，让组件能够更专注于自身的业务逻辑。这是一种**控制反转（Inversion of Control）**的设计思想，它将依赖的创建和提供交给更高层级的组件来处理。
+
+- 如果你的项目很小，或者你只是想快速实现一个功能，直接 `import` 确实可以。
+- 但如果你的项目正在成长，或者你希望构建一个可维护、可扩展、易于测试的系统，那么使用 `provide / inject` 来提供 `mitt` 实例无疑是更成熟、更专业的选择。
+
+**多花几行代码，换来的是更高的解耦度、更强的可测试性，以及在项目长期发展中至关重要的代码可维护性。**
+
+
+## React 示例：使用 Context API 共享实例
+
+和 Vue 项目相似，除了直接 import 方式，React 项目中也可以使用 Context API 来共享 `emitter` 实例。
+
+React 的 Context API 和 Vue 的 provide / inject 是功能和机制上非常相似的两种模式
+
+首先，创建一个 `EmitterContext`。
+
+```js
+// EmitterContext.js
+import React, { createContext } from 'react';
+import mitt from 'mitt';
+
+export const EmitterContext = createContext(null);
+export const emitter = mitt();
+```
+
+然后，在父组件中通过 `Provider` 传入 `emitter` 实例。
+
+```js
+// ParentComponent.jsx
+import { EmitterContext, emitter } from './EmitterContext';
+import ChildComponent from './ChildComponent';
+
+function ParentComponent() {
+  const handleClick = () => {
+    emitter.emit('parent-event', '来自 ParentComponent 的消息');
+  };
+
+  return (
+    <EmitterContext.Provider value={emitter}>
+      <button onClick={handleClick}>触发事件</button>
+      <ChildComponent />
+    </EmitterContext.Provider>
+  );
+}
+```
+
+最后，在子组件中通过 `useContext` 钩子来使用 `emitter`。
+
+```js
+// ChildComponent.jsx
+import React, { useContext, useEffect } from 'react';
+import { EmitterContext } from './EmitterContext';
+
+function ChildComponent() {
+  const emitter = useContext(EmitterContext);
+
+  useEffect(() => {
+    // 定义事件处理函数
+    const onParentEvent = (data) => {
+      console.log('接收到父组件的事件:', data);
+    };
+
+    // 组件挂载后监听事件
+    if (emitter) {
+      emitter.on('parent-event', onParentEvent);
+    }
+
+    // 在 cleanup 函数中移除监听器，相当于组件卸载时
+    return () => {
+      if (emitter) {
+        emitter.off('parent-event', onParentEvent);
+      }
+    };
+  }, [emitter]); // 依赖项为 emitter，确保只在 emitter 实例变化时重新执行
+
+  return <div>子组件已挂载</div>;
+}
+```
+
+理由和上一节一样，在 React 中，**Context API** 是共享 `emitter` 实例的最佳实践。
+
+## 总结
+
+本文介绍了 mitt 在 Vue 和 React 项目中的应用，并介绍了 `provide / inject` 模式的优势。
+
+- `import` 方式适合中小型项目，但不适合大型项目。
+- `provide / inject` 或者 `Context` 方式适合大型项目，它提供了更好的可测试性、更灵活的作用域控制、更好的架构设计。
+
+因此具体使用哪种方案要根据项目规模和 `mitt` 的使用场景来决定。
