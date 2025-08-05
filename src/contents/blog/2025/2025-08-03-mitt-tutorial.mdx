@@ -4,7 +4,8 @@ slug: mitt-tutorial
 summary: mitt 是一个非常轻量级的事件发射器（Event Emitter），它的核心思想是提供一个简单的发布/订阅（Pub/Sub）模式，让你可以轻松地在应用程序的不同部分之间进行通信，而无需它们直接相互依赖。
 date: '2025-08-03'
 featured: false
-tags: mitt
+tags: 
+  - mitt
 draft: false
 featured_image_url: 
 ---
@@ -216,7 +217,69 @@ cartEmitter.emit('update', { items: 5 }); // 只在 cartEmitter 上触发
 userEmitter.emit('update', '测试');
 ```
 
-## 三、结语
+## 三、记得在适当时机接触监听
+
+### 为什么需要解除监听？
+
+如果不解除监听，可能会导致以下两个主要问题：
+
+#### 1. 内存泄漏 (Memory Leak)
+
+当你为一个事件添加了监听器后，这个监听器就会被事件总线（`mitt` 实例）所“持有”。如果你的组件被销毁（例如，用户从一个页面跳转到另一个页面），但你没有移除这个监听器，事件总线仍然会保留对该组件回调函数的引用。
+
+这意味着即使组件的 DOM 元素和数据已经被垃圾回收器清除，这个回调函数及其闭包中引用的所有数据（包括组件实例本身）依然无法被回收。随着用户在应用中不断切换页面，越来越多的废弃监听器会堆积在内存中，最终导致应用程序的性能下降，甚至崩溃。
+
+#### 2. 意料之外的行为和 bug
+
+假设你有一个组件 A，它监听了 `user:login` 事件。当用户登录时，组件 A 会执行某个操作。
+
+想象下面的场景：
+1. 你进入了组件 A 所在的页面。
+1. 你离开了这个页面，组件 A 被销毁了。
+1. 你又重新进入了组件 A 所在的页面，一个新的组件 A 实例被创建。
+1. 现在，事件总线上实际上有两个 `user:login` 的监听器：一个来自旧的、已销毁的组件，另一个来自新的组件。
+1. 当用户登录时，这个事件会被触发两次，导致你的逻辑被重复执行，从而产生难以追踪的 bug。
+
+### 示例说明
+
+下面是关键代码：
+
+```js
+onMounted(() => {
+  // 在组件挂载时添加监听器
+  emitter.on('global-event', handleEvent);
+  console.log('监听器已添加');
+});
+
+onUnmounted(() => {
+  // 在组件卸载前移除监听器
+  emitter.off('global-event', handleEvent);
+  console.log('监听器已移除');
+});
+```
+
+如果是 react 项目，可以在 useEffect 的回调函数中清除监听：
+
+```jsx
+import emitter from 'emitter.js'
+
+export default function App() {
+
+  useEffect(() => {
+    const handleEvent = (data) => {
+      console.log('接收到全局事件', data);
+    }
+
+    emitter.on('global-event', handleEvent)
+
+    return () => {
+      emitter.off('global-event', handleEvent)
+    }
+  }, [])
+}
+```
+
+## 四、结语
 
 `mitt` 是一个非常轻量级的事件发射器，它提供了一种简单、灵活的发布/订阅模式，可以帮助你在应用程序的不同部分之间进行通信。
 
