@@ -1,0 +1,57 @@
+---
+title: 本地部署 FastAPI 文档
+description: 
+slug: deploy-fastapi-docs-locally
+date: '2025-08-06'
+featured: false
+type: python
+draft: true
+---
+
+最近在学习 [FastAPI](https://fastapi.tiangolo.com/)，经常需要查阅文档，但是文档每个页面加载都需要1-2秒时间，有时甚至会出现加载失败的情况，因此决定想办法吧文档部署到本地。
+
+经过我分析发现，文档的 markdown 文件位于仓库 [https://github.com/fastapi/fastapi](https://github.com/fastapi/fastapi) 的 `docs_src` 目录，同时 `docs` 目录存放了各国语言的翻译版本，`scripts/docs.py` 则是对应编译文档的脚本，编译后的 HTML 文档位于 `site` 目录下。
+
+
+首先 clone 项目到本地：
+
+```bash
+git clone https://github.com/fastapi/fastapi
+
+# 如果网速慢可以加上 --depth 1 参数，只 clone 最新版本：
+git clone --depth 1 https://github.com/fastapi/fastapi
+```
+
+
+然后需要安装项目依赖，我使用的是 `uv`:
+
+```bash
+# 创建虚拟环境
+uv venv
+
+# 进入虚拟环境
+source venv/bin/activate
+
+# 安装依赖 （尝试过安装 requirements-docs.txt 的依赖，但测试发现打包失败）
+# uv pip install -r requirements-docs.txt
+uv pip install -r requirements.txt
+```
+
+接下来就可以编译了：
+
+```bash
+# 构建文档
+python ./scripts/docs.py build-all
+```
+
+编译后会发现项目中出现了一个 `site` 目录，这是静态 HTML 了，此时可以通过下面命令启动一个服务来查看文档：
+
+```bash
+# 启动本地服务器
+python ./scripts/docs.py serve
+```
+
+然后在浏览器中访问 `http://localhost:8000/` 就可以看到文档了。
+
+
+其实当你拿到 site 目录之后，你可以把它部署到任何静态文件服务器上，比如 nginx、caddy、或者前端 http-server 包等。
